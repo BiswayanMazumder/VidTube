@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 export default function Header() {
   return (
-    <div className='webbody'>
+
             <div className="heading">
                 <div className="jjefjdf">
                     <Link>
@@ -26,6 +26,5 @@ export default function Header() {
                     </Link>
                 </div>
             </div>
-        </div>
   )
 }

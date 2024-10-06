@@ -37,7 +37,7 @@
   }
 }
 body{
-  background-color: black;
+  background-color: white;
   overflow-x: hidden;
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
@@ -49,7 +49,7 @@ body{
 .heading{
   /* background-color: white; */
   width: 100vw;
-  height: 100px;
+  height: 90px;
 }
 .jjefjdf{
   display: flex;
@@ -77,7 +77,7 @@ input {
 }
 .kjefkjfl {
   margin-top: 25px;
-  height: 40px;
+  height: 30px;
   width: 80px;
   border: 1px solid rgba(0, 0, 0, 0.3); /* Lighter border */
   border-radius: 20px;
@@ -93,4 +93,35 @@ input {
 .kjefkjfl:hover{
   background-color: rgb(221, 221, 242);
   border: 1px solid rgb(221, 221, 242);
+}
+.sidebar{
+  width: 20vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  /* background-color: red */
+}
+.sidebarcomp{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  background-color: #F2F2F2;
+  height: 50px;
+  width: 18vw;
+  margin-left: 10px;
+  border-radius: 10px;
+  justify-content: start;
+  align-items: center;
+  text-align: center;
+  gap: 30px;
+}
+.jkfdlf{
+  margin-left: 30px;
+}
+.nefkf{
+  font-weight: bold;
+}
+.sidebarcomp:hover{
+  background-color: #f1e2e2;
 }
