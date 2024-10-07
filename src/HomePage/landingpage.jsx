@@ -4,10 +4,10 @@ import Header from '../Components/header';
 import Sidebar from '../Components/sidebar';
 import ShortSidebar from '../Components/shortsidebar';
 export default function Landingpage() {
-    const [sidebar,setsidebar]=useState(true);
+    const [sidebar, setsidebar] = useState(true);
     return (
         <div className="webbody">
-             <div className="heading">
+            <div className="heading">
                 <div className="jjefjdf">
                     <Link>
                         <div className="ejjnejfkd" onClick={() => setsidebar(!sidebar)}>
@@ -23,14 +23,14 @@ export default function Landingpage() {
                         <input type="text" placeholder='  Search' className="jjejfjekf" />
                     </div>
                     <Link style={{ textDecoration: 'none', color: 'black' }}>
-                    <div className="kjefkjfl">
-                        Sign in
-                    </div>
+                        <div className="kjefkjfl">
+                            Sign in
+                        </div>
                     </Link>
                 </div>
             </div>
             {
-                sidebar?<Sidebar />:<ShortSidebar/>
+                sidebar ? <Sidebar /> : <ShortSidebar />
             }
         </div>
     )
