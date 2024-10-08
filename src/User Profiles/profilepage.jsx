@@ -172,6 +172,11 @@ export default function ProfilePage() {
             >
                 <div className="jjnffkmkm">
                     Home
+                    {
+                        activeTab === 'home'?<div className="nfjvf">
+                        
+                        </div>:<></>
+                    }
                 </div>
             </Link>
             <Link 
@@ -180,6 +185,11 @@ export default function ProfilePage() {
             >
                 <div className="jjnffkmkm">
                     Videos
+                    {
+                        activeTab === 'video'?<div className="nfjvf">
+                        
+                        </div>:<></>
+                    }
                 </div>
             </Link>
             <Link 
@@ -188,6 +198,11 @@ export default function ProfilePage() {
             >
                 <div className="jjnffkmkm">
                     Community
+                    {
+                        activeTab === 'comm'?<div className="nfjvf">
+                        
+                        </div>:<></>
+                    }
                 </div>
             </Link>
             <Link 
@@ -196,6 +211,11 @@ export default function ProfilePage() {
             >
                 <div className="jjnffkmkm">
                     About
+                    {
+                        activeTab === 'about'?<div className="nfjvf">
+                        
+                        </div>:<></>
+                    }
                 </div>
             </Link>
         </div>
