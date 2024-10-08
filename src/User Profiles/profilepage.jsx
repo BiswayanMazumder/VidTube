@@ -23,7 +23,7 @@ export default function ProfilePage() {
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
     const [coverPic, setCoverPic] = useState('');
-
+    const [subs,setsubs] = useState([]);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -37,7 +37,7 @@ export default function ProfilePage() {
             } catch (error) {
                 console.error(error);
             }
-
+    
             try {
                 const coverDocRef = doc(db, 'User Cover Pictures', userId);
                 const coverDocSnapshot = await getDoc(coverDocRef);
@@ -48,7 +48,18 @@ export default function ProfilePage() {
             } catch (error) {
                 console.error(error);
             }
-
+    
+            try {
+                const coverDocRef = doc(db, 'Subscribers', userId);
+                const coverDocSnapshot = await getDoc(coverDocRef);
+                if (coverDocSnapshot.exists()) {
+                    const coverData = coverDocSnapshot.data();
+                    setsubs(coverData['Subscriber UIDs']);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+    
             try {
                 const profileDocRef = doc(db, 'User Profile Pictures', userId);
                 const profileDocSnapshot = await getDoc(profileDocRef);
@@ -60,8 +71,14 @@ export default function ProfilePage() {
                 console.error(error);
             }
         };
+    
         fetchData();
     }, [userId]);
+    
+    useEffect(() => {
+        console.log('Subs:', subs);
+    }, [subs]);
+    
 
     useEffect(() => {
         document.title = `${name} - VidTube`;
@@ -86,7 +103,12 @@ export default function ProfilePage() {
                         <div style={{ fontWeight: "600", fontSize: "22px" }}>
                             {name}
                         </div>
-                        <div style={{ marginTop: "20px", color: "gray", fontSize: "15px" }}>
+                        <div style={{ marginTop: "10px", color: "gray", fontSize: "15px" }}>
+                            {
+                               subs.length==0?'No subscribers': subs.length>1? `${subs.length} subscribers`: `${subs.length} subscriber`
+                            }
+                        </div>
+                        <div style={{ marginTop: "10px", color: "gray", fontSize: "15px" }}>
                             {bio}
                         </div>
                         <Link style={{ textDecoration: 'none', color: 'white' }}>
