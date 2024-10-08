@@ -147,11 +147,19 @@ export default function ProfilePage() {
                         <div style={{ marginTop: "10px", color: "gray", fontSize: "15px" }}>
                             {bio}
                         </div>
-                        <Link style={{ textDecoration: 'none', color: 'white' }}>
-                            <div className='hebfjenk'>
-                                <center>Subscribe</center>
-                            </div>
-                        </Link>
+                        <div className="knrgjnfkg">
+                            <Link style={{ textDecoration: 'none', color: 'white' }}>
+                                <div className='hebfjenk'>
+                                    <center>Subscribe</center>
+                                </div>
+                            </Link>
+                            <Link style={{ textDecoration: 'none', color: 'black' }}>
+                                <div className='hebfjenk' style={{ backgroundColor: 'transparent', color: 'black', border: '0.5px solid black' }}>
+                                    <center>Join</center>
+                                </div>
+
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>

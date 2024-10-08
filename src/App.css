@@ -102,6 +102,11 @@ body{
   margin-left: 20px;
   margin-top: 15px;
 }
+.knrgjnfkg{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
 .bhjnrjnr{
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
