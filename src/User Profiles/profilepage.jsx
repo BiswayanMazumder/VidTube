@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import Header from '../Components/header'
+import Header from '../Components/header';
+
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
     authDomain: "pixelprowess69.firebaseapp.com",
@@ -18,21 +19,23 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 export default function ProfilePage() {
-    const { userId } = useParams(); // Get userId from the URL
+    const { userId } = useParams();
     const [dp, setDp] = useState('');
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
     const [coverPic, setCoverPic] = useState('');
-    const [subs, setsubs] = useState([]);
+    const [subs, setSubs] = useState([]);
     const [vidData, setVidData] = useState([]);
-    const [videocount, setvideoscount] = useState(0);
+    const [videoCount, setVideoCount] = useState(0);
+    const [loading, setLoading] = useState(true); // Loading state
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log("Fetching VID data..."); // Log fetching attempt
+                console.log("Fetching VID data...");
                 const docRef = doc(db, 'Global VIDs', 'VIDs');
                 const docSnapshot = await getDoc(docRef);
-                let count = 0; // Initialize count outside the loop
+                let count = 0;
 
                 if (docSnapshot.exists()) {
                     const data = docSnapshot.data();
@@ -44,19 +47,17 @@ export default function ProfilePage() {
 
                         if (videoDoc.exists()) {
                             const videoData = videoDoc.data();
-                            const uploader = videoData['Uploaded UID']; // Get the uploader for the current video
-                            // console.log('Uploader:', uploader);
+                            const uploader = videoData['Uploaded UID'];
 
-                            // Check if the uploader matches the userId
                             if (uploader === userId) {
-                                count += 1; // Increment count if there’s a match
+                                count += 1;
                             }
                         } else {
                             console.log(`Video not found for VID: ${data.VID[i]}`);
                         }
                     }
-                    setvideoscount(count);
-                    console.log('Total videos uploaded by user:', count); // Log the final count
+                    setVideoCount(count);
+                    console.log('Total videos uploaded by user:', count);
                 }
             } catch (error) {
                 console.log(error);
@@ -64,10 +65,10 @@ export default function ProfilePage() {
         };
 
         fetchData();
-    }, []);
+    }, [userId]);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchUserData = async () => {
             try {
                 const docRef = doc(db, 'User Details', userId);
                 const docSnapshot = await getDoc(docRef);
@@ -76,51 +77,37 @@ export default function ProfilePage() {
                     setName(userData.Username);
                     setBio(userData.Bio);
                 }
-            } catch (error) {
-                console.error(error);
-            }
 
-            try {
                 const coverDocRef = doc(db, 'User Cover Pictures', userId);
                 const coverDocSnapshot = await getDoc(coverDocRef);
                 if (coverDocSnapshot.exists()) {
                     const coverData = coverDocSnapshot.data();
                     setCoverPic(coverData['Cover Pic']);
                 }
-            } catch (error) {
-                console.error(error);
-            }
 
-            try {
-                const coverDocRef = doc(db, 'Subscribers', userId);
-                const coverDocSnapshot = await getDoc(coverDocRef);
-                if (coverDocSnapshot.exists()) {
-                    const coverData = coverDocSnapshot.data();
-                    setsubs(coverData['Subscriber UIDs']);
+                const subDocRef = doc(db, 'Subscribers', userId);
+                const subDocSnapshot = await getDoc(subDocRef);
+                if (subDocSnapshot.exists()) {
+                    const subData = subDocSnapshot.data();
+                    setSubs(subData['Subscriber UIDs']);
                 }
-            } catch (error) {
-                console.error(error);
-            }
 
-            try {
                 const profileDocRef = doc(db, 'User Profile Pictures', userId);
                 const profileDocSnapshot = await getDoc(profileDocRef);
                 if (profileDocSnapshot.exists()) {
                     const profileData = profileDocSnapshot.data();
                     setDp(profileData['Profile Pic']);
                 }
+
+                setLoading(false); // All data is loaded
             } catch (error) {
                 console.error(error);
+                setLoading(false); // Even if there's an error, stop loading
             }
         };
 
-        fetchData();
+        fetchUserData();
     }, [userId]);
-
-    useEffect(() => {
-        // console.log('Subs:', subs);
-    }, [subs]);
-
 
     useEffect(() => {
         document.title = `${name} - VidTube`;
@@ -129,6 +116,11 @@ export default function ProfilePage() {
     return (
         <div>
             <Header />
+            {loading && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, width: '100%', height: '5px', backgroundColor: 'red', animation: 'loading 1s infinite'
+                }} />
+            )}
             <div className="videobody">
                 <div className='coverpic'>
                     <img
@@ -147,9 +139,9 @@ export default function ProfilePage() {
                         </div>
                         <div style={{ marginTop: "10px", color: "gray", fontSize: "15px" }}>
                             {
-                                subs.length == 0 ? 'No subscribers' : subs.length > 1 ? `${subs.length} subscribers` : `${subs.length} subscriber`
+                                subs.length === 0 ? 'No subscribers' : subs.length > 1 ? `${subs.length} subscribers` : `${subs.length} subscriber`
                             }   •   {
-                                videocount == 0 ? '    No videos' : videocount > 1 ? `    ${videocount} videos` : `    ${videocount} video`
+                                videoCount === 0 ? '    No videos' : videoCount > 1 ? `    ${videoCount} videos` : `    ${videoCount} video`
                             }
                         </div>
                         <div style={{ marginTop: "10px", color: "gray", fontSize: "15px" }}>
