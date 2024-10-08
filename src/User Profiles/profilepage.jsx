@@ -23,7 +23,49 @@ export default function ProfilePage() {
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
     const [coverPic, setCoverPic] = useState('');
-    const [subs,setsubs] = useState([]);
+    const [subs, setsubs] = useState([]);
+    const [vidData, setVidData] = useState([]);
+    const [videocount, setvideoscount] = useState(0);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                console.log("Fetching VID data..."); // Log fetching attempt
+                const docRef = doc(db, 'Global VIDs', 'VIDs');
+                const docSnapshot = await getDoc(docRef);
+                let count = 0; // Initialize count outside the loop
+
+                if (docSnapshot.exists()) {
+                    const data = docSnapshot.data();
+                    setVidData(data.VID);
+
+                    for (let i = 0; i < data.VID.length; i++) {
+                        const videoRef = doc(db, 'Global Post', data.VID[i]);
+                        const videoDoc = await getDoc(videoRef);
+
+                        if (videoDoc.exists()) {
+                            const videoData = videoDoc.data();
+                            const uploader = videoData['Uploaded UID']; // Get the uploader for the current video
+                            // console.log('Uploader:', uploader);
+
+                            // Check if the uploader matches the userId
+                            if (uploader === userId) {
+                                count += 1; // Increment count if there’s a match
+                            }
+                        } else {
+                            console.log(`Video not found for VID: ${data.VID[i]}`);
+                        }
+                    }
+                    setvideoscount(count);
+                    console.log('Total videos uploaded by user:', count); // Log the final count
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -37,7 +79,7 @@ export default function ProfilePage() {
             } catch (error) {
                 console.error(error);
             }
-    
+
             try {
                 const coverDocRef = doc(db, 'User Cover Pictures', userId);
                 const coverDocSnapshot = await getDoc(coverDocRef);
@@ -48,7 +90,7 @@ export default function ProfilePage() {
             } catch (error) {
                 console.error(error);
             }
-    
+
             try {
                 const coverDocRef = doc(db, 'Subscribers', userId);
                 const coverDocSnapshot = await getDoc(coverDocRef);
@@ -59,7 +101,7 @@ export default function ProfilePage() {
             } catch (error) {
                 console.error(error);
             }
-    
+
             try {
                 const profileDocRef = doc(db, 'User Profile Pictures', userId);
                 const profileDocSnapshot = await getDoc(profileDocRef);
@@ -71,14 +113,14 @@ export default function ProfilePage() {
                 console.error(error);
             }
         };
-    
+
         fetchData();
     }, [userId]);
-    
+
     useEffect(() => {
-        console.log('Subs:', subs);
+        // console.log('Subs:', subs);
     }, [subs]);
-    
+
 
     useEffect(() => {
         document.title = `${name} - VidTube`;
@@ -86,7 +128,7 @@ export default function ProfilePage() {
 
     return (
         <div>
-        <Header/>
+            <Header />
             <div className="videobody">
                 <div className='coverpic'>
                     <img
@@ -105,16 +147,18 @@ export default function ProfilePage() {
                         </div>
                         <div style={{ marginTop: "10px", color: "gray", fontSize: "15px" }}>
                             {
-                               subs.length==0?'No subscribers': subs.length>1? `${subs.length} subscribers`: `${subs.length} subscriber`
+                                subs.length == 0 ? 'No subscribers' : subs.length > 1 ? `${subs.length} subscribers` : `${subs.length} subscriber`
+                            }   •   {
+                                videocount == 0 ? '    No videos' : videocount > 1 ? `    ${videocount} videos` : `    ${videocount} video`
                             }
                         </div>
                         <div style={{ marginTop: "10px", color: "gray", fontSize: "15px" }}>
                             {bio}
                         </div>
                         <Link style={{ textDecoration: 'none', color: 'white' }}>
-                        <div  className='hebfjenk'>
-                            <center>Subscribe</center>
-                        </div>
+                            <div className='hebfjenk'>
+                                <center>Subscribe</center>
+                            </div>
                         </Link>
                     </div>
                 </div>
