@@ -32,48 +32,6 @@ export default function ProfilePage() {
     const [loading, setLoading] = useState(true); // Loading state
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                console.log("Fetching VID data...");
-                const docRef = doc(db, 'Global VIDs', 'VIDs');
-                const docSnapshot = await getDoc(docRef);
-                let count = 0;
-
-                if (docSnapshot.exists()) {
-                    const data = docSnapshot.data();
-                    setVidData(data.VID);
-
-                    for (let i = 0; i < data.VID.length; i++) {
-                        const videoRef = doc(db, 'Global Post', data.VID[i]);
-                        const videoDoc = await getDoc(videoRef);
-
-                        if (videoDoc.exists()) {
-                            const videoData = videoDoc.data();
-                            const uploader = videoData['Uploaded UID'];
-
-                            if (uploader === userId) {
-                                count += 1;
-                            }
-                        } else {
-                            console.log(`Video not found for VID: ${data.VID[i]}`);
-                        }
-                    }
-                    setVideoCount(count);
-                    // console.log('Total videos uploaded by user:', count);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        fetchData();
-    }, [userId]);
-    const [activeTab, setActiveTab] = useState('home');
-    var ishome = true;
-    var isvideo = false;
-    var iscomm = false;
-    var isabout = false;
-    useEffect(() => {
         const fetchUserData = async () => {
             try {
                 const docRef = doc(db, 'User Details', userId);
@@ -104,21 +62,57 @@ export default function ProfilePage() {
                     const profileData = profileDocSnapshot.data();
                     setDp(profileData['Profile Pic']);
                 }
-
-                setLoading(false); // All data is loaded
             } catch (error) {
                 console.error(error);
-                setLoading(false); // Even if there's an error, stop loading
             }
         };
 
-        fetchUserData();
+        const fetchData = async () => {
+            try {
+                console.log("Fetching VID data...");
+                const docRef = doc(db, 'Global VIDs', 'VIDs');
+                const docSnapshot = await getDoc(docRef);
+                let count = 0;
+
+                if (docSnapshot.exists()) {
+                    const data = docSnapshot.data();
+                    setVidData(data.VID);
+
+                    for (let i = 0; i < data.VID.length; i++) {
+                        const videoRef = doc(db, 'Global Post', data.VID[i]);
+                        const videoDoc = await getDoc(videoRef);
+
+                        if (videoDoc.exists()) {
+                            const videoData = videoDoc.data();
+                            const uploader = videoData['Uploaded UID'];
+
+                            if (uploader === userId) {
+                                count += 1;
+                            }
+                        } else {
+                            console.log(`Video not found for VID: ${data.VID[i]}`);
+                        }
+                    }
+                    setVideoCount(count);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        
+        const loadData = async () => {
+            setLoading(true); // Start loading
+            await Promise.all([fetchUserData(), fetchData()]);
+            setLoading(false); // End loading
+        };
+
+        loadData();
     }, [userId]);
 
     useEffect(() => {
         document.title = `${name} - VidTube`;
     }, [name]);
-
+    const [activeTab,setActiveTab]=useState('home');
     return (
         <div>
             <Header />
@@ -174,11 +168,7 @@ export default function ProfilePage() {
                     >
                         <div className="jjnffkmkm">
                             Home
-                            {
-                                activeTab === 'home' ? <div className="nfjvf">
-
-                                </div> : <></>
-                            }
+                            {activeTab === 'home' && <div className="nfjvf"></div>}
                         </div>
                     </Link>
                     <Link
@@ -187,11 +177,7 @@ export default function ProfilePage() {
                     >
                         <div className="jjnffkmkm">
                             Videos
-                            {
-                                activeTab === 'video' ? <div className="nfjvf">
-
-                                </div> : <></>
-                            }
+                            {activeTab === 'video' && <div className="nfjvf"></div>}
                         </div>
                     </Link>
                     <Link
@@ -200,11 +186,7 @@ export default function ProfilePage() {
                     >
                         <div className="jjnffkmkm">
                             Community
-                            {
-                                activeTab === 'comm' ? <div className="nfjvf">
-
-                                </div> : <></>
-                            }
+                            {activeTab === 'comm' && <div className="nfjvf"></div>}
                         </div>
                     </Link>
                     <Link
@@ -213,25 +195,18 @@ export default function ProfilePage() {
                     >
                         <div className="jjnffkmkm">
                             About
-                            {
-                                activeTab === 'about' ? <div className="nfjvf">
-
-                                </div> : <></>
-                            }
+                            {activeTab === 'about' && <div className="nfjvf"></div>}
                         </div>
                     </Link>
                 </div>
                 <div className="jhfjkfj">
-                    {
-                        activeTab==='home'?<div className="jndjkdmv" style={{ fontWeight: "bold",fontFamily:'Vedana' }}>
-                        Videos
-                    </div>:<></>
-                    }
-                    {
-                        activeTab === 'about' ? <Aboutpage /> : activeTab === 'video' || activeTab === 'home' ? <Videospage /> : <></>
-                    }
+                    {activeTab === 'home' && (
+                        <div className="jndjkdmv" style={{ fontWeight: "bold", fontFamily: 'Verdana' }}>
+                            Videos
+                        </div>
+                    )}
+                    {activeTab === 'about' ? <Aboutpage /> : (activeTab === 'video' || activeTab === 'home' ? <Videospage /> : null)}
                 </div>
-
             </div>
         </div>
     );
