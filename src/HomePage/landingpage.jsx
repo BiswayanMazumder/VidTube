@@ -123,11 +123,13 @@ export default function Landingpage() {
         <div className="webbody">
             <div className="heading">
                 <div className="jjefjdf">
-                    <div className="ejjnejfkd" onClick={() => setSidebar(!sidebar)}>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" focusable="false" aria-hidden="true" fill='black'>
-                            <path d="M21 6H3V5h18v1zm0 5H3v1h18v-1zm0 6H3v1h18v-1z"></path>
-                        </svg>
-                    </div>
+                    <Link>
+                        <div className="ejjnejfkd" onClick={() => setSidebar(!sidebar)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" focusable="false" aria-hidden="true" fill='black'>
+                                <path d="M21 6H3V5h18v1zm0 5H3v1h18v-1zm0 6H3v1h18v-1z"></path>
+                            </svg>
+                        </div>
+                    </Link>
                     <Link to={"/"}>
                         <div className="kejfkf">
                             <img src="https://vidtube-sable.vercel.app/assets/logo-koDzNJgp.png" alt="" height={"30px"} width={"130px"} />
