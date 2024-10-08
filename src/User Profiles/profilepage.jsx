@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import Header from '../Components/header';
+import Aboutpage from './aboutpage';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -66,7 +67,7 @@ export default function ProfilePage() {
 
         fetchData();
     }, [userId]);
-    const [activeTab, setActiveTab] = useState('home'); 
+    const [activeTab, setActiveTab] = useState('home');
     var ishome = true;
     var isvideo = false;
     var iscomm = false;
@@ -166,59 +167,65 @@ export default function ProfilePage() {
                     </div>
                 </div>
                 <div className="irfjkfjlvf">
-            <Link 
-                style={{ textDecoration: 'none', color: activeTab === 'home' ? 'black' : 'grey' }} 
-                onClick={() => setActiveTab('home')}
-            >
-                <div className="jjnffkmkm">
-                    Home
+                    <Link
+                        style={{ textDecoration: 'none', color: activeTab === 'home' ? 'black' : 'grey' }}
+                        onClick={() => setActiveTab('home')}
+                    >
+                        <div className="jjnffkmkm">
+                            Home
+                            {
+                                activeTab === 'home' ? <div className="nfjvf">
+
+                                </div> : <></>
+                            }
+                        </div>
+                    </Link>
+                    <Link
+                        style={{ textDecoration: 'none', color: activeTab === 'video' ? 'black' : 'grey' }}
+                        onClick={() => setActiveTab('video')}
+                    >
+                        <div className="jjnffkmkm">
+                            Videos
+                            {
+                                activeTab === 'video' ? <div className="nfjvf">
+
+                                </div> : <></>
+                            }
+                        </div>
+                    </Link>
+                    <Link
+                        style={{ textDecoration: 'none', color: activeTab === 'comm' ? 'black' : 'grey' }}
+                        onClick={() => setActiveTab('comm')}
+                    >
+                        <div className="jjnffkmkm">
+                            Community
+                            {
+                                activeTab === 'comm' ? <div className="nfjvf">
+
+                                </div> : <></>
+                            }
+                        </div>
+                    </Link>
+                    <Link
+                        style={{ textDecoration: 'none', color: activeTab === 'about' ? 'black' : 'grey' }}
+                        onClick={() => setActiveTab('about')}
+                    >
+                        <div className="jjnffkmkm">
+                            About
+                            {
+                                activeTab === 'about' ? <div className="nfjvf">
+
+                                </div> : <></>
+                            }
+                        </div>
+                    </Link>
+                </div>
+                <div className="jhfjkfj">
                     {
-                        activeTab === 'home'?<div className="nfjvf">
-                        
-                        </div>:<></>
+                        activeTab==='about'?<Aboutpage/>:<></>
                     }
                 </div>
-            </Link>
-            <Link 
-                style={{ textDecoration: 'none', color: activeTab === 'video' ? 'black' : 'grey' }} 
-                onClick={() => setActiveTab('video')}
-            >
-                <div className="jjnffkmkm">
-                    Videos
-                    {
-                        activeTab === 'video'?<div className="nfjvf">
-                        
-                        </div>:<></>
-                    }
-                </div>
-            </Link>
-            <Link 
-                style={{ textDecoration: 'none', color: activeTab === 'comm' ? 'black' : 'grey' }} 
-                onClick={() => setActiveTab('comm')}
-            >
-                <div className="jjnffkmkm">
-                    Community
-                    {
-                        activeTab === 'comm'?<div className="nfjvf">
-                        
-                        </div>:<></>
-                    }
-                </div>
-            </Link>
-            <Link 
-                style={{ textDecoration: 'none', color: activeTab === 'about' ? 'black' : 'grey' }} 
-                onClick={() => setActiveTab('about')}
-            >
-                <div className="jjnffkmkm">
-                    About
-                    {
-                        activeTab === 'about'?<div className="nfjvf">
-                        
-                        </div>:<></>
-                    }
-                </div>
-            </Link>
-        </div>
+                
             </div>
         </div>
     );

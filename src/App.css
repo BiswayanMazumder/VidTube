@@ -177,6 +177,29 @@ input {
   align-items: start;
   text-align: start;
 }
+.jhfjkfj{
+  position: relative;
+  margin-top: 20px;
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  text-align: start;
+  flex-direction: column;
+  gap: 10px;
+  margin-left: 50px;
+  width: 100vw;
+  font-size: 20px;
+  margin-top: 20px;
+}
+.jhcdjkj{
+  font-weight: bold;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.jdhfjk{
+  color: black;
+  font-size: 18px;
+  margin-top: 10px;
+}
 .coverpic{
   width: 100%;
   margin: 20px;
