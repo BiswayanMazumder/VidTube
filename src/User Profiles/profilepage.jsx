@@ -4,6 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import Header from '../Components/header';
 import Aboutpage from './aboutpage';
+import Videospage from './videospage';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -222,10 +223,15 @@ export default function ProfilePage() {
                 </div>
                 <div className="jhfjkfj">
                     {
-                        activeTab==='about'?<Aboutpage/>:<></>
+                        activeTab==='home'?<div className="jndjkdmv" style={{ fontWeight: "bold",fontFamily:'Vedana' }}>
+                        Videos
+                    </div>:<></>
+                    }
+                    {
+                        activeTab === 'about' ? <Aboutpage /> : activeTab === 'video' || activeTab === 'home' ? <Videospage /> : <></>
                     }
                 </div>
-                
+
             </div>
         </div>
     );
