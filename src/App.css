@@ -191,6 +191,19 @@ input {
   font-size: 20px;
   margin-top: 20px;
 }
+.jkgflmlv{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+.kenfkrmfl{
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 .jhcdjkj{
   font-weight: bold;
   font-family: Verdana, Geneva, Tahoma, sans-serif;

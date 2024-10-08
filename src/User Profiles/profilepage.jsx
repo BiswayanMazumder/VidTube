@@ -200,11 +200,11 @@ export default function ProfilePage() {
                     </Link>
                 </div>
                 <div className="jhfjkfj">
-                    {activeTab === 'home' && (
+                    {/* {activeTab === 'home' && (
                         <div className="jndjkdmv" style={{ fontWeight: "bold", fontFamily: 'Verdana' }}>
                             Videos
                         </div>
-                    )}
+                    )} */}
                     {activeTab === 'about' ? <Aboutpage /> : (activeTab === 'video' || activeTab === 'home' ? <Videospage /> : null)}
                 </div>
             </div>

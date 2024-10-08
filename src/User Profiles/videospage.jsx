@@ -70,7 +70,7 @@ export default function Videospage() {
 
         fetchUserData();
     }, [userId]);
-
+    const [videolink,setvideolink]=useState([]);
     useEffect(() => {
         const fetchVideos = async () => {
             try {
@@ -84,6 +84,7 @@ export default function Videospage() {
                     const uniqueCaptions = new Set();
                     const Views = [];
                     const UploadDates = [];
+                    const Videolink=[];
                     for (const vid of data.VID) {
                         const videoRef = doc(db, 'Global Post', vid);
                         const videoDoc = await getDoc(videoRef);
@@ -95,6 +96,7 @@ export default function Videospage() {
                                 uniqueCaptions.add(videoData['Caption']);
                                 Views.push(videoData['Views']);
                                 UploadDates.push(videoData['Uploaded At']);
+                                Videolink.push(videoData['Video Link']);
                             }
                         }
                     }
@@ -102,6 +104,7 @@ export default function Videospage() {
                     setThumbnails(Array.from(uniqueThumbnails));
                     setCaptions(Array.from(uniqueCaptions));
                     setviews(Views);
+                    setvideolink(Videolink);
                     setuploaddate(UploadDates);
                 }
             } catch (error) {
@@ -118,12 +121,13 @@ export default function Videospage() {
         else return (views / 1000000000).toFixed(1) + 'B';
     }
     function formatTimeAgo(timestamp) {
+        if (!timestamp || !timestamp.seconds) return "Unknown time ago"; // Safety check
         const now = new Date();
-        const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-
+        const date = new Date(timestamp.seconds * 1000 + (timestamp.nanoseconds || 0) / 1000000);
+    
         const seconds = Math.floor((now - date) / 1000);
         let interval = Math.floor(seconds / 31536000);
-
+    
         if (interval >= 1) return interval + " year" + (interval > 1 ? "s" : "") + " ago";
         interval = Math.floor(seconds / 2592000);
         if (interval >= 1) return interval + " month" + (interval > 1 ? "s" : "") + " ago";
@@ -135,9 +139,21 @@ export default function Videospage() {
         if (interval >= 1) return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
         return seconds + " second" + (seconds > 1 ? "s" : "") + " ago";
     }
+    
     return (
         <div className='webbody'>
-        
+            <div className="jkgflmlv">
+            <video src={videolink[0]} height={"238px"} width={"438px"} autoPlay muted loop controls style={{borderRadius:"10px"}}></video>
+                {/* <img src={thumbnails[0]} alt="" style={{ borderRadius: "10px" }} /> */}
+                <div className="kenfkrmfl">
+                    {captions[0]}
+                    <div className="jnjvfmv" style={{ fontWeight: "300", fontSize: "15px", color: "grey" }}>
+                    {
+                            formatViews(views[0]) + " views • " + formatTimeAgo(uploaddate[0])
+                        }
+                    </div>
+                </div>
+            </div>
             <div className="jdbfjekfjkhef">
                 {thumbnails.map((url, index) => (
                     <div key={index} className="thumbnail-item">
@@ -150,11 +166,11 @@ export default function Videospage() {
                                     </Link>
                                 </div>
                                 <div className="jjnjbhvf">
-                                    <div className="jehfej" style={{ color: "black", fontSize: "15px",display:"flex",flexDirection:"column",gap:"1px",fontWeight:"500" }}>
+                                    <div className="jehfej" style={{ color: "black", fontSize: "15px", display: "flex", flexDirection: "column", gap: "1px", fontWeight: "500" }}>
                                         <h5>{captions[index]}</h5>
-                                        <div className="jnfjvnkfv" style={{ color: "black", fontSize: "15px",display:"flex",flexDirection:"row",gap:"5px" }}>
-                                        <p style={{fontSize:"12px",color:"grey"}}>{views[index]===0?'No Views':formatViews(views[index])+' Views'}</p> •
-                                        <p style={{fontSize:"12px",color:"grey"}}>{formatTimeAgo(uploaddate[index])}</p>
+                                        <div className="jnfjvnkfv" style={{ color: "black", fontSize: "15px", display: "flex", flexDirection: "row", gap: "5px" }}>
+                                            <p style={{ fontSize: "12px", color: "grey" }}>{views[index] === 0 ? 'No Views' : formatViews(views[index]) + ' Views'}</p> •
+                                            <p style={{ fontSize: "12px", color: "grey" }}>{formatTimeAgo(uploaddate[index])}</p>
                                         </div>
                                     </div>
                                 </div>
