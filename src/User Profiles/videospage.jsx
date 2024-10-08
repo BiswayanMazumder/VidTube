@@ -135,10 +135,6 @@ export default function Videospage() {
         if (interval >= 1) return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
         return seconds + " second" + (seconds > 1 ? "s" : "") + " ago";
     }
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
     return (
         <div className='webbody'>
         
