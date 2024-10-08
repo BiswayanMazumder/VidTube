@@ -124,6 +124,13 @@ input {
   align-items: start;
   text-align: start;
 }
+.thumbnail-item{
+  padding: 5px;
+  border-radius: 10px;
+}
+.thumbnail-item:hover{
+  background-color: #f2dfdf;
+}
 /* Optionally, add some spacing back if needed */
 .thumbnail-item h5 {
   margin-bottom: 5px; /* Add some space between h5 and p */
