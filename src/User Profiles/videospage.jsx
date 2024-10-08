@@ -153,7 +153,7 @@ export default function Videospage() {
                                     <div className="jehfej" style={{ color: "black", fontSize: "15px",display:"flex",flexDirection:"column",gap:"1px",fontWeight:"500" }}>
                                         <h5>{captions[index]}</h5>
                                         <div className="jnfjvnkfv" style={{ color: "black", fontSize: "15px",display:"flex",flexDirection:"row",gap:"5px" }}>
-                                        <p style={{fontSize:"12px",color:"grey"}}>{views[index]===0?'No Views':formatViews(views[index])+' Views'}</p>
+                                        <p style={{fontSize:"12px",color:"grey"}}>{views[index]===0?'No Views':formatViews(views[index])+' Views'}</p> •
                                         <p style={{fontSize:"12px",color:"grey"}}>{formatTimeAgo(uploaddate[index])}</p>
                                         </div>
                                     </div>
