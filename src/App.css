@@ -107,6 +107,17 @@ body{
   flex-direction: row;
   gap: 20px;
 }
+.irfjkfjlvf{
+  display: flex;
+  flex-direction: row;
+  gap: 70px;
+  margin-left: 50px;
+  margin-top: 10px;
+  color: grey;
+  font-weight: 600;
+  font-size: 15px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
 .bhjnrjnr{
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }

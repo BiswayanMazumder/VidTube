@@ -57,7 +57,7 @@ export default function ProfilePage() {
                         }
                     }
                     setVideoCount(count);
-                    console.log('Total videos uploaded by user:', count);
+                    // console.log('Total videos uploaded by user:', count);
                 }
             } catch (error) {
                 console.log(error);
@@ -66,7 +66,11 @@ export default function ProfilePage() {
 
         fetchData();
     }, [userId]);
-
+    const [activeTab, setActiveTab] = useState('home'); 
+    var ishome = true;
+    var isvideo = false;
+    var iscomm = false;
+    var isabout = false;
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -157,11 +161,44 @@ export default function ProfilePage() {
                                 <div className='hebfjenk' style={{ backgroundColor: 'transparent', color: 'black', border: '0.5px solid black' }}>
                                     <center>Join</center>
                                 </div>
-
                             </Link>
                         </div>
                     </div>
                 </div>
+                <div className="irfjkfjlvf">
+            <Link 
+                style={{ textDecoration: 'none', color: activeTab === 'home' ? 'black' : 'grey' }} 
+                onClick={() => setActiveTab('home')}
+            >
+                <div className="jjnffkmkm">
+                    Home
+                </div>
+            </Link>
+            <Link 
+                style={{ textDecoration: 'none', color: activeTab === 'video' ? 'black' : 'grey' }} 
+                onClick={() => setActiveTab('video')}
+            >
+                <div className="jjnffkmkm">
+                    Videos
+                </div>
+            </Link>
+            <Link 
+                style={{ textDecoration: 'none', color: activeTab === 'comm' ? 'black' : 'grey' }} 
+                onClick={() => setActiveTab('comm')}
+            >
+                <div className="jjnffkmkm">
+                    Community
+                </div>
+            </Link>
+            <Link 
+                style={{ textDecoration: 'none', color: activeTab === 'about' ? 'black' : 'grey' }} 
+                onClick={() => setActiveTab('about')}
+            >
+                <div className="jjnffkmkm">
+                    About
+                </div>
+            </Link>
+        </div>
             </div>
         </div>
     );
