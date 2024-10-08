@@ -13,8 +13,9 @@ function App() {
         <Route path="/" element={<Landingpage />} />
       </Routes>
       <Routes>
-        <Route path="/profile" element={<Profilepage />} />
-      </Routes>
+                {/* Other routes */}
+                <Route path="/profile/:userId" element={<Profilepage />} />
+            </Routes>
     </BrowserRouter>
   );
 }

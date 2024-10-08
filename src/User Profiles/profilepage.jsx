@@ -1,12 +1,8 @@
-// import React, { useEffect } from 'react'
-import Header from '../Components/header'
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
-import Sidebar from '../Components/sidebar';
-import ShortSidebar from '../Components/shortsidebar';
-import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import Header from '../Components/header'
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
     authDomain: "pixelprowess69.firebaseapp.com",
@@ -19,77 +15,83 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
-export default function Profilepage() {
-    const uploader = localStorage.getItem('userid')
 
-    const [dp, setdp] = useState('');
-    const [name, setname] = useState('');
-    const [coverpic, setcoverpic] = useState('');
-    // const [name, setname] = useState([]);
+export default function ProfilePage() {
+    const { userId } = useParams(); // Get userId from the URL
+    const [dp, setDp] = useState('');
+    const [name, setName] = useState('');
+    const [bio, setBio] = useState('');
+    const [coverPic, setCoverPic] = useState('');
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const docRef = doc(db, 'User Details', uploader);
+                const docRef = doc(db, 'User Details', userId);
                 const docSnapshot = await getDoc(docRef);
                 if (docSnapshot.exists()) {
-                    const videoData = docSnapshot.data();
-                    setname(videoData.Username)
+                    const userData = docSnapshot.data();
+                    setName(userData.Username);
+                    setBio(userData.Bio);
                 }
-                // console.log('Name',name)
             } catch (error) {
-                console.log(error)
+                console.error(error);
             }
+
             try {
-                const docRefs = doc(db, 'User Cover Pictures', uploader);
-                const docSnapshots = await getDoc(docRefs);
-                if (docSnapshots.exists()) {
-                    const videoDatas = docSnapshots.data();
-                    setcoverpic(videoDatas['Cover Pic'])
+                const coverDocRef = doc(db, 'User Cover Pictures', userId);
+                const coverDocSnapshot = await getDoc(coverDocRef);
+                if (coverDocSnapshot.exists()) {
+                    const coverData = coverDocSnapshot.data();
+                    setCoverPic(coverData['Cover Pic']);
                 }
-                // console.log('CP',coverpic)
             } catch (error) {
-                console.log(error)
+                console.error(error);
             }
+
             try {
-                const docRefss = doc(db, 'User Profile Pictures', uploader);
-                const docSnapshotss = await getDoc(docRefss);
-                if (docSnapshotss.exists()) {
-                    const videoDatass = docSnapshotss.data();
-                    setdp(videoDatass['Profile Pic'])
+                const profileDocRef = doc(db, 'User Profile Pictures', userId);
+                const profileDocSnapshot = await getDoc(profileDocRef);
+                if (profileDocSnapshot.exists()) {
+                    const profileData = profileDocSnapshot.data();
+                    setDp(profileData['Profile Pic']);
                 }
-                // console.log('CP',dp)
             } catch (error) {
-                console.log(error)
+                console.error(error);
             }
-        }
+        };
         fetchData();
-    })
+    }, [userId]);
+
     useEffect(() => {
-        document.title = `${name} - VidTube`
-    })
+        document.title = `${name} - VidTube`;
+    }, [name]);
+
     return (
         <div>
-            <Header />
+        <Header/>
             <div className="videobody">
                 <div className='coverpic'>
                     <img
-                        src={coverpic}
+                        src={coverPic}
                         alt=""
-                        style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                        style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: "10px" }}
                     />
                 </div>
-                <div className="coverpic" style={{marginTop:'-20px',display:'flex',flexDirection:'row',justifyContent:'start',alignItems:'start'}}>
+                <div className="coverpic" style={{ marginTop: '-20px', display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'start' }}>
                     <div className="profilepic">
-                        <img src={dp} alt="" height={"150px"} width={"150px"} style={{borderRadius:'50%'}} />
+                        <img src={dp} alt="" height={"150px"} width={"150px"} style={{ borderRadius: '50%' }} />
                     </div>
-                    <div className="jkfnjvjfkvkfl">
-                        
+                    <div style={{ marginLeft: '10px' }}>
+                        <div style={{ fontWeight: "600", fontSize: "22px" }}>
+                            {name}
+                        </div>
+                        <div style={{ marginTop: "10px", color: "gray", fontSize: "13px" }}>
+                            {bio}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }

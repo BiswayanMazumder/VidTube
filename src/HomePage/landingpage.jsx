@@ -256,7 +256,7 @@ export default function Landingpage() {
                                 <img src={url} alt={`Thumbnail ${index}`} className="thumbnail-image" height={"150px"} width={"265px"} style={{ borderRadius: "10px" }} />
                                 <div className="jefkfm">
                                     <div className="pfp">
-                                        <Link to={"/profile"} onClick={(()=>{
+                                        <Link to={`/profile/${uploader[index]}`} onClick={(()=>{
                                             localStorage.setItem("userid", uploader[index]);
                                         })}>
                                             <img src={dp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
