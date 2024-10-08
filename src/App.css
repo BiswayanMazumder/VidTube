@@ -124,6 +124,19 @@ input {
   align-items: start;
   text-align: start;
 }
+.coverpic{
+  width: 100%;
+  margin: 20px;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+}
+.profilepic{
+  height: 150px;
+  width: 150px;
+  border-radius: 50%;
+  background-color: red;
+}
 .thumbnail-item{
   padding: 5px;
   border-radius: 10px;
