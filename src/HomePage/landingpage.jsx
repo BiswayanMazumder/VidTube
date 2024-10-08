@@ -44,6 +44,12 @@ export default function Landingpage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [thumbnail, setthumbnail] = useState([]);
+    const [caption, setcaption] = useState([]);
+    const [views, setviews] = useState([]);
+    const [uploaddate, setuploaddate] = useState([]);
+    const [uploader, setuploader] = useState([]);
+    const [dp, setdp] = useState([]);
+    const [name, setname] = useState([]);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -54,9 +60,16 @@ export default function Landingpage() {
                 if (docSnapshot.exists()) {
                     const data = docSnapshot.data();
                     setVidData(data.VID);
-                    // console.log('Fetched VID Data:', data.VID); // Log the fetched data
 
                     const thumbnailLinks = [];
+                    const Captions = [];
+                    const Views = [];
+                    const UploadDates = [];
+                    const Uploader = [];
+                    const Name = [];
+                    const PFP = [];
+
+                    // Fetch video data
                     for (let i = 0; i < data.VID.length; i++) {
                         const videoRef = doc(db, 'Global Post', data.VID[i]);
                         const videoDoc = await getDoc(videoRef);
@@ -64,12 +77,54 @@ export default function Landingpage() {
                         if (videoDoc.exists()) {
                             const videoData = videoDoc.data();
                             thumbnailLinks.push(videoData['Thumbnail Link']);
-                            // console.log('Fetched Video Data:', videoData['Thumbnail Link']); // Log each thumbnail
+                            Captions.push(videoData['Caption']);
+                            Views.push(videoData['Views']);
+                            UploadDates.push(videoData['Uploaded At']);
+                            Uploader.push(videoData['Uploaded UID']);
+                        } else {
+                            console.log(`Video not found for VID: ${data.VID[i]}`);
                         }
                     }
 
+                    // Set video-related states
                     setthumbnail(thumbnailLinks);
-                    // console.log('Collected Thumbnails:', thumbnail); // Log final thumbnails
+                    setcaption(Captions);
+                    setviews(Views);
+                    setuploaddate(UploadDates);
+                    setuploader(Uploader);
+
+                    // Fetch usernames and profile pictures
+                    for (let i = 0; i < Uploader.length; i++) {
+                        const userRef = doc(db, 'User Details', Uploader[i]);
+                        const userDoc = await getDoc(userRef);
+
+                        if (userDoc.exists()) {
+                            const userData = userDoc.data();
+                            Name.push(userData['Username']);
+                        } else {
+                            console.log(`User not found for UID: ${Uploader[i]}`);
+                        }
+                    }
+
+                    // Fetch profile pictures
+                    for (let i = 0; i < Uploader.length; i++) {
+                        const userRef = doc(db, 'User Profile Pictures', Uploader[i]);
+                        const userDoc = await getDoc(userRef);
+
+                        if (userDoc.exists()) {
+                            const userData = userDoc.data();
+                            PFP.push(userData['Profile Pic']);
+                        } else {
+                            console.log(`User profile picture not found for UID: ${Uploader[i]}`);
+                        }
+                    }
+
+                    // Set usernames and profile pictures states
+                    setname(Name);
+                    setdp(PFP);
+
+                    // console.log('Collected usernames:', Name);
+                    // console.log('Collected profile pictures:', PFP);
                 } else {
                     console.log('No such document!');
                 }
@@ -84,6 +139,27 @@ export default function Landingpage() {
 
         fetchData();
     }, []);
+
+
+    function formatTimeAgo(timestamp) {
+        const now = new Date();
+        const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+
+        const seconds = Math.floor((now - date) / 1000);
+        let interval = Math.floor(seconds / 31536000);
+
+        if (interval >= 1) return interval + " year" + (interval > 1 ? "s" : "") + " ago";
+        interval = Math.floor(seconds / 2592000);
+        if (interval >= 1) return interval + " month" + (interval > 1 ? "s" : "") + " ago";
+        interval = Math.floor(seconds / 86400);
+        if (interval >= 1) return interval + " day" + (interval > 1 ? "s" : "") + " ago";
+        interval = Math.floor(seconds / 3600);
+        if (interval >= 1) return interval + " hour" + (interval > 1 ? "s" : "") + " ago";
+        interval = Math.floor(seconds / 60);
+        if (interval >= 1) return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
+        return seconds + " second" + (seconds > 1 ? "s" : "") + " ago";
+    }
+
     const handleSignIn = async () => {
         try {
             const result = await signInWithPopup(auth, provider);
@@ -94,6 +170,13 @@ export default function Landingpage() {
             console.error('Error during sign-in:', error);
         }
     };
+    function formatViews(views) {
+        if (views < 1000) return views;
+        else if (views < 1000000) return (views / 1000).toFixed(1) + 'K';
+        else if (views < 1000000000) return (views / 1000000).toFixed(1) + 'M';
+        else return (views / 1000000000).toFixed(1) + 'B';
+    }
+
     const handleSignOut = async () => {
         try {
             await signOut(auth);
@@ -161,9 +244,47 @@ export default function Landingpage() {
                     </div>
                 </div>
             </div>
-            {
-                sidebar ? <Sidebar /> : <ShortSidebar />
-            }
+            <div className="videobody">
+                {/* {
+                    sidebar ? <Sidebar /> : <ShortSidebar />
+                } */}
+                <div className="jdbfjekfjkhef">
+                    {/* <div className="thumbnail-container"> */}
+                    {thumbnail.map((url, index) => (
+                        <div key={index} className="thumbnail-item">
+                            <Link style={{ textDecoration: 'none', color: 'black' }}>
+                                <img src={url} alt={`Thumbnail ${index}`} className="thumbnail-image" height={"150px"} width={"265px"} style={{ borderRadius: "10px" }} />
+                                <div className="jefkfm">
+                                    <div className="pfp">
+                                        <Link>
+                                            <img src={dp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                                        </Link>
+                                    </div>
+                                    <div className="jjnjbhvf">
+                                        <h5>{caption[index]}</h5>
+                                        <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
+                                            {name[index]}
+
+                                        </div>
+                                        <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
+                                            <p>{
+                                                views[index] > 0 ?
+                                                    views[index] === 1 ? formatViews(views[index]) + ' View' :
+                                                        formatViews(views[index]) + ' Views' :
+                                                    "No views"
+                                            }</p>
+                                            •
+                                            <p>{formatTimeAgo(uploaddate[index])}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        </div>
+                    ))}
+
+
+                </div>
+            </div>
         </div>
     );
 }
