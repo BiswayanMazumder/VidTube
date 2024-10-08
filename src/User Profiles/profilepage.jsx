@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import Header from '../Components/header'
@@ -82,13 +82,18 @@ export default function ProfilePage() {
                     <div className="profilepic">
                         <img src={dp} alt="" height={"150px"} width={"150px"} style={{ borderRadius: '50%' }} />
                     </div>
-                    <div style={{ marginLeft: '10px' }}>
+                    <div style={{ marginLeft: '10px', marginTop: "20px" }}>
                         <div style={{ fontWeight: "600", fontSize: "22px" }}>
                             {name}
                         </div>
-                        <div style={{ marginTop: "10px", color: "gray", fontSize: "13px" }}>
+                        <div style={{ marginTop: "20px", color: "gray", fontSize: "15px" }}>
                             {bio}
                         </div>
+                        <Link style={{ textDecoration: 'none', color: 'white' }}>
+                        <div  className='hebfjenk'>
+                            <center>Subscribe</center>
+                        </div>
+                        </Link>
                     </div>
                 </div>
             </div>
