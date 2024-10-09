@@ -4,7 +4,9 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import Header from '../Components/header';
 import Aboutpage from './aboutpage';
-import Videospage from './videospage';
+import Videospage from './videoshomepage';
+import VideosHomepage from './videoshomepage';
+import VideoSection from './videospage';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -99,7 +101,7 @@ export default function ProfilePage() {
                 console.log(error);
             }
         };
-        
+
         const loadData = async () => {
             setLoading(true); // Start loading
             await Promise.all([fetchUserData(), fetchData()]);
@@ -112,7 +114,7 @@ export default function ProfilePage() {
     useEffect(() => {
         document.title = `${name} - VidTube`;
     }, [name]);
-    const [activeTab,setActiveTab]=useState('home');
+    const [activeTab, setActiveTab] = useState('home');
     return (
         <div>
             <Header />
@@ -173,7 +175,10 @@ export default function ProfilePage() {
                     </Link>
                     <Link
                         style={{ textDecoration: 'none', color: activeTab === 'video' ? 'black' : 'grey' }}
-                        onClick={() => setActiveTab('video')}
+                        onClick={() => {
+                            setActiveTab('video')
+                            console.log('Active',setActiveTab);
+                        }}
                     >
                         <div className="jjnffkmkm">
                             Videos
@@ -200,13 +205,14 @@ export default function ProfilePage() {
                     </Link>
                 </div>
                 <div className="jhfjkfj">
-                    {/* {activeTab === 'home' && (
-                        <div className="jndjkdmv" style={{ fontWeight: "bold", fontFamily: 'Verdana' }}>
-                            Videos
-                        </div>
-                    )} */}
-                    {activeTab === 'about' ? <Aboutpage /> : (activeTab === 'video' || activeTab === 'home' ? <Videospage /> : null)}
+                    {
+                        activeTab === 'about' ? <Aboutpage /> :
+                            activeTab === 'home' ? <VideosHomepage /> :
+                                activeTab === 'video' ? <VideoSection /> :
+                                    null
+                    }
                 </div>
+
             </div>
         </div>
     );

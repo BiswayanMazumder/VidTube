@@ -16,7 +16,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export default function VideoSection() {
+export default function VideosHomepage() {
     const { userId } = useParams();
     const [dp, setDp] = useState('');
     const [name, setName] = useState('');
@@ -147,6 +147,26 @@ export default function VideoSection() {
 
     return (
         <div className='webbody'>
+            <div className="jkgflmlv">
+                <video 
+                    src={videoLink[0]} 
+                    height={"238px"} 
+                    width={"438px"} 
+                    autoPlay 
+                    loop 
+                    muted
+                    controls 
+                    style={{ borderRadius: "10px" }} 
+                />
+                <div className="kenfkrmfl">
+                    {captions[0]}
+                    <div className="jnjvfmv" style={{ fontWeight: "300", fontSize: "15px", color: "grey" }}>
+                        {
+                            formatViews(views[0]) + " views • " + formatTimeAgo(uploadDate[0])
+                        }
+                    </div>
+                </div>
+            </div>
             <div className="jdbfjekfjkhef">
                 {thumbnails.map((url, index) => (
                     <div 
