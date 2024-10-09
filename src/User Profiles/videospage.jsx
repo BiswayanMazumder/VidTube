@@ -154,6 +154,7 @@ export default function Videospage() {
                     width={"438px"} 
                     autoPlay 
                     loop 
+                    muted
                     controls 
                     style={{ borderRadius: "10px" }} 
                 />
