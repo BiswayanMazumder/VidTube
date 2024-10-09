@@ -7,6 +7,7 @@ import Aboutpage from './aboutpage';
 import Videospage from './videoshomepage';
 import VideosHomepage from './videoshomepage';
 import VideoSection from './videospage';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -21,9 +22,10 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
+const auth = getAuth(app);
 export default function ProfilePage() {
     const { userId } = useParams();
+
     const [dp, setDp] = useState('');
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
@@ -32,7 +34,27 @@ export default function ProfilePage() {
     const [vidData, setVidData] = useState([]);
     const [videoCount, setVideoCount] = useState(0);
     const [loading, setLoading] = useState(true); // Loading state
-
+    const [currentuser, setcurrentuser] = useState(false);
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, see docs for a list of available properties
+                // https://firebase.google.com/docs/reference/js/auth.user
+                // setuser(true);             //...
+                const uid = user.uid;
+                if (uid === userId) {
+                    setcurrentuser(true);
+                } else {
+                    setcurrentuser(false);
+                }
+                // ...
+            } else {
+                // User is signed out
+                // ...
+            }
+        });
+        // console.log(currentuser);
+    });
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -68,7 +90,6 @@ export default function ProfilePage() {
                 console.error(error);
             }
         };
-
         const fetchData = async () => {
             try {
                 console.log("Fetching VID data...");
@@ -150,11 +171,26 @@ export default function ProfilePage() {
                             {bio}
                         </div>
                         <div className="knrgjnfkg">
-                            <Link style={{ textDecoration: 'none', color: 'white' }}>
-                                <div className='hebfjenk'>
-                                    <center>Subscribe</center>
-                                </div>
-                            </Link>
+                            {
+                                currentuser ? (
+                                    <></>
+                                ) : (
+                                    auth.currentUser && subs.includes(auth.currentUser.uid) ? (
+                                        <Link style={{ textDecoration: 'none', color: 'white' }}>
+                                            <div className='hebfjenk' style={{backgroundColor:'#f2dfdf',color:'black',border:'1px solid black'}}>
+                                                <center>Subscribed</center>
+                                            </div>
+                                        </Link>
+                                    ) : (
+                                        <Link style={{ textDecoration: 'none', color: 'white' }}>
+                                            <div className='hebfjenk'>
+                                                <center>Subscribe</center>
+                                            </div>
+                                        </Link>
+                                    )
+                                )
+                            }
+
                             <Link style={{ textDecoration: 'none', color: 'black' }}>
                                 <div className='hebfjenk' style={{ backgroundColor: 'transparent', color: 'black', border: '0.5px solid black' }}>
                                     <center>Join</center>
@@ -177,7 +213,7 @@ export default function ProfilePage() {
                         style={{ textDecoration: 'none', color: activeTab === 'video' ? 'black' : 'grey' }}
                         onClick={() => {
                             setActiveTab('video')
-                            console.log('Active',setActiveTab);
+                            console.log('Active', setActiveTab);
                         }}
                     >
                         <div className="jjnffkmkm">
@@ -185,7 +221,7 @@ export default function ProfilePage() {
                             {activeTab === 'video' && <div className="nfjvf"></div>}
                         </div>
                     </Link>
-                    <Link
+                    {/* <Link
                         style={{ textDecoration: 'none', color: activeTab === 'comm' ? 'black' : 'grey' }}
                         onClick={() => setActiveTab('comm')}
                     >
@@ -193,7 +229,7 @@ export default function ProfilePage() {
                             Community
                             {activeTab === 'comm' && <div className="nfjvf"></div>}
                         </div>
-                    </Link>
+                    </Link> */}
                     <Link
                         style={{ textDecoration: 'none', color: activeTab === 'about' ? 'black' : 'grey' }}
                         onClick={() => setActiveTab('about')}
