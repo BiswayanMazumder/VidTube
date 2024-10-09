@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import Header from '../Components/header';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -19,7 +18,7 @@ const db = getFirestore(app);
 
 export default function Videospage() {
     const { userId } = useParams();
-    const [dp, setDp] = useState(''); 
+    const [dp, setDp] = useState('');
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
     const [coverPic, setCoverPic] = useState('');
@@ -28,8 +27,12 @@ export default function Videospage() {
     const [loading, setLoading] = useState(true);
     const [thumbnails, setThumbnails] = useState([]);
     const [captions, setCaptions] = useState([]);
-    const [views, setviews] = useState([]);
-    const [uploaddate, setuploaddate] = useState([]);
+    const [views, setViews] = useState([]);
+    const [uploadDate, setUploadDate] = useState([]);
+    const [videoLink, setVideoLink] = useState([]);
+    const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+    const [hoveredIndex, setHoveredIndex] = useState(null); // Track hovered thumbnail index
+
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -70,7 +73,7 @@ export default function Videospage() {
 
         fetchUserData();
     }, [userId]);
-    const [videolink,setvideolink]=useState([]);
+
     useEffect(() => {
         const fetchVideos = async () => {
             try {
@@ -84,7 +87,7 @@ export default function Videospage() {
                     const uniqueCaptions = new Set();
                     const Views = [];
                     const UploadDates = [];
-                    const Videolink=[];
+                    const Videolink = [];
                     for (const vid of data.VID) {
                         const videoRef = doc(db, 'Global Post', vid);
                         const videoDoc = await getDoc(videoRef);
@@ -103,9 +106,9 @@ export default function Videospage() {
 
                     setThumbnails(Array.from(uniqueThumbnails));
                     setCaptions(Array.from(uniqueCaptions));
-                    setviews(Views);
-                    setvideolink(Videolink);
-                    setuploaddate(UploadDates);
+                    setViews(Views);
+                    setVideoLink(Videolink);
+                    setUploadDate(UploadDates);
                 }
             } catch (error) {
                 console.error(error);
@@ -114,20 +117,22 @@ export default function Videospage() {
 
         fetchVideos();
     }, [userId]);
+
     function formatViews(views) {
         if (views < 1000) return views;
         else if (views < 1000000) return (views / 1000).toFixed(1) + 'K';
         else if (views < 1000000000) return (views / 1000000).toFixed(1) + 'M';
         else return (views / 1000000000).toFixed(1) + 'B';
     }
+
     function formatTimeAgo(timestamp) {
         if (!timestamp || !timestamp.seconds) return "Unknown time ago"; // Safety check
         const now = new Date();
         const date = new Date(timestamp.seconds * 1000 + (timestamp.nanoseconds || 0) / 1000000);
-    
+
         const seconds = Math.floor((now - date) / 1000);
         let interval = Math.floor(seconds / 31536000);
-    
+
         if (interval >= 1) return interval + " year" + (interval > 1 ? "s" : "") + " ago";
         interval = Math.floor(seconds / 2592000);
         if (interval >= 1) return interval + " month" + (interval > 1 ? "s" : "") + " ago";
@@ -139,29 +144,64 @@ export default function Videospage() {
         if (interval >= 1) return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
         return seconds + " second" + (seconds > 1 ? "s" : "") + " ago";
     }
-    
+
     return (
         <div className='webbody'>
             <div className="jkgflmlv">
-            <video src={videolink[0]} height={"238px"} width={"438px"} autoPlay muted loop controls style={{borderRadius:"10px"}}></video>
-                {/* <img src={thumbnails[0]} alt="" style={{ borderRadius: "10px" }} /> */}
+                <video 
+                    src={videoLink[activeVideoIndex]} 
+                    height={"238px"} 
+                    width={"438px"} 
+                    autoPlay 
+                    loop 
+                    controls 
+                    style={{ borderRadius: "10px" }} 
+                />
                 <div className="kenfkrmfl">
-                    {captions[0]}
+                    {captions[activeVideoIndex]}
                     <div className="jnjvfmv" style={{ fontWeight: "300", fontSize: "15px", color: "grey" }}>
-                    {
-                            formatViews(views[0]) + " views • " + formatTimeAgo(uploaddate[0])
+                        {
+                            formatViews(views[activeVideoIndex]) + " views • " + formatTimeAgo(uploadDate[activeVideoIndex])
                         }
                     </div>
                 </div>
             </div>
             <div className="jdbfjekfjkhef">
                 {thumbnails.map((url, index) => (
-                    <div key={index} className="thumbnail-item">
+                    <div 
+                        key={index} 
+                        className="thumbnail-item" 
+                        onMouseEnter={() => setHoveredIndex(index)} 
+                        onMouseLeave={() => setHoveredIndex(null)}
+                        onClick={() => setActiveVideoIndex(index)}
+                    >
                         <Link to="#" style={{ textDecoration: 'none', color: 'black' }}>
-                            <img src={url} alt={`Thumbnail ${index}`} className="thumbnail-image" height={"150px"} width={"265px"} style={{ borderRadius: "10px" }} />
+                            <div className="jjfmenmd">
+                                {hoveredIndex === index ? (
+                                    <video 
+                                        src={videoLink[index]} 
+                                        height={"150px"} 
+                                        width={"265px"} 
+                                        autoPlay 
+                                        muted 
+                                        loop 
+                                         
+                                        style={{ borderRadius: "10px" }} 
+                                    />
+                                ) : (
+                                    <img 
+                                        src={url} 
+                                        alt={`Thumbnail ${index}`} 
+                                        className="thumbnail-image" 
+                                        height={"150px"} 
+                                        width={"265px"} 
+                                        style={{ borderRadius: "10px" }} 
+                                    />
+                                )}
+                            </div>
                             <div className="jefkfm">
                                 <div className="pfp">
-                                    <Link to="#">
+                                    <Link>
                                         <img src={dp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
                                     </Link>
                                 </div>
@@ -170,7 +210,7 @@ export default function Videospage() {
                                         <h5>{captions[index]}</h5>
                                         <div className="jnfjvnkfv" style={{ color: "black", fontSize: "15px", display: "flex", flexDirection: "row", gap: "5px" }}>
                                             <p style={{ fontSize: "12px", color: "grey" }}>{views[index] === 0 ? 'No Views' : formatViews(views[index]) + ' Views'}</p> •
-                                            <p style={{ fontSize: "12px", color: "grey" }}>{formatTimeAgo(uploaddate[index])}</p>
+                                            <p style={{ fontSize: "12px", color: "grey" }}>{formatTimeAgo(uploadDate[index])}</p>
                                         </div>
                                     </div>
                                 </div>
