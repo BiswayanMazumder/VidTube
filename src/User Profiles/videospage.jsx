@@ -149,7 +149,7 @@ export default function Videospage() {
         <div className='webbody'>
             <div className="jkgflmlv">
                 <video 
-                    src={videoLink[activeVideoIndex]} 
+                    src={videoLink[0]} 
                     height={"238px"} 
                     width={"438px"} 
                     autoPlay 
@@ -159,10 +159,10 @@ export default function Videospage() {
                     style={{ borderRadius: "10px" }} 
                 />
                 <div className="kenfkrmfl">
-                    {captions[activeVideoIndex]}
+                    {captions[0]}
                     <div className="jnjvfmv" style={{ fontWeight: "300", fontSize: "15px", color: "grey" }}>
                         {
-                            formatViews(views[activeVideoIndex]) + " views • " + formatTimeAgo(uploadDate[activeVideoIndex])
+                            formatViews(views[0]) + " views • " + formatTimeAgo(uploadDate[0])
                         }
                     </div>
                 </div>
