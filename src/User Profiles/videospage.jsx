@@ -19,7 +19,7 @@ const db = getFirestore(app);
 
 export default function Videospage() {
     const { userId } = useParams();
-    const [dp, setDp] = useState('');
+    const [dp, setDp] = useState(''); 
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
     const [coverPic, setCoverPic] = useState('');
