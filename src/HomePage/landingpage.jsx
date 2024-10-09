@@ -21,6 +21,9 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
 export default function Landingpage() {
+    useEffect(()=>{
+        document.title='VidTube';
+    })
     const [sidebar, setSidebar] = useState(true);
     const [user, setuser] = useState(false);
     const [photourl, setphotourl] = useState('');
