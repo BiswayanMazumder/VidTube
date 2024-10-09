@@ -21,6 +21,23 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
 export default function Header() {
+    const [premium,setpremium]=useState(false);
+    useEffect(() => {
+        const fetchVideoData = async () => {
+            try {
+                const docRef = doc(db, 'Premium Users', auth.currentUser.uid);
+                const docSnapshot = await getDoc(docRef);
+                if (docSnapshot.exists()) {
+                    const videoData = docSnapshot.data();
+                    setpremium(videoData['Premium User']);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        console.log('prem',premium);
+        fetchVideoData();
+    })
     const handleSignIn = async () => {
         try {
             const result = await signInWithPopup(auth, provider);
@@ -84,7 +101,7 @@ export default function Header() {
                     </Link>
                     <Link to={"/"}>
                         <div className="kejfkf" >
-                            <img src="https://vidtube-sable.vercel.app/assets/logo-koDzNJgp.png" alt="" height={"30px"} width={"130px"} />
+                            <img src={premium?"https://as2.ftcdn.net/v2/jpg/04/69/69/17/1000_F_469691792_MfkrxlGuUkHsztMOuCo7CvADeyvhGihm.jpg":"https://vidtube-sable.vercel.app/assets/logo-koDzNJgp.png"} alt="" height={"30px"} width={"130px"} />
                         </div>
                     </Link>
                     <div className="searchbar">
