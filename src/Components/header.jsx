@@ -72,8 +72,6 @@ export default function Header() {
             window.location.replace('/');
             onAuthStateChanged(auth, (user) => {
                 if (user) {
-                    // User is signed in, see docs for a list of available properties
-                    // https://firebase.google.com/docs/reference/js/auth.user
                     setuser(true);
                     setphotourl(user.photoURL);              //...
                     const uid = user.uid;

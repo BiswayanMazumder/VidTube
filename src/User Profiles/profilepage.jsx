@@ -4,10 +4,10 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import Header from '../Components/header';
 import Aboutpage from './aboutpage';
-import Videospage from './videoshomepage';
 import VideosHomepage from './videoshomepage';
 import VideoSection from './videospage';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import Communitypage from './communitypage';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -23,6 +23,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
 export default function ProfilePage() {
     const { userId } = useParams();
 
@@ -33,28 +34,20 @@ export default function ProfilePage() {
     const [subs, setSubs] = useState([]);
     const [vidData, setVidData] = useState([]);
     const [videoCount, setVideoCount] = useState(0);
-    const [loading, setLoading] = useState(true); // Loading state
+    const [loading, setLoading] = useState(true);
     const [currentuser, setcurrentuser] = useState(false);
+    
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User is signed in, see docs for a list of available properties
-                // https://firebase.google.com/docs/reference/js/auth.user
-                // setuser(true);             //...
                 const uid = user.uid;
-                if (uid === userId) {
-                    setcurrentuser(true);
-                } else {
-                    setcurrentuser(false);
-                }
-                // ...
+                setcurrentuser(uid === userId);
             } else {
-                // User is signed out
-                // ...
+                setcurrentuser(false);
             }
         });
-        // console.log(currentuser);
-    });
+    }, [userId]);
+
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -90,9 +83,9 @@ export default function ProfilePage() {
                 console.error(error);
             }
         };
+
         const fetchData = async () => {
             try {
-                console.log("Fetching VID data...");
                 const docRef = doc(db, 'Global VIDs', 'VIDs');
                 const docSnapshot = await getDoc(docRef);
                 let count = 0;
@@ -124,9 +117,9 @@ export default function ProfilePage() {
         };
 
         const loadData = async () => {
-            setLoading(true); // Start loading
+            setLoading(true);
             await Promise.all([fetchUserData(), fetchData()]);
-            setLoading(false); // End loading
+            setLoading(false);
         };
 
         loadData();
@@ -135,7 +128,31 @@ export default function ProfilePage() {
     useEffect(() => {
         document.title = `${name} - VidTube`;
     }, [name]);
+
     const [activeTab, setActiveTab] = useState('home');
+    const [commupload, setcommupload] = useState([]);
+    const [communityPosts, setCommunityPosts] = useState([]);
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const docRef = doc(db, "Community Posts", userId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const subData = docSnap.data();
+                    setCommunityPosts(subData['Posts']); // Assuming 'Posts' is an array of objects
+                    setcommupload(subData['Date of Upload']);
+                    console.log('Fetched data:', subData); // Log the fetched data
+                } else {
+                    console.log('No such document!');
+                }
+            } catch (error) {
+                console.error("Error fetching document: ", error);
+            }
+        };
+
+        fetchUserData();
+    }, [userId]);
     return (
         <div>
             <Header />
@@ -151,7 +168,7 @@ export default function ProfilePage() {
                         alt=""
                         style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: "10px" }}
                     />
-                </div> 
+                </div>
                 <div className="coverpic" style={{ marginTop: '-20px', display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'start' }}>
                     <div className="profilepic">
                         <img src={dp} alt="" height={"150px"} width={"150px"} style={{ borderRadius: '50%' }} />
@@ -159,7 +176,7 @@ export default function ProfilePage() {
                     <div style={{ marginLeft: '10px', marginTop: "20px" }}>
                         <div style={{ fontWeight: "600", fontSize: "22px" }}>
                             {name} {
-                                subs.length>0?<svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 0 24 24" width="15" focusable="false" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zM9.8 17.3l-4.2-4.1L7 11.8l2.8 2.7L17 7.4l1.4 1.4-8.6 8.5z"></path></svg>:<></>
+                                subs.length > 0 ? <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 0 24 24" width="15" focusable="false" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zM9.8 17.3l-4.2-4.1L7 11.8l2.8 2.7L17 7.4l1.4 1.4-8.6 8.5z"></path></svg> : <></>
                             }
                         </div>
                         <div style={{ marginTop: "10px", color: "gray", fontSize: "15px" }}>
@@ -178,13 +195,13 @@ export default function ProfilePage() {
                                     <></>
                                 ) : (
                                     auth.currentUser && subs.includes(auth.currentUser.uid) ? (
-                                        <Link style={{ textDecoration: 'none', color: 'white' }}>
-                                            <div className='hebfjenk' style={{backgroundColor:'#f2dfdf',color:'black',border:'1px solid black'}}>
+                                        <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
+                                            <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black' }}>
                                                 <center>Subscribed</center>
                                             </div>
                                         </Link>
                                     ) : (
-                                        <Link style={{ textDecoration: 'none', color: 'white' }}>
+                                        <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribe-link">
                                             <div className='hebfjenk'>
                                                 <center>Subscribe</center>
                                             </div>
@@ -193,7 +210,7 @@ export default function ProfilePage() {
                                 )
                             }
 
-                            <Link style={{ textDecoration: 'none', color: 'black' }}>
+                            <Link style={{ textDecoration: 'none', color: 'black' }} data-testid="join-link">
                                 <div className='hebfjenk' style={{ backgroundColor: 'transparent', color: 'black', border: '0.5px solid black' }}>
                                     <center>Join</center>
                                 </div>
@@ -203,8 +220,9 @@ export default function ProfilePage() {
                 </div>
                 <div className="irfjkfjlvf">
                     <Link
-                        style={{ textDecoration: 'none', color: activeTab === 'home' ? 'black' : 'grey' }}
+                        style={{ textDecoration: 'none', color: activeTab === 'home' ? 'black' : 'grey', padding: '10px'}}
                         onClick={() => setActiveTab('home')}
+                        data-testid="home-link"
                     >
                         <div className="jjnffkmkm">
                             Home
@@ -212,29 +230,31 @@ export default function ProfilePage() {
                         </div>
                     </Link>
                     <Link
-                        style={{ textDecoration: 'none', color: activeTab === 'video' ? 'black' : 'grey' }}
-                        onClick={() => {
-                            setActiveTab('video')
-                            console.log('Active', setActiveTab);
-                        }}
+                        style={{ textDecoration: 'none', color: activeTab === 'video' ? 'black' : 'grey', padding: '10px' }}
+                        onClick={() => setActiveTab('video')}
+                        data-testid="video-link"
                     >
                         <div className="jjnffkmkm">
                             Videos
                             {activeTab === 'video' && <div className="nfjvf"></div>}
                         </div>
                     </Link>
-                    {/* <Link
-                        style={{ textDecoration: 'none', color: activeTab === 'comm' ? 'black' : 'grey' }}
-                        onClick={() => setActiveTab('comm')}
+                   {
+                    communityPosts.length>0? <Link
+                        style={{ textDecoration: 'none', color: activeTab === 'community' ? 'black' : 'grey', padding: '10px' }}
+                        onClick={() => setActiveTab('community')}
+                        data-testid="video-link"
                     >
                         <div className="jjnffkmkm">
                             Community
-                            {activeTab === 'comm' && <div className="nfjvf"></div>}
+                            {activeTab === 'community' && <div className="nfjvf"></div>}
                         </div>
-                    </Link> */}
+                    </Link>:<></>
+                   }
                     <Link
-                        style={{ textDecoration: 'none', color: activeTab === 'about' ? 'black' : 'grey' }}
+                        style={{ textDecoration: 'none', color: activeTab === 'about' ? 'black' : 'grey', padding: '10px' }}
                         onClick={() => setActiveTab('about')}
+                        data-testid="about-link"
                     >
                         <div className="jjnffkmkm">
                             About
@@ -245,12 +265,11 @@ export default function ProfilePage() {
                 <div className="jhfjkfj">
                     {
                         activeTab === 'about' ? <Aboutpage /> :
-                            activeTab === 'home' ? <VideosHomepage /> :
-                                activeTab === 'video' ? <VideoSection /> :
-                                    null
+                        activeTab === 'home' ? <VideosHomepage /> :
+                        activeTab === 'video' ? <VideoSection /> :
+                        activeTab === 'community' ? <Communitypage /> :<></>
                     }
                 </div>
-
             </div>
         </div>
     );
