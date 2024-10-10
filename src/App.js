@@ -5,6 +5,7 @@ import {
   Route
 } from 'react-router-dom';
 import Landingpage from './HomePage/landingpage';
+import { Analytics } from "@vercel/analytics/react"
 import Profilepage from './User Profiles/profilepage';
 function App() {
   return (
@@ -13,9 +14,10 @@ function App() {
         <Route path="/" element={<Landingpage />} />
       </Routes>
       <Routes>
-                {/* Other routes */}
-                <Route path="/profile/:userId" element={<Profilepage />} />
-            </Routes>
+        {/* Other routes */}
+        <Route path="/profile/:userId" element={<Profilepage />} />
+      </Routes>
+      <Analytics />
     </BrowserRouter>
   );
 }
