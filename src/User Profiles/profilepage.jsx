@@ -151,7 +151,7 @@ export default function ProfilePage() {
                         alt=""
                         style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: "10px" }}
                     />
-                </div>
+                </div> 
                 <div className="coverpic" style={{ marginTop: '-20px', display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'start' }}>
                     <div className="profilepic">
                         <img src={dp} alt="" height={"150px"} width={"150px"} style={{ borderRadius: '50%' }} />
