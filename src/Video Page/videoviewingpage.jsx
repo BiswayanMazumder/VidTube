@@ -131,7 +131,7 @@ export default function Videoviewingpage() {
   const [videoowner, setvideoowner] = useState('');
   const [videoownername, setvideoownername] = useState('');
   const [videoownerpfp, setvideoownerpfp] = useState('');
-  const [subscount,setsubs]=useState([]);
+  const [subscount, setsubs] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const videoRef = doc(db, 'Global Post', videoId);
@@ -143,7 +143,7 @@ export default function Videoviewingpage() {
         setvideotitle(videoData['Caption']);
         setvideoowner(videoData['Uploaded UID']); // Ensure this UID is valid
       }
-  
+
       // After setting video owner, fetch user details
       if (videoowner) {
         const userRef = doc(db, 'User Details', videoowner);
@@ -152,7 +152,7 @@ export default function Videoviewingpage() {
           const userData = userDoc.data();
           setvideoownername(userData['Username']);
         }
-  
+
         const profilePicRef = doc(db, 'User Profile Pictures', videoowner);
         const profilePicDoc = await getDoc(profilePicRef);
         if (profilePicDoc.exists()) {
@@ -169,7 +169,7 @@ export default function Videoviewingpage() {
     }
     fetchData();
   }, [videoId, videoowner]);
-  
+
   return (
     <div className='webbody'>
       <Header />
@@ -177,17 +177,32 @@ export default function Videoviewingpage() {
         <video width="100%" height="533" src={videolink} title={videotitle} controls autoPlay style={{ backgroundColor: "black" }} onContextMenu={(e) => e.preventDefault()}></video>
         <div className="nkmkv" style={{ margin: "10px", fontWeight: "bold", fontSize: "20px" }}>
           {videotitle}
-          <div className='ekhbfehfss' style={{display:"flex",flexDirection:"row",gap:"10px",marginTop:"20px"}}>
-          <img src={videoownerpfp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
-          <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${videoowner}`}>
-          <div className="jfvjnf" style={{fontWeight:"300",fontSize:"15px",marginTop:"0px"}}>
-            {videoownername}
+          <div className='ekhbfehfss' style={{ display: "flex", flexDirection: "row", gap: "10px", marginTop: "20px" }}>
+            <img src={videoownerpfp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+            <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${videoowner}`}>
+              <div className="jfvjnf" style={{ fontWeight: "300", fontSize: "15px", marginTop: "0px" }}>
+                {videoownername}
+              </div>
+              <div className="jfvjnf" style={{ fontWeight: "300", fontSize: "15px", color: 'grey' }}>
+                {subscount.length === 1 || subscount.length === 0 ? subscount.length + ' Subscriber' : subscount.length + ' Subscribers'}
+              </div>
+            </Link>
+            {
+              auth.currentUser && subscount.includes(auth.currentUser.uid) ? (
+                <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
+                  <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black',fontSize: "15px",marginLeft:"50px",marginTop:"-8px"}}>
+                    <center>Subscribed</center>
+                  </div>
+                </Link>
+              ) : (
+                <Link style={{ textDecoration: 'none', color: 'white',fontSize: "15px",marginLeft:"50px",marginTop:"-10px"}} data-testid="subscribe-link">
+                  <div className='hebfjenk'>
+                    <center>Subscribe</center>
+                  </div>
+                </Link>
+              )
+            }
           </div>
-          <div className="jfvjnf" style={{fontWeight:"300",fontSize:"15px",color:'grey'}}>
-            {subscount.length===1 || subscount.length===0?subscount.length+' Subscriber':subscount.length+' Subscribers'}
-          </div>
-          </Link>
-        </div>
         </div>
       </div>
     </div>
