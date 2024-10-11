@@ -132,6 +132,7 @@ export default function Videoviewingpage() {
   const [videoownername, setvideoownername] = useState('');
   const [videoownerpfp, setvideoownerpfp] = useState('');
   const [subscount, setsubs] = useState([]);
+  const [videoupload, setvideoupload] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const videoRef = doc(db, 'Global Post', videoId);
@@ -141,6 +142,7 @@ export default function Videoviewingpage() {
         setvideolink(videoData['Video Link']);
         setvideoviews(videoData['Views']);
         setvideotitle(videoData['Caption']);
+        setvideoupload(videoData['Uploaded At']);
         setvideoowner(videoData['Uploaded UID']); // Ensure this UID is valid
       }
 
@@ -169,7 +171,30 @@ export default function Videoviewingpage() {
     }
     fetchData();
   }, [videoId, videoowner]);
+  function formatViews(views) {
+    if (views < 1000) return views;
+    else if (views < 1000000) return (views / 1000).toFixed(1) + 'K';
+    else if (views < 1000000000) return (views / 1000000).toFixed(1) + 'M';
+    else return (views / 1000000000).toFixed(1) + 'B';
+  }
+  function formatTimeAgo(timestamp) {
+    const now = new Date();
+    const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
 
+    const seconds = Math.floor((now - date) / 1000);
+    let interval = Math.floor(seconds / 31536000);
+
+    if (interval >= 1) return interval + " year" + (interval > 1 ? "s" : "") + " ago";
+    interval = Math.floor(seconds / 2592000);
+    if (interval >= 1) return interval + " month" + (interval > 1 ? "s" : "") + " ago";
+    interval = Math.floor(seconds / 86400);
+    if (interval >= 1) return interval + " day" + (interval > 1 ? "s" : "") + " ago";
+    interval = Math.floor(seconds / 3600);
+    if (interval >= 1) return interval + " hour" + (interval > 1 ? "s" : "") + " ago";
+    interval = Math.floor(seconds / 60);
+    if (interval >= 1) return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
+    return seconds + " second" + (seconds > 1 ? "s" : "") + " ago";
+  }
   return (
     <div className='webbody'>
       <Header />
@@ -177,6 +202,12 @@ export default function Videoviewingpage() {
         <video width="100%" height="533" src={videolink} title={videotitle} controls autoPlay style={{ backgroundColor: "black" }} onContextMenu={(e) => e.preventDefault()}></video>
         <div className="nkmkv" style={{ margin: "10px", fontWeight: "bold", fontSize: "20px" }}>
           {videotitle}
+          <div className="jjfndv" style={{ fontSize: "15px", color: "grey", fontWeight: "300", marginTop: "10px" }}>
+            {formatViews(videoviwes)} views
+          </div>
+          <div className="jjfndv" style={{ fontSize: "15px", color: "grey", fontWeight: "300", marginTop: "10px" }}>
+            Uploaded {formatTimeAgo(videoupload)}
+          </div>
           <div className='ekhbfehfss' style={{ display: "flex", flexDirection: "row", gap: "10px", marginTop: "20px" }}>
             <img src={videoownerpfp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
             <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${videoowner}`}>
@@ -187,15 +218,16 @@ export default function Videoviewingpage() {
                 {subscount.length === 1 || subscount.length === 0 ? subscount.length + ' Subscriber' : subscount.length + ' Subscribers'}
               </div>
             </Link>
+
             {
               auth.currentUser && subscount.includes(auth.currentUser.uid) ? (
                 <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
-                  <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black',fontSize: "15px",marginLeft:"50px",marginTop:"-8px"}}>
+                  <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "-8px" }}>
                     <center>Subscribed</center>
                   </div>
                 </Link>
               ) : (
-                <Link style={{ textDecoration: 'none', color: 'white',fontSize: "15px",marginLeft:"50px",marginTop:"-10px"}} data-testid="subscribe-link">
+                <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link">
                   <div className='hebfjenk'>
                     <center>Subscribe</center>
                   </div>
