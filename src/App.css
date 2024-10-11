@@ -352,3 +352,11 @@ input {
 .enmndv{
   margin-top: 10px;
 }
+.jrhkfjk {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  align-items: center; /* Vertically centers the items */
+}

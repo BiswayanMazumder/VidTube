@@ -192,7 +192,11 @@ export default function ProfilePage() {
                         <div className="knrgjnfkg">
                             {
                                 currentuser ? (
-                                    <></>
+                                    <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
+                                            <div className='hebfjenk' style={{ backgroundColor: 'rgb(94, 94, 239)', color: 'white', border: '1px solid blue' }}>
+                                                <center>Customise</center>
+                                            </div>
+                                        </Link>
                                 ) : (
                                     auth.currentUser && subs.includes(auth.currentUser.uid) ? (
                                         <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
@@ -239,8 +243,7 @@ export default function ProfilePage() {
                             {activeTab === 'video' && <div className="nfjvf"></div>}
                         </div>
                     </Link>
-                   {
-                    communityPosts.length>0? <Link
+                   <Link
                         style={{ textDecoration: 'none', color: activeTab === 'community' ? 'black' : 'grey', padding: '10px' }}
                         onClick={() => setActiveTab('community')}
                         data-testid="video-link"
@@ -249,8 +252,8 @@ export default function ProfilePage() {
                             Community
                             {activeTab === 'community' && <div className="nfjvf"></div>}
                         </div>
-                    </Link>:<></>
-                   }
+                    </Link>
+                   
                     <Link
                         style={{ textDecoration: 'none', color: activeTab === 'about' ? 'black' : 'grey', padding: '10px' }}
                         onClick={() => setActiveTab('about')}

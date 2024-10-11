@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -16,9 +17,22 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
+const auth = getAuth(app);
 export default function Communitypage() {
     const { userId } = useParams();
+    const [currentuser, setcurrentuser] = useState(false);
+    // const [currentuser, setcurrentuser] = useState(false);
+    
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const uid = user.uid;
+                setcurrentuser(uid === userId);
+            } else {
+                setcurrentuser(false);
+            }
+        });
+    }, [userId]);
     const [commupload, setcommupload] = useState([]);
     const [communityPosts, setCommunityPosts] = useState([]);
     const [dp, setDp] = useState('');
@@ -29,7 +43,6 @@ export default function Communitypage() {
     const [vidData, setVidData] = useState([]);
     const [videoCount, setVideoCount] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [currentuser, setcurrentuser] = useState(false);
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -149,13 +162,46 @@ export default function Communitypage() {
         <div className='webbody'>
             <div className="jnkmkkdkd">
                 {
+                    currentuser?<div className="nmkvmlkd" style={{ height: "280px", display: 'flex', flexDirection: 'column' }}>
+                    <div className="jfnvjfnv" style={{ display: 'flex', alignItems: 'center' }}>
+                        <img src={dp} alt="" height={'40px'} width={'40px'} style={{ borderRadius: '50%' }} />
+                        <div className="enmndv" style={{ fontWeight: 'bold', marginLeft: '10px' }}>
+                            {name}
+                        </div>
+                    </div>
+                    <input
+                        type="text"
+                        
+                        style={{
+                            flexGrow: 1,
+                            marginTop: '10px',
+                            border: 'none',
+                            outline: 'none',
+                            position: 'relative',
+                            width: '95%',
+                            lineHeight: '1.2',
+                            boxShadow: 'none' // Remove any box-shadow if needed
+                        }}
+                        placeholder='What is on your mind?'
+                    />
+                    <div className="jrhkfjk">
+                        <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribe-link">
+                            <div className='hebfjenk' style={{backgroundColor:'rgb(94, 94, 239)'}}>
+                                <center>Post</center>
+                            </div>
+                        </Link>
+                    </div>
+                </div>:<></>
+                }
+
+                {
 
                     communityPosts.map((post, index) => (
 
                         <div key={index} className="nmkvmlkd">
                             <div className="jfnvjfnv">
                                 <img src={dp} alt="" height={'40px'} width={'40px'} style={{ borderRadius: '50%' }} />
-                                <div className="enmndv">
+                                <div className="enmndv" style={{ fontWeight: 'bold' }}>
                                     {name}
                                 </div>
                                 {/* <div className="enmndv">
