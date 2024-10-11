@@ -81,25 +81,28 @@ export default function VideosHomepage() {
                 const docSnapshot = await getDoc(docRef);
                 if (docSnapshot.exists()) {
                     const data = docSnapshot.data();
-                    setVidData(data.VID);
-
+                    
+                    // console.log('VID DAta', data.VID);
                     const uniqueThumbnails = new Set();
                     const uniqueCaptions = new Set();
                     const Views = [];
                     const UploadDates = [];
                     const Videolink = [];
+                    const VideoID=[];
                     for (const vid of data.VID) {
                         const videoRef = doc(db, 'Global Post', vid);
                         const videoDoc = await getDoc(videoRef);
-
+                        // console.log('VID Data', vid);
                         if (videoDoc.exists()) {
                             const videoData = videoDoc.data();
                             if (videoData['Uploaded UID'] === userId) {
+                                VideoID.push(vid);
                                 uniqueThumbnails.add(videoData['Thumbnail Link']);
                                 uniqueCaptions.add(videoData['Caption']);
                                 Views.push(videoData['Views']);
                                 UploadDates.push(videoData['Uploaded At']);
                                 Videolink.push(videoData['Video Link']);
+                                // setVID(data.VID);
                             }
                         }
                     }
@@ -109,6 +112,8 @@ export default function VideosHomepage() {
                     setViews(Views);
                     setVideoLink(Videolink);
                     setUploadDate(UploadDates);
+                    // console.log('VID DATA',VideoID)
+                    setVidData(VideoID);
                 }
             } catch (error) {
                 console.error(error);
@@ -176,7 +181,7 @@ export default function VideosHomepage() {
                         onMouseLeave={() => setHoveredIndex(null)}
                         onClick={() => setActiveVideoIndex(index)}
                     >
-                        <Link to="#" style={{ textDecoration: 'none', color: 'black' }}>
+                        <Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}>
                             <div className="jjfmenmd">
                                 {hoveredIndex === index ? (
                                     <video 
