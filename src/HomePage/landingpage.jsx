@@ -54,6 +54,7 @@ export default function Landingpage() {
     const [uploader, setuploader] = useState([]);
     const [dp, setdp] = useState([]);
     const [name, setname] = useState([]);
+    const [VID,setVID]=useState([]);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -72,9 +73,11 @@ export default function Landingpage() {
                     const Uploader = [];
                     const Name = [];
                     const PFP = [];
-
+                    // console.log('VID',data.VID);
+                    setVID(data.VID);
                     // Fetch video data
                     for (let i = 0; i < data.VID.length; i++) {
+                        
                         const videoRef = doc(db, 'Global Post', data.VID[i]);
                         const videoDoc = await getDoc(videoRef);
 
@@ -217,7 +220,9 @@ export default function Landingpage() {
                     {/* <div className="thumbnail-container"> */}
                     {thumbnail.map((url, index) => (
                         <div key={index} className="thumbnail-item">
-                            <Link style={{ textDecoration: 'none', color: 'black' }}>
+                            <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(()=>{
+                                            localStorage.setItem("VID", VID[index]);
+                                        })}>
                                 <img src={url} alt={`Thumbnail ${index}`} className="thumbnail-image" height={"150px"} width={"265px"} style={{ borderRadius: "10px" }} />
                                 <div className="jefkfm">
                                     <div className="pfp">

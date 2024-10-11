@@ -193,7 +193,6 @@ export default function Communitypage() {
                     </div>
                 </div>:<></>
                 }
-
                 {
 
                     communityPosts.map((post, index) => (

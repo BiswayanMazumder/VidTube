@@ -7,11 +7,15 @@ import {
 import Landingpage from './HomePage/landingpage';
 import { Analytics } from "@vercel/analytics/react"
 import Profilepage from './User Profiles/profilepage';
+import Videoviewingpage from './Video Page/videoviewingpage';
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landingpage />} />
+      </Routes>
+      <Routes>
+      <Route path="/videos/:videoId" element={<Videoviewingpage/>} />
       </Routes>
       <Routes>
         {/* Other routes */}
