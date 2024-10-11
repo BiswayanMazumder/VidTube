@@ -129,6 +129,8 @@ export default function Videoviewingpage() {
   const [videoviwes, setvideoviews] = useState(0);
   const [videotitle, setvideotitle] = useState('');
   const [videoowner, setvideoowner] = useState('');
+  const [videoownername, setvideoownername] = useState('');
+  const [videoownerpfp, setvideoownerpfp] = useState('');
   useEffect(() => {
     const fetchData = async () => {
       const videoRef = doc(db, 'Global Post', videoId);
@@ -138,18 +140,44 @@ export default function Videoviewingpage() {
         setvideolink(videoData['Video Link']);
         setvideoviews(videoData['Views']);
         setvideotitle(videoData['Caption']);
-        setvideoowner(videoData['Uploaded UID']);
+        setvideoowner(videoData['Uploaded UID']); // Ensure this UID is valid
+      }
+  
+      // After setting video owner, fetch user details
+      if (videoowner) {
+        const userRef = doc(db, 'User Details', videoowner);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setvideoownername(userData['Username']);
+        }
+  
+        const profilePicRef = doc(db, 'User Profile Pictures', videoowner);
+        const profilePicDoc = await getDoc(profilePicRef);
+        if (profilePicDoc.exists()) {
+          const profilePicData = profilePicDoc.data();
+          setvideoownerpfp(profilePicData['Profile Pic']);
+        }
       }
     }
     fetchData();
-  }, [videoId])
+  }, [videoId, videoowner]);
+  
   return (
     <div className='webbody'>
       <Header />
       <div className="videobody">
-        <iframe width="100%" height="533" src={videolink} title="I BOUGHT THE MOST EXPENSIVE PENS FROM AMAZON" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        <div className="nkmkv" style={{margin:"10px",fontWeight:"bold",fontSize:"20px"}}>
-        {videotitle}
+        <video width="100%" height="533" src={videolink} title={videotitle} controls autoPlay style={{ backgroundColor: "black" }} onContextMenu={(e) => e.preventDefault()}></video>
+        <div className="nkmkv" style={{ margin: "10px", fontWeight: "bold", fontSize: "20px" }}>
+          {videotitle}
+          <div className='ekhbfehfss' style={{display:"flex",flexDirection:"row",gap:"10px",marginTop:"20px"}}>
+          <img src={videoownerpfp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+          <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${videoowner}`}>
+          <div className="jfvjnf" style={{fontWeight:"300",fontSize:"15px",marginTop:"10px"}}>
+            {videoownername}
+          </div>
+          </Link>
+        </div>
         </div>
       </div>
     </div>
