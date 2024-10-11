@@ -217,7 +217,7 @@ export default function Videoviewingpage() {
         if (docSnapshot.exists()) {
           const data = docSnapshot.data();
 
-          console.log('VID DAta', data.VID);
+          // console.log('VID DAta', data.VID);
           const uniqueThumbnails = new Set();
           const uniqueCaptions = new Set();
           const Views = [];
@@ -301,7 +301,7 @@ export default function Videoviewingpage() {
           </div>
         </div>
         <div className="krkmvkrhgjr">
-          <div className="commentsection"></div>
+          {/* <div className="commentsection"></div> */}
           <div className="relatedvideos">
             {
               thumbnails.map((thumbnail, index) => (
@@ -310,7 +310,7 @@ export default function Videoviewingpage() {
                   <img src={thumbnails[index]} alt={captions[index]} height={"120px"}
                     width={"200px"} style={{borderRadius: "10px"}} />
                   </Link>
-                    <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${vidData[index]}`}>
+                    <Link style={{ textDecoration: 'none', color: 'black',fontWeight: "600" }} to={`/videos/${vidData[index]}`}>
                     {captions[index]}
                     </Link>
                 </div>
