@@ -112,7 +112,7 @@ export default function VideoSection() {
                     setViews(Views);
                     setVideoLink(Videolink);
                     setUploadDate(UploadDates);
-                    // console.log('VID DATA',VideoID)
+                    console.log('VID DATA',VideoID)
                     setVidData(VideoID);
                 }
             } catch (error) {

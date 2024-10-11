@@ -195,6 +195,70 @@ export default function Videoviewingpage() {
     if (interval >= 1) return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
     return seconds + " second" + (seconds > 1 ? "s" : "") + " ago";
   }
+  const { userId } = useParams();
+  // const [dp, setDp] = useState('');
+  const [names, setName] = useState('');//
+  const [bio, setBio] = useState('');
+  const [coverPic, setCoverPic] = useState('');
+  const [subs, setSubs] = useState([]);
+  const [thumbnails, setThumbnails] = useState([]);
+  const [captions, setCaptions] = useState([]);
+  const [viewss, setViews] = useState([]);//
+  const [uploadDate, setUploadDate] = useState([]);
+  const [videoLink, setVideoLink] = useState([]);
+  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+  const [hoveredIndex, setHoveredIndex] = useState(null); // Track hovered thumbnail index
+  const [VIDs, setVIDs] = useState([]);//
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const docRef = doc(db, 'Global VIDs', 'VIDs');
+        const docSnapshot = await getDoc(docRef);
+        if (docSnapshot.exists()) {
+          const data = docSnapshot.data();
+
+          console.log('VID DAta', data.VID);
+          const uniqueThumbnails = new Set();
+          const uniqueCaptions = new Set();
+          const Views = [];
+          const UploadDates = [];
+          const Videolink = [];
+          const VideoID = [];
+          if (data.VID.includes(videoId)) {
+            data.VID = data.VID.filter(id => id !== videoId);
+        }
+          for (const vid of data.VID) {
+            const videoRef = doc(db, 'Global Post', vid);
+            const videoDoc = await getDoc(videoRef);
+            // console.log('VID Data', vid);
+            if (videoDoc.exists()) {
+              const videoData = videoDoc.data();
+              VideoID.push(vid);
+              uniqueThumbnails.add(videoData['Thumbnail Link']);
+              uniqueCaptions.add(videoData['Caption']);
+              Views.push(videoData['Views']);
+              UploadDates.push(videoData['Uploaded At']);
+              Videolink.push(videoData['Video Link']);
+              setVIDs(data.VID);
+
+            }
+          }
+
+          setThumbnails(Array.from(uniqueThumbnails));
+          setCaptions(Array.from(uniqueCaptions));
+          setViews(Views);
+          setVideoLink(Videolink);
+          setUploadDate(UploadDates);
+          console.log('VID DATA', VideoID)
+          setVidData(VideoID);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchVideos();
+  }, [userId]);
   return (
     <div className='webbody'>
       <Header />
@@ -233,6 +297,24 @@ export default function Videoviewingpage() {
                   </div>
                 </Link>
               )
+            }
+          </div>
+        </div>
+        <div className="krkmvkrhgjr">
+          <div className="commentsection"></div>
+          <div className="relatedvideos">
+            {
+              thumbnails.map((thumbnail, index) => (
+                <div className="jnfvkf">
+                  <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${vidData[index]}`}>
+                  <img src={thumbnails[index]} alt={captions[index]} height={"120px"}
+                    width={"200px"} style={{borderRadius: "10px"}} />
+                  </Link>
+                    <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${vidData[index]}`}>
+                    {captions[index]}
+                    </Link>
+                </div>
+              ))
             }
           </div>
         </div>

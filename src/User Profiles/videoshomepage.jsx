@@ -81,14 +81,14 @@ export default function VideosHomepage() {
                 const docSnapshot = await getDoc(docRef);
                 if (docSnapshot.exists()) {
                     const data = docSnapshot.data();
-                    
+
                     // console.log('VID DAta', data.VID);
                     const uniqueThumbnails = new Set();
                     const uniqueCaptions = new Set();
                     const Views = [];
                     const UploadDates = [];
                     const Videolink = [];
-                    const VideoID=[];
+                    const VideoID = [];
                     for (const vid of data.VID) {
                         const videoRef = doc(db, 'Global Post', vid);
                         const videoDoc = await getDoc(videoRef);
@@ -153,15 +153,15 @@ export default function VideosHomepage() {
     return (
         <div className='webbody'>
             <div className="jkgflmlv">
-                <video 
-                    src={videoLink[0]} 
-                    height={"238px"} 
-                    width={"438px"} 
-                    autoPlay 
-                    loop 
+                <video
+                    src={videoLink[0]}
+                    height={"238px"}
+                    width={"438px"}
+                    autoPlay
+                    loop
                     muted
-                    controls 
-                    style={{ borderRadius: "10px" }} 
+                    controls
+                    style={{ borderRadius: "10px" }}
                 />
                 <div className="kenfkrmfl">
                     {captions[0]}
@@ -174,34 +174,34 @@ export default function VideosHomepage() {
             </div>
             <div className="jdbfjekfjkhef">
                 {thumbnails.map((url, index) => (
-                    <div 
-                        key={index} 
-                        className="thumbnail-item" 
-                        onMouseEnter={() => setHoveredIndex(index)} 
+                    <div
+                        key={index}
+                        className="thumbnail-item"
+                        onMouseEnter={() => setHoveredIndex(index)}
                         onMouseLeave={() => setHoveredIndex(null)}
                         onClick={() => setActiveVideoIndex(index)}
                     >
                         <Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}>
                             <div className="jjfmenmd">
                                 {hoveredIndex === index ? (
-                                    <video 
-                                        src={videoLink[index]} 
-                                        height={"150px"} 
-                                        width={"265px"} 
-                                        autoPlay 
-                                        muted 
-                                        loop 
-                                         
-                                        style={{ borderRadius: "10px" }} 
+                                    <video
+                                        src={videoLink[index]}
+                                        height={"150px"}
+                                        width={"265px"}
+                                        autoPlay
+                                        muted
+                                        loop
+
+                                        style={{ borderRadius: "10px" }}
                                     />
                                 ) : (
-                                    <img 
-                                        src={url} 
-                                        alt={`Thumbnail ${index}`} 
-                                        className="thumbnail-image" 
-                                        height={"150px"} 
-                                        width={"265px"} 
-                                        style={{ borderRadius: "10px" }} 
+                                    <img
+                                        src={url}
+                                        alt={`Thumbnail ${index}`}
+                                        className="thumbnail-image"
+                                        height={"150px"}
+                                        width={"265px"}
+                                        style={{ borderRadius: "10px" }}
                                     />
                                 )}
                             </div>
