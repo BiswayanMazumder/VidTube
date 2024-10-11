@@ -131,6 +131,7 @@ export default function Videoviewingpage() {
   const [videoowner, setvideoowner] = useState('');
   const [videoownername, setvideoownername] = useState('');
   const [videoownerpfp, setvideoownerpfp] = useState('');
+  const [subscount,setsubs]=useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const videoRef = doc(db, 'Global Post', videoId);
@@ -158,6 +159,12 @@ export default function Videoviewingpage() {
           const profilePicData = profilePicDoc.data();
           setvideoownerpfp(profilePicData['Profile Pic']);
         }
+        const subsRef = doc(db, 'Subscribers', videoowner);
+        const subsDoc = await getDoc(subsRef);
+        if (subsDoc.exists()) {
+          const subsData = subsDoc.data();
+          setsubs(subsData['Subscriber UIDs']);
+        }
       }
     }
     fetchData();
@@ -173,8 +180,11 @@ export default function Videoviewingpage() {
           <div className='ekhbfehfss' style={{display:"flex",flexDirection:"row",gap:"10px",marginTop:"20px"}}>
           <img src={videoownerpfp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
           <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${videoowner}`}>
-          <div className="jfvjnf" style={{fontWeight:"300",fontSize:"15px",marginTop:"10px"}}>
+          <div className="jfvjnf" style={{fontWeight:"300",fontSize:"15px",marginTop:"0px"}}>
             {videoownername}
+          </div>
+          <div className="jfvjnf" style={{fontWeight:"300",fontSize:"15px",color:'grey'}}>
+            {subscount.length===1 || subscount.length===0?subscount.length+' Subscriber':subscount.length+' Subscribers'}
           </div>
           </Link>
         </div>
