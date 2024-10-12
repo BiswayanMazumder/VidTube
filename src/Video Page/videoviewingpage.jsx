@@ -203,7 +203,7 @@ export default function Videoviewingpage() {
   const [subs, setSubs] = useState([]);
   const [thumbnails, setThumbnails] = useState([]);
   const [captions, setCaptions] = useState([]);
-  const [viewss, setViews] = useState([]);//
+  const [viewss, setViews] = useState([]);// 
   const [uploadDate, setUploadDate] = useState([]);
   const [videoLink, setVideoLink] = useState([]);
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
