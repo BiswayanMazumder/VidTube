@@ -34,6 +34,23 @@ export default function Videoviewingpage() {
   const [dp, setdp] = useState([]);
   const [name, setname] = useState([]);
   const [VID, setVID] = useState([]);
+  const [user, setuser] = useState(false);
+  const [photourl, setphotourl] = useState('');
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, see docs for a list of available properties
+                // https://firebase.google.com/docs/reference/js/auth.user
+                setuser(true);
+                setphotourl(user.photoURL);              //...
+                const uid = user.uid;
+                // ...
+            } else {
+                // User is signed out
+                // ...
+            }
+        });
+    });
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -226,7 +243,7 @@ export default function Videoviewingpage() {
           const VideoID = [];
           if (data.VID.includes(videoId)) {
             data.VID = data.VID.filter(id => id !== videoId);
-        }
+          }
           for (const vid of data.VID) {
             const videoRef = doc(db, 'Global Post', vid);
             const videoDoc = await getDoc(videoRef);
@@ -301,18 +318,32 @@ export default function Videoviewingpage() {
           </div>
         </div>
         <div className="krkmvkrhgjr">
-          {/* <div className="commentsection"></div> */}
+          <div className="commentsection">
+            <h5>Comments</h5>
+            <div className="jenfjekf" style={{ display: "flex", flexDirection: "row", gap: "15px", marginTop: "20px" }}>
+              {
+                user?<div className='jdckdk'>
+                <img src={photourl} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+              </div>:<div className='jdckdk'>
+                <img src="https://yt3.ggpht.com/a/default-user=s88-c-k-c0x00ffffff-no-rj" alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+              </div>
+              } <input type="text" placeholder='Add a comment...' />
+            </div>
+            <div className="ehgfehfjefn">
+              
+            </div>
+          </div>
           <div className="relatedvideos">
             {
               thumbnails.map((thumbnail, index) => (
                 <div className="jnfvkf">
                   <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${vidData[index]}`}>
-                  <img src={thumbnails[index]} alt={captions[index]} height={"120px"}
-                    width={"200px"} style={{borderRadius: "10px"}} />
+                    <img src={thumbnails[index]} alt={captions[index]} height={"120px"}
+                      width={"200px"} style={{ borderRadius: "10px" }} />
                   </Link>
-                    <Link style={{ textDecoration: 'none', color: 'black',fontWeight: "600" }} to={`/videos/${vidData[index]}`}>
+                  <Link style={{ textDecoration: 'none', color: 'black', fontWeight: "600" }} to={`/videos/${vidData[index]}`}>
                     {captions[index]}
-                    </Link>
+                  </Link>
                 </div>
               ))
             }
