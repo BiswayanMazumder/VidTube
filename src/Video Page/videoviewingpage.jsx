@@ -36,21 +36,21 @@ export default function Videoviewingpage() {
   const [VID, setVID] = useState([]);
   const [user, setuser] = useState(false);
   const [photourl, setphotourl] = useState('');
-    useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is signed in, see docs for a list of available properties
-                // https://firebase.google.com/docs/reference/js/auth.user
-                setuser(true);
-                setphotourl(user.photoURL);              //...
-                const uid = user.uid;
-                // ...
-            } else {
-                // User is signed out
-                // ...
-            }
-        });
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/auth.user
+        setuser(true);
+        setphotourl(user.photoURL);              //...
+        const uid = user.uid;
+        // ...
+      } else {
+        // User is signed out
+        // ...
+      }
     });
+  });
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -322,15 +322,20 @@ export default function Videoviewingpage() {
             <h5>Comments</h5>
             <div className="jenfjekf" style={{ display: "flex", flexDirection: "row", gap: "15px", marginTop: "20px" }}>
               {
-                user?<div className='jdckdk'>
-                <img src={photourl} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
-              </div>:<div className='jdckdk'>
-                <img src="https://yt3.ggpht.com/a/default-user=s88-c-k-c0x00ffffff-no-rj" alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
-              </div>
+                user ? <div className='jdckdk'>
+                  <img src={photourl} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                </div> : <div className='jdckdk'>
+                  <img src="https://yt3.ggpht.com/a/default-user=s88-c-k-c0x00ffffff-no-rj" alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                </div>
               } <input type="text" placeholder='Add a comment...' />
+             {
+              user?<Link>
+             <button className="commentbutton" style={{ width: "80px", height: "30px", borderRadius: "10px", marginTop: "5px", border: "1px solid grey" }}>Comment</button>
+             </Link>:<></>
+             }
             </div>
             <div className="ehgfehfjefn">
-              
+
             </div>
           </div>
           <div className="relatedvideos">
