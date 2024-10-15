@@ -4,7 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
 import Sidebar from '../Components/sidebar';
 import ShortSidebar from '../Components/shortsidebar';
-import { arrayUnion, doc, Firestore, getDoc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
+import { arrayUnion, doc, Firestore, getDoc, getFirestore, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import Header from '../Components/header';
 const firebaseConfig = {
   apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -155,6 +155,7 @@ export default function Videoviewingpage() {
     const fetchData = async () => {
       const videoRef = doc(db, 'Global Post', videoId);
       const videoDoc = await getDoc(videoRef);
+      
       if (videoDoc.exists()) {
         const videoData = videoDoc.data();
         setvideolink(videoData['Video Link']);
@@ -162,9 +163,22 @@ export default function Videoviewingpage() {
         setvideotitle(videoData['Caption']);
         setvideoupload(videoData['Uploaded At']);
         setvideoowner(videoData['Uploaded UID']); // Ensure this UID is valid
+  
+        // Increment views
+        const newviews = videoData['Views'] + 1; // Get the current views from videoData
+        console.log('Views', newviews);
+        const viewsdoc = doc(db, 'Global Post', videoId);
+        const viewsdetails = {
+          Views: newviews,
+        };
+  
+        // Log the view update details before writing
+        console.log('View Update Details:', viewsdetails);
+  
+        await updateDoc(viewsdoc, viewsdetails);
+        setvideoviews(newviews); // Update state to reflect the new view count
       }
-
-      // After setting video owner, fetch user details
+  
       if (videoowner) {
         const userRef = doc(db, 'User Details', videoowner);
         const userDoc = await getDoc(userRef);
@@ -172,13 +186,14 @@ export default function Videoviewingpage() {
           const userData = userDoc.data();
           setvideoownername(userData['Username']);
         }
-
+  
         const profilePicRef = doc(db, 'User Profile Pictures', videoowner);
         const profilePicDoc = await getDoc(profilePicRef);
         if (profilePicDoc.exists()) {
           const profilePicData = profilePicDoc.data();
           setvideoownerpfp(profilePicData['Profile Pic']);
         }
+  
         const subsRef = doc(db, 'Subscribers', videoowner);
         const subsDoc = await getDoc(subsRef);
         if (subsDoc.exists()) {
@@ -186,9 +201,11 @@ export default function Videoviewingpage() {
           setsubs(subsData['Subscriber UIDs']);
         }
       }
-    }
+    };
+  
     fetchData();
   }, [videoId, videoowner]);
+  
   function formatViews(views) {
     if (views < 1000) return views;
     else if (views < 1000000) return (views / 1000).toFixed(1) + 'K';
@@ -277,6 +294,7 @@ export default function Videoviewingpage() {
 
     fetchVideos();
   }, [userId]);
+
   const [randomNumber, setRandomNumber] = useState(0);
   const generateRandomNumber = () => {
     return Math.floor(1000000000 + Math.random() * 9000000000);
@@ -446,7 +464,8 @@ export default function Videoviewingpage() {
   }, []);
   useEffect(() => {
     // fetchcommentdata();
-  }, [])
+  }, []);
+
   return (
     <div className='webbody'>
       <Header />

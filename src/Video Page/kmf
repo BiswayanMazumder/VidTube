@@ -1,0 +1,6 @@
+<span>{comment.comment}</span> {/* Display the comment text */}
+                  <span>{comment.commenter}</span> {/* Display the commenter's UID */}
+                  <span>{formatTimeAgo(comment.timestamp)}</span> {/* Optionally format timestamp */}
+                  {/* Display likes and dislikes if necessary */}
+                  <span>{comment.likes} Likes</span>
+                  <span>{comment.dislikes} Dislikes</span>

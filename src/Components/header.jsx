@@ -21,7 +21,7 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
 export default function Header() {
-    const [premium,setpremium]=useState(false);
+    const [premium, setpremium] = useState(false);
     useEffect(() => {
         const fetchVideoData = async () => {
             try {
@@ -35,7 +35,7 @@ export default function Header() {
                 console.error(error);
             }
         };
-        console.log('prem',premium);
+        console.log('prem', premium);
         fetchVideoData();
     })
     const handleSignIn = async () => {
@@ -88,24 +88,26 @@ export default function Header() {
             console.error('Error during sign-out:', error);
         }
     };
-  return (
+    return (
 
-            <div className="heading">
-                <div className="jjefjdf">
-                    <Link>
-                        <div className="ejjnejfkd">
-                            {/* <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" focusable="false" aria-hidden="true" fill='black'><path d="M21 6H3V5h18v1zm0 5H3v1h18v-1zm0 6H3v1h18v-1z"></path></svg> */}
-                        </div>
-                    </Link>
-                    <Link to={"/"}>
-                        <div className="kejfkf" >
-                            <img src={premium?"https://as2.ftcdn.net/v2/jpg/04/69/69/17/1000_F_469691792_MfkrxlGuUkHsztMOuCo7CvADeyvhGihm.jpg":"https://vidtube-sable.vercel.app/assets/logo-koDzNJgp.png"} alt="" height={"30px"} width={"130px"} />
-                        </div>
-                    </Link>
-                    <div className="searchbar">
-                        <input type="text" placeholder='  Search' className="jjejfjekf" />
+        <div className="heading">
+            <div className="jjefjdf">
+                <Link>
+                    <div className="ejjnejfkd">
+                        {/* <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" focusable="false" aria-hidden="true" fill='black'><path d="M21 6H3V5h18v1zm0 5H3v1h18v-1zm0 6H3v1h18v-1z"></path></svg> */}
                     </div>
-                    <Link style={{ textDecoration: 'none', color: 'black' }}>
+                </Link>
+                <Link to={"/"}>
+                    <div className="kejfkf" >
+                        <img src={premium ? "https://as2.ftcdn.net/v2/jpg/04/69/69/17/1000_F_469691792_MfkrxlGuUkHsztMOuCo7CvADeyvhGihm.jpg" : "https://vidtube-sable.vercel.app/assets/logo-koDzNJgp.png"} alt="" height={"30px"} width={"130px"} />
+                    </div>
+                </Link>
+                <div className="searchbar">
+                    <input type="text" placeholder='  Search' className="jjejfjekf" />
+                </div>
+
+                <Link style={{ textDecoration: 'none', color: 'black' }}>
+
                     <div style={{ textDecoration: 'none', color: 'black', cursor: 'pointer' }} onClick={() => {
                         user ? handleSignOut() : handleSignIn();
                     }}>
@@ -118,8 +120,8 @@ export default function Header() {
                             </div>
                         }
                     </div>
-                    </Link>
-                </div>
+                </Link>
             </div>
-  )
+        </div>
+    )
 }
