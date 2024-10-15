@@ -381,18 +381,14 @@ export default function Videoviewingpage() {
               commenterDatas = commenterDocss.data();
               commentpfp.push(commenterDatas['Profile Pic']);
             } else {
-              console.log(`Profile picture not found for UID: ${commentData.commenter}`);
+              // console.log(`Profile picture not found for UID: ${commentData.commenter}`);
             }
 
             // Log the comment details
-            console.log('Fetched Comment:', {
-              comment: commentData.comment,
-              commenter: commenterData ? commenterData.Username : 'User not found',
-              profilePic: commenterDatas ? commenterDatas['Profile Pic'] : 'User not found',
-            });
+
 
           } else {
-            console.log(`No comment found for ID: ${commentID}`);
+            // console.log(`No comment found for ID: ${commentID}`);
           }
         }
 
