@@ -4,7 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
 import Sidebar from '../Components/sidebar';
 import ShortSidebar from '../Components/shortsidebar';
-import { arrayUnion, doc, Firestore, getDoc, getFirestore, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, doc, Firestore, getDoc, getFirestore, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import Header from '../Components/header';
 const firebaseConfig = {
   apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -469,6 +469,31 @@ export default function Videoviewingpage() {
   const [disliked, isdisliked] = useState(false);
   const [likecount, setlikecount] = useState(0);
   const [dislikecount, setdislikecount] = useState(0);
+  const likevideo = async () => {
+    try {
+        const docRef = doc(db, 'Liked Videos', videoId.toString());
+
+        // Check the existing document
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) {
+            console.log("No such document!");
+            return;
+        }
+
+        // Prepare the data to update
+        const dataToUpdate = isliked
+            ? { UIDs: arrayUnion(auth.currentUser.uid) }  // Add UID
+            : { UIDs: arrayRemove(auth.currentUser.uid) }; // Remove UID
+
+        // Update the document
+        await updateDoc(docRef, dataToUpdate);
+        console.log(`UID ${isliked ? 'added to' : 'removed from'} the document.`);
+        
+    } catch (error) {
+        console.log("Error updating document: ", error);
+    }
+};
+
   return (
     <div className='webbody'>
       <Header />
@@ -517,6 +542,7 @@ export default function Videoviewingpage() {
                     isliked(false);
                     // setcommentlike(commentlike - 1);
                   } else {
+                    // likevideo();
                     isliked(true);
                     setlikecount(likecount+1)
                     isdisliked(false);
@@ -591,11 +617,17 @@ export default function Videoviewingpage() {
                       <img src={commentpfp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
                     </div>
                     <div className="knkfnvk" style={{ display: "flex", flexDirection: "column", marginTop: "2px", gap: "5px", fontWeight: "600", fontSize: "15px" }}>
-                      <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${commentowners[index]}`}>
-                        <div className="vkfk">
+                      {/* <Link style={{ textDecoration: 'none', color: 'black' }} > */}
+                        <div className="vkfk" style={{ display: "flex", flexDirection: "row", gap: "15px", fontWeight: "600", fontSize: "15px" }}>
+                        
+                          <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${commentowners[index]}`}>
                           {commentername[index]}
+                          </Link>
+                          {
+                           user? commentowners[index]===auth.currentUser.uid?<svg aria-label="Conversation information" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="15" role="img" viewBox="0 0 24 24" width="15"><title>More Options</title><circle cx="12.001" cy="12.005" fill="none" r="10.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><circle cx="11.819" cy="7.709" r="1.25"></circle><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="10.569" x2="13.432" y1="16.777" y2="16.777"></line><polyline fill="none" points="10.569 11.05 12 11.05 12 16.777" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline></svg>:<></>:<></>
+                            }
                         </div>
-                      </Link>
+                      {/* </Link> */}
                       <div className="vkfk" style={{ fontWeight: "300", fontSize: "12px" }}>
                         {comments[index]}
                       </div>
