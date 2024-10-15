@@ -4,7 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
 import Sidebar from '../Components/sidebar';
 import ShortSidebar from '../Components/shortsidebar';
-import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { arrayUnion, doc, Firestore, getDoc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
 import Header from '../Components/header';
 const firebaseConfig = {
   apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -53,6 +53,7 @@ export default function Videoviewingpage() {
   });
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         console.log("Fetching VID data..."); // Log fetching attempt
         const docRef = doc(db, 'Global VIDs', 'VIDs');
@@ -266,7 +267,7 @@ export default function Videoviewingpage() {
           setViews(Views);
           setVideoLink(Videolink);
           setUploadDate(UploadDates);
-          console.log('VID DATA', VideoID)
+          // console.log('VID DATA', VideoID)
           setVidData(VideoID);
         }
       } catch (error) {
@@ -276,85 +277,290 @@ export default function Videoviewingpage() {
 
     fetchVideos();
   }, [userId]);
+  const [randomNumber, setRandomNumber] = useState(0);
+  const generateRandomNumber = () => {
+    return Math.floor(1000000000 + Math.random() * 9000000000);
+  };
+
+  useEffect(() => {
+    // Set a random number when the component mounts
+    setRandomNumber(generateRandomNumber());
+    // console.log('Rand',randomNumber);
+  }, []);
+  const [commentText, setCommentText] = useState('');
+  const uploadcommentid = async () => {
+    try {
+      // Create a reference to the document in Firestore
+      const docRef = doc(db, 'Comment ID', "Comment ID Generated");
+
+      // Prepare the data to upload, including the random number
+      const dataToUpdate = {
+        commentId: arrayUnion(randomNumber), // Add the random number to the array
+      };
+
+      // Update the document with merge: true to keep existing fields
+      await setDoc(docRef, dataToUpdate, { merge: true });
+      console.log('Updated Comment ID document successfully.');
+      console.log('Comment ID uploaded successfully:', randomNumber.toString());
+    } catch (error) {
+      console.error('Error uploading comment ID:', error);
+    }
+  };
+  const uploadcomment = async () => {
+    await uploadcommentid();
+    try {
+      const commentred = doc(db, 'Comment Details', randomNumber.toString());
+      const commentdetails = {
+        comment: commentText,
+        commenter: auth.currentUser.uid,
+        VideoID: videoId,
+        timestamp: serverTimestamp(),
+        likes: 0,
+        dislikes: 0,
+      };
+
+      // Log the comment details before writing
+      console.log('Comment Details:', commentdetails);
+
+      await setDoc(commentred, commentdetails);
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  }
+  const [commentataid, setcommentdataid] = useState([]);
+  const [commentowner, setcommentowner] = useState([]);
+  const [commenrdate, setcommentdate] = useState([]);
+  const [commentdata, setcommentdata] = useState([]);
+  const [commentlike, setcommentlike] = useState([]);
+  const [commentdislike, setcommentdislike] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [commentpfp, setcommentpfp] = useState([]);
+  const [commentername, setcommentername] = useState([]);
+  const [commentowners,setcomentowners] = useState([]);
+  const [commentedvideo,setcommentedvideo] = useState([]);
+  const fetchcomments = async () => {
+    try {
+      const docRef = doc(db, 'Comment ID', "Comment ID Generated");
+      const docSnapshot = await getDoc(docRef);
+
+      if (docSnapshot.exists()) {
+        const data = docSnapshot.data();
+        const CommentIDs = data.commentId || []; // Ensure this is an array
+
+        const fetchedComments = [];
+        const commenterdetails = [];
+        const commentpfp = [];
+        const commentvideoid=[];
+        const commentownerid=[];
+        for (const commentID of CommentIDs) {//comment
+          const commentRef = doc(db, 'Comment Details', commentID.toString());
+          const commentDoc = await getDoc(commentRef);
+          if (commentDoc.exists()) {
+            const commentData = commentDoc.data();
+            fetchedComments.push(commentData.comment);
+            commentvideoid.push(commentData.VideoID);
+            commentownerid.push(commentData.commenter);
+            // Fetch commenter details
+            const commenterRefs = doc(db, 'User Details', commentData.commenter);//name
+            const commenterDocs = await getDoc(commenterRefs);
+            let commenterData;
+
+            if (commenterDocs.exists()) {
+              commenterData = commenterDocs.data();
+              commenterdetails.push(commenterData.Username);
+            } else {
+              console.log(`Commenter not found for UID: ${commentData.commenter}`);
+            }
+
+            // Fetch profile picture
+            const commenterRefss = doc(db, 'User Profile Pictures', commentData.commenter);//pfp
+            const commenterDocss = await getDoc(commenterRefss);
+            let commenterDatas;
+
+            if (commenterDocss.exists()) {
+              commenterDatas = commenterDocss.data();
+              commentpfp.push(commenterDatas['Profile Pic']);
+            } else {
+              console.log(`Profile picture not found for UID: ${commentData.commenter}`);
+            }
+
+            // Log the comment details
+            console.log('Fetched Comment:', {
+              comment: commentData.comment,
+              commenter: commenterData ? commenterData.Username : 'User not found',
+              profilePic: commenterDatas ? commenterDatas['Profile Pic'] : 'User not found',
+            });
+
+          } else {
+            console.log(`No comment found for ID: ${commentID}`);
+          }
+        }
+
+        setComments(fetchedComments);
+        setcommentpfp(commentpfp); // Set profile pictures separately
+        setcommentername(commenterdetails);
+        setcomentowners(commentownerid);
+        setcommentedvideo(commentvideoid);
+      } else {
+        console.log('No Comment ID document found!');
+      }
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
+
+
+
+  // Call fetchcomments in a useEffect
+  useEffect(() => {
+    fetchcomments();
+  }, []);
+  const fetchcommentdata = async () => {
+    await fetchcomments();
+    try {
+      for (var i = 0; i < commentataid.length; i++) {
+        const docRef = doc(db, 'Comment Details', commentataid[i].toString());
+        const docSnapshot = await getDoc(docRef);
+        if (docSnapshot.exists()) {
+          const data = docSnapshot.data();
+          setcommentdata(data.comment);
+          setcommentowner(data.commenter);
+          setcommentdate(data.timestamp);
+          setcommentlike(data.likes);
+          setcommentdislike(data.dislikes);
+
+          // Log the fetched comment data
+          console.log('Fetched comment data:', {
+            comment: data.comment,
+            commenter: data.commenter,
+            timestamp: data.timestamp,
+            likes: data.likes,
+            dislikes: data.dislikes
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching comment data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchcomments();
+    console.log('Comment pfp', commentpfp)
+  }, []);
+  useEffect(() => {
+    // fetchcommentdata();
+  }, [])
   return (
     <div className='webbody'>
       <Header />
-      <div className="videobody">
-        <video width="100%" height="533" src={videolink} title={videotitle} controls autoPlay style={{ backgroundColor: "black" }} onContextMenu={(e) => e.preventDefault()}></video>
-        <div className="nkmkv" style={{ margin: "10px", fontWeight: "bold", fontSize: "20px" }}>
-          {videotitle}
-          <div className="jjfndv" style={{ fontSize: "15px", color: "grey", fontWeight: "300", marginTop: "10px" }}>
-            {formatViews(videoviwes)} views
-          </div>
-          <div className="jjfndv" style={{ fontSize: "15px", color: "grey", fontWeight: "300", marginTop: "10px" }}>
-            Uploaded {formatTimeAgo(videoupload)}
-          </div>
-          <div className='ekhbfehfss' style={{ display: "flex", flexDirection: "row", gap: "10px", marginTop: "20px" }}>
-            <img src={videoownerpfp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
-            <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${videoowner}`}>
-              <div className="jfvjnf" style={{ fontWeight: "300", fontSize: "15px", marginTop: "0px" }}>
-                {videoownername}
-              </div>
-              <div className="jfvjnf" style={{ fontWeight: "300", fontSize: "15px", color: 'grey' }}>
-                {subscount.length === 1 || subscount.length === 0 ? subscount.length + ' Subscriber' : subscount.length + ' Subscribers'}
-              </div>
-            </Link>
+      {
+        loading ? <div className="loading-bar"></div> : <div className="videobody">
+          <video width="100%" height="533" src={videolink} title={videotitle} controls autoPlay style={{ backgroundColor: "black" }} onContextMenu={(e) => e.preventDefault()}></video>
+          <div className="nkmkv" style={{ margin: "10px", fontWeight: "bold", fontSize: "20px" }}>
+            {videotitle}
+            <div className="jjfndv" style={{ fontSize: "15px", color: "grey", fontWeight: "300", marginTop: "10px" }}>
+              {formatViews(videoviwes)} views
+            </div>
+            <div className="jjfndv" style={{ fontSize: "15px", color: "grey", fontWeight: "300", marginTop: "10px" }}>
+              Uploaded {formatTimeAgo(videoupload)}
+            </div>
+            <div className='ekhbfehfss' style={{ display: "flex", flexDirection: "row", gap: "10px", marginTop: "20px" }}>
+              <img src={videoownerpfp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+              <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${videoowner}`}>
+                <div className="jfvjnf" style={{ fontWeight: "300", fontSize: "15px", marginTop: "0px" }}>
+                  {videoownername}
+                </div>
+                <div className="jfvjnf" style={{ fontWeight: "300", fontSize: "15px", color: 'grey' }}>
+                  {subscount.length === 1 || subscount.length === 0 ? subscount.length + ' Subscriber' : subscount.length + ' Subscribers'}
+                </div>
+              </Link>
 
-            {
-              auth.currentUser && subscount.includes(auth.currentUser.uid) ? (
-                <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
-                  <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "-8px" }}>
-                    <center>Subscribed</center>
-                  </div>
-                </Link>
-              ) : (
-                <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link">
-                  <div className='hebfjenk'>
-                    <center>Subscribe</center>
-                  </div>
-                </Link>
-              )
-            }
-          </div>
-        </div>
-        <div className="krkmvkrhgjr">
-          <div className="commentsection">
-            <h5>Comments</h5>
-            <div className="jenfjekf" style={{ display: "flex", flexDirection: "row", gap: "15px", marginTop: "20px" }}>
               {
-                user ? <div className='jdckdk'>
-                  <img src={photourl} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
-                </div> : <div className='jdckdk'>
-                  <img src="https://yt3.ggpht.com/a/default-user=s88-c-k-c0x00ffffff-no-rj" alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
-                </div>
-              } <input type="text" placeholder='Add a comment...' />
-             {
-              user?<Link>
-             <button className="commentbutton" style={{ width: "80px", height: "30px", borderRadius: "10px", marginTop: "5px", border: "1px solid grey" }}>Comment</button>
-             </Link>:<></>
-             }
+                auth.currentUser && subscount.includes(auth.currentUser.uid) ? (
+                  <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
+                    <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "-8px" }}>
+                      <center>Subscribed</center>
+                    </div>
+                  </Link>
+                ) : (
+                  <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link">
+                    <div className='hebfjenk'>
+                      <center>Subscribe</center>
+                    </div>
+                  </Link>
+                )
+              }
             </div>
-            <div className="ehgfehfjefn">
+          </div>
+          <div className="krkmvkrhgjr">
+            <div className="commentsection">
+              <h5>Comments</h5>
+              <div className="jenfjekf" style={{ display: "flex", flexDirection: "row", gap: "15px", marginTop: "20px" }}>
+                {
+                  user ? <div className='jdckdk'>
+                    <img src={photourl} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                  </div> : <div className='jdckdk'>
+                    <img src="https://yt3.ggpht.com/a/default-user=s88-c-k-c0x00ffffff-no-rj" alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                  </div>
+                } <input
+                  type="text"
+                  placeholder='Add a comment...'
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                />
+                {
+                  auth.currentUser ? <Link>
+                    {
+                      commentText.length > 0 ? <button className="commentbutton" style={{ width: "80px", height: "30px", borderRadius: "10px", marginTop: "5px", border: "1px solid grey" }} onClick={() => {
+                        uploadcomment();
+                        fetchcomments();
+                        setCommentText('');
+                      }}>Comment</button> : <></>
+                    }
+                  </Link> : <></>
+                }
+              </div>
+
+              <div className="ehgfehfjefn" style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "50px" }}>
+                {comments.map((comment, index) => (
+                  commentedvideo[index]==videoId?<div className="jefjkf" style={{ display: "flex", flexDirection: "row", gap: "10px", marginTop: "10px", flexDirection: 'row', gap: "10px", fontWeight: "500", fontSize: "15px" }} key={index}>
+                    <div className="bnbnfnv" style={{ height: "40px", width: "40px", borderRadius: "50%", backgroundColor: "grey" }}>
+                      <img src={commentpfp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                    </div>
+                    <div className="knkfnvk" style={{ display: "flex", flexDirection: "column", marginTop: "2px",  gap: "5px", fontWeight: "600", fontSize: "15px" }}>
+                      <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${commentowners[index]}`}>
+                      <div className="vkfk">
+                        {commentername[index]}
+                      </div>
+                      </Link>
+                      <div className="vkfk" style={{fontWeight:"300",fontSize:"12px"}}>
+                        {comments[index]}
+                      </div>
+                    </div>
+                  </div>:<></>
+                ))}
+              </div>
 
             </div>
-          </div>
-          <div className="relatedvideos">
-            {
-              thumbnails.map((thumbnail, index) => (
-                <div className="jnfvkf">
-                  <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${vidData[index]}`}>
-                    <img src={thumbnails[index]} alt={captions[index]} height={"120px"}
-                      width={"200px"} style={{ borderRadius: "10px" }} />
-                  </Link>
-                  <Link style={{ textDecoration: 'none', color: 'black', fontWeight: "600" }} to={`/videos/${vidData[index]}`}>
-                    {captions[index]}
-                  </Link>
-                </div>
-              ))
-            }
+            <div className="relatedvideos">
+              {
+                thumbnails.map((thumbnail, index) => (
+                  <div className="jnfvkf">
+                    <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${vidData[index]}`}>
+                      <img src={thumbnails[index]} alt={captions[index]} height={"120px"}
+                        width={"200px"} style={{ borderRadius: "10px" }} />
+                    </Link>
+                    <Link style={{ textDecoration: 'none', color: 'black', fontWeight: "600" }} to={`/videos/${vidData[index]}`}>
+                      {captions[index]}
+                    </Link>
+                  </div>
+                ))
+              }
+            </div>
           </div>
         </div>
-      </div>
+      }
     </div>
   )
 }
