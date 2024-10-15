@@ -155,7 +155,7 @@ export default function Videoviewingpage() {
     const fetchData = async () => {
       const videoRef = doc(db, 'Global Post', videoId);
       const videoDoc = await getDoc(videoRef);
-      
+
       if (videoDoc.exists()) {
         const videoData = videoDoc.data();
         setvideolink(videoData['Video Link']);
@@ -163,7 +163,7 @@ export default function Videoviewingpage() {
         setvideotitle(videoData['Caption']);
         setvideoupload(videoData['Uploaded At']);
         setvideoowner(videoData['Uploaded UID']); // Ensure this UID is valid
-  
+
         // Increment views
         const newviews = videoData['Views'] + 1; // Get the current views from videoData
         console.log('Views', newviews);
@@ -171,14 +171,14 @@ export default function Videoviewingpage() {
         const viewsdetails = {
           Views: newviews,
         };
-  
+
         // Log the view update details before writing
         console.log('View Update Details:', viewsdetails);
-  
+
         await updateDoc(viewsdoc, viewsdetails);
         setvideoviews(newviews); // Update state to reflect the new view count
       }
-  
+
       if (videoowner) {
         const userRef = doc(db, 'User Details', videoowner);
         const userDoc = await getDoc(userRef);
@@ -186,14 +186,14 @@ export default function Videoviewingpage() {
           const userData = userDoc.data();
           setvideoownername(userData['Username']);
         }
-  
+
         const profilePicRef = doc(db, 'User Profile Pictures', videoowner);
         const profilePicDoc = await getDoc(profilePicRef);
         if (profilePicDoc.exists()) {
           const profilePicData = profilePicDoc.data();
           setvideoownerpfp(profilePicData['Profile Pic']);
         }
-  
+
         const subsRef = doc(db, 'Subscribers', videoowner);
         const subsDoc = await getDoc(subsRef);
         if (subsDoc.exists()) {
@@ -202,10 +202,10 @@ export default function Videoviewingpage() {
         }
       }
     };
-  
+
     fetchData();
   }, [videoId, videoowner]);
-  
+
   function formatViews(views) {
     if (views < 1000) return views;
     else if (views < 1000000) return (views / 1000).toFixed(1) + 'K';
@@ -354,8 +354,8 @@ export default function Videoviewingpage() {
   const [comments, setComments] = useState([]);
   const [commentpfp, setcommentpfp] = useState([]);
   const [commentername, setcommentername] = useState([]);
-  const [commentowners,setcomentowners] = useState([]);
-  const [commentedvideo,setcommentedvideo] = useState([]);
+  const [commentowners, setcomentowners] = useState([]);
+  const [commentedvideo, setcommentedvideo] = useState([]);
   const fetchcomments = async () => {
     try {
       const docRef = doc(db, 'Comment ID', "Comment ID Generated");
@@ -368,8 +368,8 @@ export default function Videoviewingpage() {
         const fetchedComments = [];
         const commenterdetails = [];
         const commentpfp = [];
-        const commentvideoid=[];
-        const commentownerid=[];
+        const commentvideoid = [];
+        const commentownerid = [];
         for (const commentID of CommentIDs) {//comment
           const commentRef = doc(db, 'Comment Details', commentID.toString());
           const commentDoc = await getDoc(commentRef);
@@ -506,6 +506,12 @@ export default function Videoviewingpage() {
                   </Link>
                 )
               }
+              <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
+                <div className='hebfjenkd' style={{ backgroundColor: 'black', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "0px", width: "fit-content",gap: "50px",paddingLeft: "10px",paddingRight: "10px" }}>
+                <svg stroke="white" fill="white" stroke-width="0" viewBox="0 0 1024 1024" height="28" width="28" xmlns="http://www.w3.org/2000/svg"><path d="M885.9 533.7c16.8-22.2 26.1-49.4 26.1-77.7 0-44.9-25.1-87.4-65.5-111.1a67.67 67.67 0 0 0-34.3-9.3H572.4l6-122.9c1.4-29.7-9.1-57.9-29.5-79.4A106.62 106.62 0 0 0 471 99.9c-52 0-98 35-111.8 85.1l-85.9 311H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h601.3c9.2 0 18.2-1.8 26.5-5.4 47.6-20.3 78.3-66.8 78.3-118.4 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7-.2-12.6-2-25.1-5.6-37.1zM184 852V568h81v284h-81zm636.4-353l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 22.4-13.2 42.6-33.6 51.8H329V564.8l99.5-360.5a44.1 44.1 0 0 1 42.2-32.3c7.6 0 15.1 2.2 21.1 6.7 9.9 7.4 15.2 18.6 14.6 30.5l-9.6 198.4h314.4C829 418.5 840 436.9 840 456c0 16.5-7.2 32.1-19.6 43z"></path></svg>
+                <svg stroke="white" fill="white" stroke-width="0" viewBox="0 0 1024 1024" height="28" width="28" xmlns="http://www.w3.org/2000/svg"><path d="M885.9 490.3c3.6-12 5.4-24.4 5.4-37 0-28.3-9.3-55.5-26.1-77.7 3.6-12 5.4-24.4 5.4-37 0-28.3-9.3-55.5-26.1-77.7 3.6-12 5.4-24.4 5.4-37 0-51.6-30.7-98.1-78.3-118.4a66.1 66.1 0 0 0-26.5-5.4H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h129.3l85.8 310.8C372.9 889 418.9 924 470.9 924c29.7 0 57.4-11.8 77.9-33.4 20.5-21.5 31-49.7 29.5-79.4l-6-122.9h239.9c12.1 0 23.9-3.2 34.3-9.3 40.4-23.5 65.5-66.1 65.5-111 0-28.3-9.3-55.5-26.1-77.7zM184 456V172h81v284h-81zm627.2 160.4H496.8l9.6 198.4c.6 11.9-4.7 23.1-14.6 30.5-6.1 4.5-13.6 6.8-21.1 6.7a44.28 44.28 0 0 1-42.2-32.3L329 459.2V172h415.4a56.85 56.85 0 0 1 33.6 51.8c0 9.7-2.3 18.9-6.9 27.3l-13.9 25.4 21.9 19a56.76 56.76 0 0 1 19.6 43c0 9.7-2.3 18.9-6.9 27.3l-13.9 25.4 21.9 19a56.76 56.76 0 0 1 19.6 43c0 9.7-2.3 18.9-6.9 27.3l-14 25.5 21.9 19a56.76 56.76 0 0 1 19.6 43c0 19.1-11 37.5-28.8 48.4z"></path></svg>
+                </div>
+              </Link>
             </div>
           </div>
           <div className="krkmvkrhgjr">
@@ -539,21 +545,21 @@ export default function Videoviewingpage() {
 
               <div className="ehgfehfjefn" style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "50px" }}>
                 {comments.map((comment, index) => (
-                  commentedvideo[index]==videoId?<div className="jefjkf" style={{ display: "flex", flexDirection: "row", gap: "10px", marginTop: "10px", flexDirection: 'row', gap: "10px", fontWeight: "500", fontSize: "15px" }} key={index}>
+                  commentedvideo[index] == videoId ? <div className="jefjkf" style={{ display: "flex", flexDirection: "row", gap: "10px", marginTop: "10px", flexDirection: 'row', gap: "10px", fontWeight: "500", fontSize: "15px" }} key={index}>
                     <div className="bnbnfnv" style={{ height: "40px", width: "40px", borderRadius: "50%", backgroundColor: "grey" }}>
                       <img src={commentpfp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
                     </div>
-                    <div className="knkfnvk" style={{ display: "flex", flexDirection: "column", marginTop: "2px",  gap: "5px", fontWeight: "600", fontSize: "15px" }}>
+                    <div className="knkfnvk" style={{ display: "flex", flexDirection: "column", marginTop: "2px", gap: "5px", fontWeight: "600", fontSize: "15px" }}>
                       <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${commentowners[index]}`}>
-                      <div className="vkfk">
-                        {commentername[index]}
-                      </div>
+                        <div className="vkfk">
+                          {commentername[index]}
+                        </div>
                       </Link>
-                      <div className="vkfk" style={{fontWeight:"300",fontSize:"12px"}}>
+                      <div className="vkfk" style={{ fontWeight: "300", fontSize: "12px" }}>
                         {comments[index]}
                       </div>
                     </div>
-                  </div>:<></>
+                  </div> : <></>
                 ))}
               </div>
 

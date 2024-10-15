@@ -64,7 +64,7 @@ body{
 .kejfkf{
   margin-top: 28px;
 }
-.hebfjenk{
+.hebfjenk,.hebfjenkd{
   display: flex;
   height: 40px;
   width: 110px;
@@ -82,7 +82,11 @@ body{
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
-
+@media screen and (max-width:755px) {
+  .hebfjenkd{
+    display: none;
+  }
+}
 .hebfjenk:hover{
   background-color: rgb(21, 20, 20);
 }
@@ -226,15 +230,18 @@ input {
   border-radius: 50%;
   background-color: red;
 }
-.thumbnail-item{
+.thumbnail-item,.thumbnail-item-dark{
   padding: 5px;
   border-radius: 10px;
 }
 .thumbnail-item:hover{
   background-color: #f2dfdf;
 }
+.thumbnail-item-dark:hover{
+  background-color: rgb(189, 65, 65);
+}
 /* Optionally, add some spacing back if needed */
-.thumbnail-item h5 {
+.thumbnail-item ,.thumbnail-item-dark h5 {
   margin-bottom: 5px; /* Add some space between h5 and p */
   margin-top: 2px;
 }
@@ -256,7 +263,8 @@ input {
   font-size: 15px;
   position: absolute;
   right: 0; /* Push to the right */
-  margin-right: 20px;
+  margin-right: 60px;
+
 }
 .inkfjekfe{
   margin-top: 35px;
@@ -431,4 +439,12 @@ input {
   100% {
     background-position: 0 0;
   }
+}
+.kenfkemn{
+  display: flex;
+  margin-top: 30px;
+  position: absolute;
+  right: 0; 
+  margin-left: 10px;
+  margin-right: 20px;
 }

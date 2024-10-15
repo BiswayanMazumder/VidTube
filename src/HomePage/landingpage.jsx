@@ -209,17 +209,32 @@ export default function Landingpage() {
             console.error('Error during sign-out:', error);
         }
     };
+    const [nightmode, setnightmode] = useState(false);
+
+    const fetchdarkmode = async () => {
+        const nightmodee = localStorage.getItem('nightmode') === 'true'; // Ensure it's a boolean
+        setnightmode(nightmodee);
+        console.log('night mode', nightmodee); // Log the correct value
+    };
+
+    useEffect(() => {
+        fetchdarkmode(); // Fetch the mode initially
+        const interval = setInterval(fetchdarkmode, 1000); // Call the function every second
+
+        return () => clearInterval(interval); // Cleanup the interval on unmount
+    }, []); 
+    
     return (
-        <div className="webbody">
+        <div className="webbody" style={{ backgroundColor: nightmode ? 'black' : 'white', color: nightmode ? 'white' : 'black' }} >
             <Header />
             <div className="videobody">
                 {/* {
                     sidebar ? <Sidebar /> : <ShortSidebar />
                 } */}
-                <div className="jdbfjekfjkhef">
+                <div className="jdbfjekfjkhef" style={{color: nightmode ? 'white' : 'black'}}>
                     {/* <div className="thumbnail-container"> */}
                     {thumbnail.map((url, index) => (
-                        <div key={index} className="thumbnail-item">
+                        <div key={index} className={nightmode?"thumbnail-item-dark":"thumbnail-item"}>
                             <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(()=>{
                                             localStorage.setItem("VID", VID[index]);
                                         })}>
@@ -232,7 +247,7 @@ export default function Landingpage() {
                                             <img src={dp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
                                         </Link>
                                     </div>
-                                    <div className="jjnjbhvf">
+                                    <div className="jjnjbhvf" style={{color: nightmode ? 'white' : 'black'}}>
                                         <h5>{caption[index]}</h5>
                                         <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
                                             {name[index]}
