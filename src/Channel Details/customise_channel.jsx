@@ -7,13 +7,13 @@ import ShortSidebar from '../Components/shortsidebar';
 import { arrayRemove, arrayUnion, doc, Firestore, getDoc, getFirestore, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import Header from '../Components/header';
 const firebaseConfig = {
-  apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
-  authDomain: "pixelprowess69.firebaseapp.com",
-  projectId: "pixelprowess69",
-  storageBucket: "pixelprowess69.appspot.com",
-  messagingSenderId: "785469951781",
-  appId: "1:785469951781:web:e5b45a44c5ec5f44d0d4cc",
-  measurementId: "G-TZ5WZEQPZE"
+    apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
+    authDomain: "pixelprowess69.firebaseapp.com",
+    projectId: "pixelprowess69",
+    storageBucket: "pixelprowess69.appspot.com",
+    messagingSenderId: "785469951781",
+    appId: "1:785469951781:web:e5b45a44c5ec5f44d0d4cc",
+    measurementId: "G-TZ5WZEQPZE"
 };
 
 // Initialize Firebase
@@ -25,7 +25,8 @@ const db = getFirestore(app);
 export default function Customise_channel() {
     const { userId } = useParams();
     useEffect(() => {
-        if(!auth.currentUser){
+        document.title = 'Channel customization - Vidtube Studio'
+        if (!auth.currentUser) {
             window.location.replace('/')
         }
     })
@@ -76,10 +77,59 @@ export default function Customise_channel() {
     };
     useEffect(() => {
         fetchUserData();
-    },[userId]);
-  return (
-    <div className='webbody'>
-      <Header/>
-    </div>
-  )
+    }, [userId]);
+    return (
+        <div className='webbody'>
+            <Header />
+            <div className="rjgjrgrkjg">
+                <div className="heading">
+                    <div className="jrhgrjg">
+                        Banner Image
+                    </div>
+                    <br />
+                    <div className="sjjcc">
+                        This image will appear across the top of your channel
+                    </div>
+                </div>
+                <br />
+                <div className="ehfejkej">
+                    <div className="ehjehdj" style={{borderRadius: '10px'}}>
+                        <img src={coverPic} alt="" height={'160px'} width={'290px'} style={{borderRadius: '10px'}}/>
+                    </div>
+                    <div className="hhbjhdn">
+                        For the best results on all devices, use an image that’s at least 2048 x 1152 pixels and 6MB or less.
+                        <Link style={{ textDecoration: 'none', color: 'black' }}>
+                            <div className="effkf">
+                                Upload
+                            </div>
+                        </Link>
+                    </div>
+                </div>
+                <br /><br />
+                <div className="heading">
+                    <div className="jrhgrjg">
+                        Picture
+                    </div>
+                    <br />
+                    <div className="sjjcc">
+                        Your profile picture will appear where your channel is presented on VidTube, like next to your videos and comments
+                    </div>
+                </div>
+                <br />
+                <div className="ehfejkej">
+                    <div className="ehjehdj" style={{display: 'flex', justifyContent: 'center', alignItems: 'center',borderRadius: '10px'}}>
+                        <img src={dp} alt="" height={'100px'} width={'100px'} style={{ borderRadius: '50%' }}/>
+                    </div>
+                    <div className="hhbjhdn">
+                    It’s recommended to use a picture that’s at least 98 x 98 pixels and 4MB or less. 
+                        <Link style={{ textDecoration: 'none', color: 'black' }}>
+                            <div className="effkf">
+                                Upload
+                            </div>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
 }
