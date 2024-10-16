@@ -147,6 +147,29 @@ export default function Customise_channel() {
                         </label>
                     </div>
                 </div>
+                <br /><br />
+                <div className="heading">
+                    <div className="jrhgrjg">Name</div>
+                    <br />
+                    <div className="sjjcc">
+                        Choose a name that justifies your content
+                    </div>
+                    <br />
+                    <div className="sjjcc">
+                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} style={{ paddingLeft: '20px' }} />
+                    </div>
+                </div>
+                <br /><br /><br />
+                <div className="heading">
+                    <div className="jrhgrjg">Description</div>
+                    <br />
+                    
+                    {/* <br /> */}
+                    <div className="sjjcc">
+                        <input type="text" value={bio} onChange={(e) => setName(e.target.value)} style={{ paddingLeft: '20px',height:'200px',marginBottom:'100px' }}  />
+                    </div>
+                </div>
+                <br /><br /><br />
             </div>
         </div>
     );
