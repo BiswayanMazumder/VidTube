@@ -89,12 +89,12 @@ export default function Customise_channel() {
                         setCoverPic(downloadURL);
                         const coverDocRef = doc(db, 'User Cover Pictures', userId);
                         await updateDoc(coverDocRef, { 'Cover Pic': downloadURL });
-                        setMessage('Cover picture updated successfully!');
+                        setMessage('Uploaded');
                     } else if (type === 'profile') {
                         setDp(downloadURL);
                         const profileDocRef = doc(db, 'User Profile Pictures', userId);
                         await updateDoc(profileDocRef, { 'Profile Pic': downloadURL });
-                        setMessage('Profile picture updated successfully!');
+                        setMessage('Uploaded');
                     }
                 } catch (error) {
                     console.error(error);
@@ -113,7 +113,7 @@ export default function Customise_channel() {
         <div className='webbody'>
             <Header />
             <div className="rjgjrgrkjg">
-                {message && <div className="message">{message}</div>}
+                {/* {message && <div className="message">{message}</div>} */}
                 {/* Rest of your component code */}
                 <div className="heading">
                     <div className="jrhgrjg">Banner Image</div>
@@ -137,7 +137,7 @@ export default function Customise_channel() {
                             onChange={(e) => handleFileChange(e, 'cover')}
                         />
                         <label htmlFor="cover-upload" style={{ textDecoration: 'none', color: 'black' }}>
-                            <div className="effkf" style={{ cursor: 'pointer' }}>Upload</div>
+                            <div className="effkf" style={{ cursor: 'pointer' }}>{message ? message : 'Upload'}</div>
                         </label>
                     </div>
                 </div>
