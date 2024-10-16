@@ -3,4 +3,45 @@
                   <span>{formatTimeAgo(comment.timestamp)}</span> {/* Optionally format timestamp */}
                   {/* Display likes and dislikes if necessary */}
                   <span>{comment.likes} Likes</span>
-                  <span>{comment.dislikes} Dislikes</span>
+
+                  4503319065
+                  (number)
+                  
+                  
+                  1
+                  3493534448
+                  (number)
+                  
+                  
+                  2
+                  9138413497
+                  (number)
+                  
+                  
+                  3
+                  8020607087
+                  (number)
+                  
+                  
+                  4
+                  8970849237
+                  (number)
+                  
+                  
+                  5
+                  8755868658
+                  (number)
+                  
+                  
+                  6
+                  1982875399
+                  (number)
+                  
+                  
+                  7
+                  6069842034
+                  (number)
+                  
+                  
+                  8
+                  3020995541                  <span>{comment.dislikes} Dislikes</span>

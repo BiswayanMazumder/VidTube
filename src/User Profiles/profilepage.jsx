@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, updateDoc, setDoc, arrayUnion } from "firebase/firestore";
 import Header from '../Components/header';
 import Aboutpage from './aboutpage';
 import VideosHomepage from './videoshomepage';
@@ -184,7 +184,57 @@ export default function ProfilePage() {
 
         fetchCommunityPosts();
     }, [userId]);
+    const [joined, setjoined] = useState(false);
+    useEffect(() => {
+        const checkmembership = async () => {
+            const docRef = doc(db, 'Memberships', userId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                setjoined(true);
+            } else {
+                setjoined(false);
+            }
+        }
+        checkmembership();
+    }, [userId]);
+    const joinmembership = async () => {
+        const docRef = doc(db, 'Memberships', userId);
 
+        // Prepare the data to upload, including the random number
+        const dataToUpdate = {
+            MemberID: arrayUnion(auth.currentUser.uid), // Add the random number to the array
+        };
+
+        // Update the document with merge: true to keep existing fields
+        await setDoc(docRef, dataToUpdate, { merge: true });
+    }
+    const joinpayments = async () => {
+        const options = {
+            key: 'rzp_test_5ujtbmUNWVYysI', // Your Razorpay Key ID
+            amount: '50000', // Amount in paise
+            currency: 'INR',
+            name: 'VidTube',
+            description: `Membership of ${name}`,
+            image: 'https://vidtubee.vercel.app/favicon.ico', // Your logo URL
+            handler: async (response) => {
+                // Handle payment success
+                // console.log(response.razorpay_payment_id);
+
+                try {
+                    await joinmembership();
+                } catch (error) {
+                    // console.error('Error adding to cart:', error);
+                    // alert('Payment Successful, but failed to add to cart.');
+                }
+            },
+            theme: {
+                color: '#F37254'
+            }
+        };
+
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
+    }
     return (
         <div>
             <Header />
@@ -233,20 +283,20 @@ export default function ProfilePage() {
                                     <div style={{ display: 'flex', gap: '10px' }}>
                                         {subscribed ? (
                                             <Link style={{ textDecoration: 'none', color: 'black' }} data-testid="subscribed-link">
-                                            <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black' }} onClick={handleSubscribe}>
-                                                <center>Subscribed</center>
-                                            </div>
+                                                <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black' }} onClick={handleSubscribe}>
+                                                    <center>Subscribed</center>
+                                                </div>
                                             </Link>
                                         ) : (
                                             <Link style={{ textDecoration: 'none', color: 'black' }} data-testid="subscribe-link">
-                                            <div className='hebfjenk' onClick={handleSubscribe}>
-                                                <center>Subscribe</center>
-                                            </div>
+                                                <div className='hebfjenk' onClick={handleSubscribe}>
+                                                    <center>Subscribe</center>
+                                                </div>
                                             </Link>
                                         )}
                                         <Link style={{ textDecoration: 'none', color: 'black' }} data-testid="join-link">
-                                            <div className='hebfjenk' style={{ backgroundColor: 'transparent', color: 'black', border: '0.5px solid black' }}>
-                                                <center>Join</center>
+                                            <div className='hebfjenk' style={{ backgroundColor: 'transparent', color: 'black', border: '0.5px solid black' }} onClick={joined?null:joinpayments}>
+                                                <center>{joined?'Already Joined':'Join'}</center>
                                             </div>
                                         </Link>
                                     </div>
@@ -300,9 +350,9 @@ export default function ProfilePage() {
                 <div className="jhfjkfj">
                     {
                         activeTab === 'about' ? <Aboutpage /> :
-                        activeTab === 'home' ? <VideosHomepage /> :
-                        activeTab === 'video' ? <VideoSection /> :
-                        activeTab === 'community' ? <Communitypage communityPosts={communityPosts} /> : <></>
+                            activeTab === 'home' ? <VideosHomepage /> :
+                                activeTab === 'video' ? <VideoSection /> :
+                                    activeTab === 'community' ? <Communitypage communityPosts={communityPosts} /> : <></>
                     }
                 </div>
             </div>
