@@ -22,7 +22,7 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
 export default function Videoviewingpage() {
-  const { videoId,userId } = useParams();
+  const { videoId, userId } = useParams();
   // const { userId } = useParams();
   const [vidData, setVidData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -399,7 +399,8 @@ export default function Videoviewingpage() {
       if (docSnapshot.exists()) {
         const data = docSnapshot.data();
         const CommentIDs = data.commentId || []; // Ensure this is an array
-
+        setcommentdataid(CommentIDs);
+        console.log('Comment IDs:', CommentIDs);
         const fetchedComments = [];
         const commenterdetails = [];
         const commentpfp = [];
@@ -555,11 +556,11 @@ export default function Videoviewingpage() {
               </Link>
 
               {
-                auth.currentUser?auth.currentUser.uid===videoowner?<Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link" to={`/channel/${auth.currentUser.uid}/editing/profile`}>
-                    <div className='hebfjenk' >
-                      <center>Customize</center>
-                    </div>
-                  </Link>:subscount.includes(auth.currentUser.uid) ? (
+                auth.currentUser ? auth.currentUser.uid === videoowner ? <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link" to={`/channel/${auth.currentUser.uid}/editing/profile`}>
+                  <div className='hebfjenk' >
+                    <center>Customize</center>
+                  </div>
+                </Link> : subscount.includes(auth.currentUser.uid) ? (
                   <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
                     <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "-8px" }} onClick={handleSubscribe}>
                       <center>Subscribed</center>
@@ -571,7 +572,7 @@ export default function Videoviewingpage() {
                       <center>Subscribe</center>
                     </div>
                   </Link>
-                ):<></>
+                ) : <></>
               }
               {/* <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
                 <div className='hebfjenkd' style={{ backgroundColor: 'black', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "0px", width: "fit-content", gap: "50px", paddingLeft: "10px", paddingRight: "10px" }}>
@@ -643,6 +644,7 @@ export default function Videoviewingpage() {
                         uploadcomment();
                         fetchcomments();
                         setCommentText('');
+                        window.location.reload();
                       }}>Comment</button> : <></>
                     }
                   </Link> : <></>
@@ -656,15 +658,35 @@ export default function Videoviewingpage() {
                       <img src={commentpfp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
                     </div>
                     <div className="knkfnvk" style={{ display: "flex", flexDirection: "column", marginTop: "2px", gap: "5px", fontWeight: "600", fontSize: "15px" }}>
-                      {/* <Link style={{ textDecoration: 'none', color: 'black' }} > */}
                       <div className="vkfk" style={{ display: "flex", flexDirection: "row", gap: "15px", fontWeight: "600", fontSize: "15px" }}>
 
-                        <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${commentowners[index]}`}>
+                        <Link style={{ textDecoration: 'none', color: 'black', marginTop: "5px" }} to={`/profile/${commentowners[index]}`}>
                           {commentername[index]}
                         </Link>
-                        {
-                          user ? commentowners[index] === auth.currentUser.uid ? <svg aria-label="Conversation information" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="15" role="img" viewBox="0 0 24 24" width="15"><title>More Options</title><circle cx="12.001" cy="12.005" fill="none" r="10.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><circle cx="11.819" cy="7.709" r="1.25"></circle><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="10.569" x2="13.432" y1="16.777" y2="16.777"></line><polyline fill="none" points="10.569 11.05 12 11.05 12 16.777" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline></svg> : <></> : <></>
-                        }
+                        <div onClick={async () => {
+                          const docRef = doc(db, 'Comment ID', "Comment ID Generated");
+                          // Prepare the data to upload, including the random number
+                          const dataToUpdate = {
+                            commentId: arrayRemove(commentataid[index]), // Add the random number to the array
+                          };
+
+                          // Update the document with merge: true to keep existing fields
+                          await setDoc(docRef, dataToUpdate, { merge: true });
+                          window.location.reload();
+                        }} style={{ textDecoration: 'none', color: 'black' }}>
+                          {
+                            user ? commentowners[index] === auth.currentUser.uid ? <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="red"
+                              style={{ cursor: 'pointer' }}
+                            >
+                              <path d="M3 6h18v2H3zm1 3h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V9zm3 3h2v6H7zm4 0h2v6h-2zm4 0h2v6h-2z" />
+                            </svg> : <></> : <></>
+                          }
+                        </div>
                       </div>
                       {/* </Link> */}
                       <div className="vkfk" style={{ fontWeight: "300", fontSize: "12px" }}>
