@@ -465,34 +465,34 @@ export default function Videoviewingpage() {
   useEffect(() => {
     // fetchcommentdata();
   }, []);
-  const [liked,isliked]=useState(false);
+  const [liked, isliked] = useState(false);
   const [disliked, isdisliked] = useState(false);
   const [likecount, setlikecount] = useState(0);
   const [dislikecount, setdislikecount] = useState(0);
   const likevideo = async () => {
     try {
-        const docRef = doc(db, 'Liked Videos', videoId.toString());
+      const docRef = doc(db, 'Liked Videos', videoId.toString());
 
-        // Check the existing document
-        const docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) {
-            console.log("No such document!");
-            return;
-        }
+      // Check the existing document
+      const docSnap = await getDoc(docRef);
+      if (!docSnap.exists()) {
+        console.log("No such document!");
+        return;
+      }
 
-        // Prepare the data to update
-        const dataToUpdate = isliked
-            ? { UIDs: arrayUnion(auth.currentUser.uid) }  // Add UID
-            : { UIDs: arrayRemove(auth.currentUser.uid) }; // Remove UID
+      // Prepare the data to update
+      const dataToUpdate = isliked
+        ? { UIDs: arrayUnion(auth.currentUser.uid) }  // Add UID
+        : { UIDs: arrayRemove(auth.currentUser.uid) }; // Remove UID
 
-        // Update the document
-        await updateDoc(docRef, dataToUpdate);
-        console.log(`UID ${isliked ? 'added to' : 'removed from'} the document.`);
-        
+      // Update the document
+      await updateDoc(docRef, dataToUpdate);
+      console.log(`UID ${isliked ? 'added to' : 'removed from'} the document.`);
+
     } catch (error) {
-        console.log("Error updating document: ", error);
+      console.log("Error updating document: ", error);
     }
-};
+  };
 
   return (
     <div className='webbody'>
@@ -535,48 +535,48 @@ export default function Videoviewingpage() {
                 )
               }
               <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
-                <div className='hebfjenkd' style={{ backgroundColor: 'black', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "0px", width: "fit-content",gap: "50px",paddingLeft: "10px",paddingRight: "10px" }}>
-                <div className="rbrn" style={{color: "white",display: "flex", flexDirection: "row", gap: "10px", alignItems: "center"}}>
-                <div className="jnf" onClick={() => {
-                  if (liked) {
-                    isliked(false);
-                    // setcommentlike(commentlike - 1);
-                  } else {
-                    // likevideo();
-                    isliked(true);
-                    setlikecount(likecount+1)
-                    isdisliked(false);
-                    dislikecount>0?setdislikecount(dislikecount - 1):setdislikecount(0);
-                    // setcommentlike(commentlike + 1);
-                  }
-                }}>
-                {
-                  liked?<svg stroke="green" fill="green" stroke-width="1" viewBox="0 0 1024 1024" height="28" width="28" xmlns="http://www.w3.org/2000/svg"><path d="M885.9 533.7c16.8-22.2 26.1-49.4 26.1-77.7 0-44.9-25.1-87.4-65.5-111.1a67.67 67.67 0 0 0-34.3-9.3H572.4l6-122.9c1.4-29.7-9.1-57.9-29.5-79.4A106.62 106.62 0 0 0 471 99.9c-52 0-98 35-111.8 85.1l-85.9 311H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h601.3c9.2 0 18.2-1.8 26.5-5.4 47.6-20.3 78.3-66.8 78.3-118.4 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7-.2-12.6-2-25.1-5.6-37.1zM184 852V568h81v284h-81zm636.4-353l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 22.4-13.2 42.6-33.6 51.8H329V564.8l99.5-360.5a44.1 44.1 0 0 1 42.2-32.3c7.6 0 15.1 2.2 21.1 6.7 9.9 7.4 15.2 18.6 14.6 30.5l-9.6 198.4h314.4C829 418.5 840 436.9 840 456c0 16.5-7.2 32.1-19.6 43z"></path></svg>:<svg stroke="white" fill="white" stroke-width="0" viewBox="0 0 1024 1024" height="28" width="28" xmlns="http://www.w3.org/2000/svg"><path d="M885.9 533.7c16.8-22.2 26.1-49.4 26.1-77.7 0-44.9-25.1-87.4-65.5-111.1a67.67 67.67 0 0 0-34.3-9.3H572.4l6-122.9c1.4-29.7-9.1-57.9-29.5-79.4A106.62 106.62 0 0 0 471 99.9c-52 0-98 35-111.8 85.1l-85.9 311H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h601.3c9.2 0 18.2-1.8 26.5-5.4 47.6-20.3 78.3-66.8 78.3-118.4 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7-.2-12.6-2-25.1-5.6-37.1zM184 852V568h81v284h-81zm636.4-353l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 22.4-13.2 42.6-33.6 51.8H329V564.8l99.5-360.5a44.1 44.1 0 0 1 42.2-32.3c7.6 0 15.1 2.2 21.1 6.7 9.9 7.4 15.2 18.6 14.6 30.5l-9.6 198.4h314.4C829 418.5 840 436.9 840 456c0 16.5-7.2 32.1-19.6 43z"></path></svg>
-                }
-                </div>
-                {likecount} Likes
-                </div>
-                <div className="enfjne" style={{color: "white",display: "flex", flexDirection: "row", gap: "10px", alignItems: "center"}}>
-                <div className="jnf" onClick={() => {
-                  if (disliked) {
-                    isdisliked(false);
-                    
-                    // setcommentlike(commentlike - 1);
-                  } else {
-                    isdisliked(true);
-                    isliked(false);
-                    setdislikecount(dislikecount + 1);
-                    likecount>0?setlikecount(likecount - 1):setlikecount(0);
-                    // setcommentlike(commentlike + 1);
-                  }
-                }}>
-                  {
-                    disliked?<svg stroke="red" fill="red" stroke-width="1" viewBox="0 0 1024 1024" height="28" width="28" xmlns="http://www.w3.org/2000/svg"><path d="M885.9 490.3c3.6-12 5.4-24.4 5.4-37 0-28.3-9.3-55.5-26.1-77.7 3.6-12 5.4-24.4 5.4-37 0-28.3-9.3-55.5-26.1-77.7 3.6-12 5.4-24.4 5.4-37 0-51.6-30.7-98.1-78.3-118.4a66.1 66.1 0 0 0-26.5-5.4H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h129.3l85.8 310.8C372.9 889 418.9 924 470.9 924c29.7 0 57.4-11.8 77.9-33.4 20.5-21.5 31-49.7 29.5-79.4l-6-122.9h239.9c12.1 0 23.9-3.2 34.3-9.3 40.4-23.5 65.5-66.1 65.5-111 0-28.3-9.3-55.5-26.1-77.7zM184 456V172h81v284h-81zm627.2 160.4H496.8l9.6 198.4c.6 11.9-4.7 23.1-14.6 30.5-6.1 4.5-13.6 6.8-21.1 6.7a44.28 44.28 0 0 1-42.2-32.3L329 459.2V172h415.4a56.85 56.85 0 0 1 33.6 51.8c0 9.7-2.3 18.9-6.9 27.3l-13.9 25.4 21.9 19a56.76 56.76 0 0 1 19.6 43c0 9.7-2.3 18.9-6.9 27.3l-13.9 25.4 21.9 19a56.76 56.76 0 0 1 19.6 43c0 9.7-2.3 18.9-6.9 27.3l-14 25.5 21.9 19a56.76 56.76 0 0 1 19.6 43c0 19.1-11 37.5-28.8 48.4z"></path></svg>:<svg stroke="white" fill="white" stroke-width="0" viewBox="0 0 1024 1024" height="28" width="28" xmlns="http://www.w3.org/2000/svg"><path d="M885.9 490.3c3.6-12 5.4-24.4 5.4-37 0-28.3-9.3-55.5-26.1-77.7 3.6-12 5.4-24.4 5.4-37 0-28.3-9.3-55.5-26.1-77.7 3.6-12 5.4-24.4 5.4-37 0-51.6-30.7-98.1-78.3-118.4a66.1 66.1 0 0 0-26.5-5.4H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h129.3l85.8 310.8C372.9 889 418.9 924 470.9 924c29.7 0 57.4-11.8 77.9-33.4 20.5-21.5 31-49.7 29.5-79.4l-6-122.9h239.9c12.1 0 23.9-3.2 34.3-9.3 40.4-23.5 65.5-66.1 65.5-111 0-28.3-9.3-55.5-26.1-77.7zM184 456V172h81v284h-81zm627.2 160.4H496.8l9.6 198.4c.6 11.9-4.7 23.1-14.6 30.5-6.1 4.5-13.6 6.8-21.1 6.7a44.28 44.28 0 0 1-42.2-32.3L329 459.2V172h415.4a56.85 56.85 0 0 1 33.6 51.8c0 9.7-2.3 18.9-6.9 27.3l-13.9 25.4 21.9 19a56.76 56.76 0 0 1 19.6 43c0 9.7-2.3 18.9-6.9 27.3l-13.9 25.4 21.9 19a56.76 56.76 0 0 1 19.6 43c0 9.7-2.3 18.9-6.9 27.3l-14 25.5 21.9 19a56.76 56.76 0 0 1 19.6 43c0 19.1-11 37.5-28.8 48.4z"></path></svg>
-                  }
-                </div>
-                
-                {dislikecount} Dislikes
-                </div>
+                <div className='hebfjenkd' style={{ backgroundColor: 'black', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "0px", width: "fit-content", gap: "50px", paddingLeft: "10px", paddingRight: "10px" }}>
+                  <div className="rbrn" style={{ color: "white", display: "flex", flexDirection: "row", gap: "10px", alignItems: "center" }}>
+                    <div className="jnf" onClick={() => {
+                      if (liked) {
+                        isliked(false);
+                        // setcommentlike(commentlike - 1);
+                      } else {
+                        // likevideo();
+                        isliked(true);
+                        setlikecount(likecount + 1)
+                        isdisliked(false);
+                        dislikecount > 0 ? setdislikecount(dislikecount - 1) : setdislikecount(0);
+                        // setcommentlike(commentlike + 1);
+                      }
+                    }}>
+                      {
+                        liked ? <svg stroke="green" fill="green" stroke-width="1" viewBox="0 0 1024 1024" height="28" width="28" xmlns="http://www.w3.org/2000/svg"><path d="M885.9 533.7c16.8-22.2 26.1-49.4 26.1-77.7 0-44.9-25.1-87.4-65.5-111.1a67.67 67.67 0 0 0-34.3-9.3H572.4l6-122.9c1.4-29.7-9.1-57.9-29.5-79.4A106.62 106.62 0 0 0 471 99.9c-52 0-98 35-111.8 85.1l-85.9 311H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h601.3c9.2 0 18.2-1.8 26.5-5.4 47.6-20.3 78.3-66.8 78.3-118.4 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7-.2-12.6-2-25.1-5.6-37.1zM184 852V568h81v284h-81zm636.4-353l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 22.4-13.2 42.6-33.6 51.8H329V564.8l99.5-360.5a44.1 44.1 0 0 1 42.2-32.3c7.6 0 15.1 2.2 21.1 6.7 9.9 7.4 15.2 18.6 14.6 30.5l-9.6 198.4h314.4C829 418.5 840 436.9 840 456c0 16.5-7.2 32.1-19.6 43z"></path></svg> : <svg stroke="white" fill="white" stroke-width="0" viewBox="0 0 1024 1024" height="28" width="28" xmlns="http://www.w3.org/2000/svg"><path d="M885.9 533.7c16.8-22.2 26.1-49.4 26.1-77.7 0-44.9-25.1-87.4-65.5-111.1a67.67 67.67 0 0 0-34.3-9.3H572.4l6-122.9c1.4-29.7-9.1-57.9-29.5-79.4A106.62 106.62 0 0 0 471 99.9c-52 0-98 35-111.8 85.1l-85.9 311H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h601.3c9.2 0 18.2-1.8 26.5-5.4 47.6-20.3 78.3-66.8 78.3-118.4 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7-.2-12.6-2-25.1-5.6-37.1zM184 852V568h81v284h-81zm636.4-353l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 0 1 6.9 27.3c0 22.4-13.2 42.6-33.6 51.8H329V564.8l99.5-360.5a44.1 44.1 0 0 1 42.2-32.3c7.6 0 15.1 2.2 21.1 6.7 9.9 7.4 15.2 18.6 14.6 30.5l-9.6 198.4h314.4C829 418.5 840 436.9 840 456c0 16.5-7.2 32.1-19.6 43z"></path></svg>
+                      }
+                    </div>
+                    {likecount} Likes
+                  </div>
+                  <div className="enfjne" style={{ color: "white", display: "flex", flexDirection: "row", gap: "10px", alignItems: "center" }}>
+                    <div className="jnf" onClick={() => {
+                      if (disliked) {
+                        isdisliked(false);
+
+                        // setcommentlike(commentlike - 1);
+                      } else {
+                        isdisliked(true);
+                        isliked(false);
+                        setdislikecount(dislikecount + 1);
+                        likecount > 0 ? setlikecount(likecount - 1) : setlikecount(0);
+                        // setcommentlike(commentlike + 1);
+                      }
+                    }}>
+                      {
+                        disliked ? <svg stroke="red" fill="red" stroke-width="1" viewBox="0 0 1024 1024" height="28" width="28" xmlns="http://www.w3.org/2000/svg"><path d="M885.9 490.3c3.6-12 5.4-24.4 5.4-37 0-28.3-9.3-55.5-26.1-77.7 3.6-12 5.4-24.4 5.4-37 0-28.3-9.3-55.5-26.1-77.7 3.6-12 5.4-24.4 5.4-37 0-51.6-30.7-98.1-78.3-118.4a66.1 66.1 0 0 0-26.5-5.4H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h129.3l85.8 310.8C372.9 889 418.9 924 470.9 924c29.7 0 57.4-11.8 77.9-33.4 20.5-21.5 31-49.7 29.5-79.4l-6-122.9h239.9c12.1 0 23.9-3.2 34.3-9.3 40.4-23.5 65.5-66.1 65.5-111 0-28.3-9.3-55.5-26.1-77.7zM184 456V172h81v284h-81zm627.2 160.4H496.8l9.6 198.4c.6 11.9-4.7 23.1-14.6 30.5-6.1 4.5-13.6 6.8-21.1 6.7a44.28 44.28 0 0 1-42.2-32.3L329 459.2V172h415.4a56.85 56.85 0 0 1 33.6 51.8c0 9.7-2.3 18.9-6.9 27.3l-13.9 25.4 21.9 19a56.76 56.76 0 0 1 19.6 43c0 9.7-2.3 18.9-6.9 27.3l-13.9 25.4 21.9 19a56.76 56.76 0 0 1 19.6 43c0 9.7-2.3 18.9-6.9 27.3l-14 25.5 21.9 19a56.76 56.76 0 0 1 19.6 43c0 19.1-11 37.5-28.8 48.4z"></path></svg> : <svg stroke="white" fill="white" stroke-width="0" viewBox="0 0 1024 1024" height="28" width="28" xmlns="http://www.w3.org/2000/svg"><path d="M885.9 490.3c3.6-12 5.4-24.4 5.4-37 0-28.3-9.3-55.5-26.1-77.7 3.6-12 5.4-24.4 5.4-37 0-28.3-9.3-55.5-26.1-77.7 3.6-12 5.4-24.4 5.4-37 0-51.6-30.7-98.1-78.3-118.4a66.1 66.1 0 0 0-26.5-5.4H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h129.3l85.8 310.8C372.9 889 418.9 924 470.9 924c29.7 0 57.4-11.8 77.9-33.4 20.5-21.5 31-49.7 29.5-79.4l-6-122.9h239.9c12.1 0 23.9-3.2 34.3-9.3 40.4-23.5 65.5-66.1 65.5-111 0-28.3-9.3-55.5-26.1-77.7zM184 456V172h81v284h-81zm627.2 160.4H496.8l9.6 198.4c.6 11.9-4.7 23.1-14.6 30.5-6.1 4.5-13.6 6.8-21.1 6.7a44.28 44.28 0 0 1-42.2-32.3L329 459.2V172h415.4a56.85 56.85 0 0 1 33.6 51.8c0 9.7-2.3 18.9-6.9 27.3l-13.9 25.4 21.9 19a56.76 56.76 0 0 1 19.6 43c0 9.7-2.3 18.9-6.9 27.3l-13.9 25.4 21.9 19a56.76 56.76 0 0 1 19.6 43c0 9.7-2.3 18.9-6.9 27.3l-14 25.5 21.9 19a56.76 56.76 0 0 1 19.6 43c0 19.1-11 37.5-28.8 48.4z"></path></svg>
+                      }
+                    </div>
+
+                    {dislikecount} Dislikes
+                  </div>
                 </div>
               </Link>
             </div>
@@ -618,15 +618,15 @@ export default function Videoviewingpage() {
                     </div>
                     <div className="knkfnvk" style={{ display: "flex", flexDirection: "column", marginTop: "2px", gap: "5px", fontWeight: "600", fontSize: "15px" }}>
                       {/* <Link style={{ textDecoration: 'none', color: 'black' }} > */}
-                        <div className="vkfk" style={{ display: "flex", flexDirection: "row", gap: "15px", fontWeight: "600", fontSize: "15px" }}>
-                        
-                          <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${commentowners[index]}`}>
+                      <div className="vkfk" style={{ display: "flex", flexDirection: "row", gap: "15px", fontWeight: "600", fontSize: "15px" }}>
+
+                        <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${commentowners[index]}`}>
                           {commentername[index]}
-                          </Link>
-                          {
-                           user? commentowners[index]===auth.currentUser.uid?<svg aria-label="Conversation information" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="15" role="img" viewBox="0 0 24 24" width="15"><title>More Options</title><circle cx="12.001" cy="12.005" fill="none" r="10.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><circle cx="11.819" cy="7.709" r="1.25"></circle><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="10.569" x2="13.432" y1="16.777" y2="16.777"></line><polyline fill="none" points="10.569 11.05 12 11.05 12 16.777" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline></svg>:<></>:<></>
-                            }
-                        </div>
+                        </Link>
+                        {
+                          user ? commentowners[index] === auth.currentUser.uid ? <svg aria-label="Conversation information" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="15" role="img" viewBox="0 0 24 24" width="15"><title>More Options</title><circle cx="12.001" cy="12.005" fill="none" r="10.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><circle cx="11.819" cy="7.709" r="1.25"></circle><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="10.569" x2="13.432" y1="16.777" y2="16.777"></line><polyline fill="none" points="10.569 11.05 12 11.05 12 16.777" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline></svg> : <></> : <></>
+                        }
+                      </div>
                       {/* </Link> */}
                       <div className="vkfk" style={{ fontWeight: "300", fontSize: "12px" }}>
                         {comments[index]}
@@ -645,9 +645,27 @@ export default function Videoviewingpage() {
                       <img src={thumbnails[index]} alt={captions[index]} height={"120px"}
                         width={"200px"} style={{ borderRadius: "10px" }} />
                     </Link>
-                    <Link style={{ textDecoration: 'none', color: 'black', fontWeight: "600" }} to={`/videos/${vidData[index]}`}>
-                      {captions[index]}
-                    </Link>
+                    <div className="jefeffkfm" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      <Link style={{ textDecoration: 'none', color: 'black', fontWeight: "600" }} to={`/videos/${vidData[index]}`}>
+                        {captions[index]}
+                      </Link>
+                      <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${uploader[index]}`}>
+                      <div className="jefjnf" style={{ color: "grey", fontSize: "12px" }}>
+                        {name[index]}
+                      </div>
+                      </Link>
+                      <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
+                        <p>{
+                          views[index] > 0 ?
+                            views[index] === 1 ? formatViews(views[index]) + ' View' :
+                              formatViews(views[index]) + ' Views' :
+                            "No views"
+                        }</p>
+                        
+                        <p>{formatTimeAgo(uploaddate[index])}</p>
+                      </div>
+                    </div>
+
                   </div>
                 ))
               }
