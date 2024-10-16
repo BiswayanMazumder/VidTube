@@ -22,7 +22,8 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
 export default function Videoviewingpage() {
-  const { videoId } = useParams();
+  const { videoId,userId } = useParams();
+  // const { userId } = useParams();
   const [vidData, setVidData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -264,7 +265,7 @@ export default function Videoviewingpage() {
     if (interval >= 1) return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
     return seconds + " second" + (seconds > 1 ? "s" : "") + " ago";
   }
-  const { userId } = useParams();
+  // const { userId } = useParams();
   // const [dp, setDp] = useState('');
   const [names, setName] = useState('');//
   const [bio, setBio] = useState('');
@@ -554,7 +555,11 @@ export default function Videoviewingpage() {
               </Link>
 
               {
-                auth.currentUser?subscount.includes(auth.currentUser.uid) ? (
+                auth.currentUser?auth.currentUser.uid===videoowner?<Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link" to={`/channel/${auth.currentUser.uid}/editing/profile`}>
+                    <div className='hebfjenk' >
+                      <center>Customise</center>
+                    </div>
+                  </Link>:subscount.includes(auth.currentUser.uid) ? (
                   <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
                     <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "-8px" }} onClick={handleSubscribe}>
                       <center>Subscribed</center>
