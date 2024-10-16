@@ -8,6 +8,7 @@ import Landingpage from './HomePage/landingpage';
 import { Analytics } from "@vercel/analytics/react"
 import Profilepage from './User Profiles/profilepage';
 import Videoviewingpage from './Video Page/videoviewingpage';
+import Customise_channel from './Channel Details/customise_channel';
 function App() {
   return (
     <BrowserRouter>
@@ -20,6 +21,9 @@ function App() {
       <Routes>
         {/* Other routes */}
         <Route path="/profile/:userId" element={<Profilepage />} />
+      </Routes>
+      <Routes>
+      <Route path="/channel/:userId/editing/profile" element={<Customise_channel/>} />
       </Routes>
       <Analytics />
     </BrowserRouter>

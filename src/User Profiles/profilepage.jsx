@@ -224,7 +224,7 @@ export default function ProfilePage() {
                         <div className="knrgjnfkg">
                             {
                                 currentuser ? (
-                                    <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
+                                    <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link" to={`/channel/${userId}/editing/profile`}>
                                         <div className='hebfjenk' style={{ backgroundColor: 'rgb(94, 94, 239)', color: 'white', border: '1px solid blue' }}>
                                             <center>Customize</center>
                                         </div>

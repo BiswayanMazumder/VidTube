@@ -150,7 +150,6 @@ export default function Header() {
                 </div> */}
 
                 <Link style={{ textDecoration: 'none', color: 'black' }}>
-
                     <div style={{ textDecoration: 'none', color: 'black', cursor: 'pointer' }} onClick={() => {
                         user ? handleSignOut() : handleSignIn();
                     }}>
