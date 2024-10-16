@@ -212,21 +212,6 @@ export default function Videoviewingpage() {
   useEffect(() => {
     fetchData();
   }, [videoId, videoowner]);
-  const [pfp, setpfp] = useState('');
-  const fetchdp = async () => {
-    //   await fetchData();
-    if (auth.currentUser) {
-      const profileDocRef = doc(db, 'User Profile Pictures', auth.currentUser.uid);
-      const profileDocSnapshot = await getDoc(profileDocRef);
-      if (profileDocSnapshot.exists()) {
-        const profileData = profileDocSnapshot.data();
-        setpfp(profileData['Profile Pic']);
-      }
-    }
-  }
-  useEffect(() => {
-    fetchdp();
-  },[])
   const handleSubscribe = async () => {
     await fetchData();
     const subsRef = doc(db, 'Subscribers', videoowner);
@@ -569,11 +554,7 @@ export default function Videoviewingpage() {
               </Link>
 
               {
-               auth.currentUser.uid === videoowner?<Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link" to={`/channel/${videoowner}/editing/profile`}>
-                    <div className='hebfjenk' >
-                      <center>Customize</center>
-                    </div>
-                  </Link>: auth.currentUser && subscount.includes(auth.currentUser.uid) ? (
+                auth.currentUser?subscount.includes(auth.currentUser.uid) ? (
                   <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
                     <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "-8px" }} onClick={handleSubscribe}>
                       <center>Subscribed</center>
@@ -585,7 +566,7 @@ export default function Videoviewingpage() {
                       <center>Subscribe</center>
                     </div>
                   </Link>
-                )
+                ):<></>
               }
               {/* <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
                 <div className='hebfjenkd' style={{ backgroundColor: 'black', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "0px", width: "fit-content", gap: "50px", paddingLeft: "10px", paddingRight: "10px" }}>
@@ -640,7 +621,7 @@ export default function Videoviewingpage() {
               <div className="jenfjekf" style={{ display: "flex", flexDirection: "row", gap: "15px", marginTop: "20px" }}>
                 {
                   user ? <div className='jdckdk'>
-                    <img src={pfp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                    <img src={photourl} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
                   </div> : <div className='jdckdk'>
                     <img src="https://yt3.ggpht.com/a/default-user=s88-c-k-c0x00ffffff-no-rj" alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
                   </div>
