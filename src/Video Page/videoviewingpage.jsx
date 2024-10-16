@@ -400,7 +400,7 @@ export default function Videoviewingpage() {
         const data = docSnapshot.data();
         const CommentIDs = data.commentId || []; // Ensure this is an array
         setcommentdataid(CommentIDs);
-        console.log('Comment IDs:', CommentIDs);
+        // console.log('Comment IDs:', CommentIDs);
         const fetchedComments = [];
         const commenterdetails = [];
         const commentpfp = [];
@@ -662,6 +662,7 @@ export default function Videoviewingpage() {
 
                         <Link style={{ textDecoration: 'none', color: 'black', marginTop: "5px" }} to={`/profile/${commentowners[index]}`}>
                           {commentername[index]}
+                          {comment.timestamp}
                         </Link>
                         <div onClick={async () => {
                           const docRef = doc(db, 'Comment ID', "Comment ID Generated");
