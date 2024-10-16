@@ -164,7 +164,7 @@ export default function Customise_channel() {
                     <div className="jrhgrjg">Description</div>
                     <br />
                     <div className="sjjcc">
-                        <input type="text" value={bio} onChange={(e) => setName(e.target.value)} style={{ paddingLeft: '20px', height: '200px', marginBottom: '100px',width:'80vw' }} />
+                        <input type="text" value={bio} onChange={(e) => setBio(e.target.value)} style={{ paddingLeft: '20px', height: '200px', marginBottom: '100px',width:'80vw' }} />
                     </div>
                 </div>
                 <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
