@@ -455,7 +455,7 @@ export default function Videoviewingpage() {
         setcomentowners(commentownerid);
         setcommentdate(commentupload);
         setcommentedvideo(commentvideoid);
-        console.log('Date', commentupload);
+        // console.log('Date', commentupload);
       } else {
         console.log('No Comment ID document found!');
       }
