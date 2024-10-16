@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { arrayRemove, arrayUnion, doc, getDoc, getFirestore } from "firebase/firestore";
+import { getAuth } from 'firebase/auth';
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 import Header from '../Components/header';
 
 const firebaseConfig = {
@@ -22,6 +22,12 @@ const db = getFirestore(app);
 
 export default function Customise_channel() {
     const { userId } = useParams();
+    const [dp, setDp] = useState('');
+    const [name, setName] = useState('');
+    const [bio, setBio] = useState('');
+    const [coverPic, setCoverPic] = useState('');
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         document.title = 'Channel customization - Vidtube Studio';
         if (!auth.currentUser) {
@@ -29,12 +35,6 @@ export default function Customise_channel() {
         }
     }, []);
 
-    const [dp, setDp] = useState('');
-    const [name, setName] = useState('');
-    const [bio, setBio] = useState('');
-    const [coverPic, setCoverPic] = useState('');
-    const [loading, setLoading] = useState(true);
-    
     const fetchUserData = async () => {
         try {
             const docRef = doc(db, 'User Details', userId);
@@ -60,6 +60,8 @@ export default function Customise_channel() {
             }
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false); // Set loading to false after data fetch
         }
     };
 
@@ -84,6 +86,10 @@ export default function Customise_channel() {
         }
     };
 
+    if (loading) {
+        return <div className="loading-bar"></div>; // Show a loading message or spinner
+    }
+
     return (
         <div className='webbody'>
             <Header />
@@ -98,7 +104,7 @@ export default function Customise_channel() {
                 <br />
                 <div className="ehfejkej">
                     <div className="ehjehdj" style={{ borderRadius: '10px' }}>
-                        <img src={coverPic} alt="" height={'160px'} width={'290px'} style={{ borderRadius: '10px' }} />
+                        <img src={coverPic} alt="Cover" height={'160px'} width={'290px'} style={{ borderRadius: '10px' }} />
                     </div>
                     <div className="hhbjhdn">
                         For the best results on all devices, use an image that’s at least 2048 x 1152 pixels and 6MB or less.
@@ -125,7 +131,7 @@ export default function Customise_channel() {
                 <br />
                 <div className="ehfejkej">
                     <div className="ehjehdj" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '10px' }}>
-                        <img src={dp} alt="" height={'100px'} width={'100px'} style={{ borderRadius: '50%' }} />
+                        <img src={dp} alt="Profile" height={'100px'} width={'100px'} style={{ borderRadius: '50%' }} />
                     </div>
                     <div className="hhbjhdn">
                         It’s recommended to use a picture that’s at least 98 x 98 pixels and 4MB or less.
