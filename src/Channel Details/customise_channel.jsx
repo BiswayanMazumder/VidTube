@@ -156,17 +156,27 @@ export default function Customise_channel() {
                     </div>
                     <br />
                     <div className="sjjcc">
-                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} style={{ paddingLeft: '20px' }} />
+                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} style={{ paddingLeft: '20px',width:'80vw' }} />
                     </div>
                 </div>
                 <br /><br /><br />
                 <div className="heading">
                     <div className="jrhgrjg">Description</div>
                     <br />
-                    
-                    {/* <br /> */}
                     <div className="sjjcc">
-                        <input type="text" value={bio} onChange={(e) => setName(e.target.value)} style={{ paddingLeft: '20px',height:'200px',marginBottom:'100px' }}  />
+                        <input type="text" value={bio} onChange={(e) => setName(e.target.value)} style={{ paddingLeft: '20px', height: '200px', marginBottom: '100px',width:'80vw' }} />
+                    </div>
+                </div>
+                <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+                <div className="heading">
+                    <div className="jrhgrjg">Email</div>
+                    <br />
+                    <div className="sjjcc">
+                        Let people know your email for business enquires
+                    </div>
+                    <br />
+                    <div className="sjjcc">
+                        <input type="text" value={auth.currentUser.email} disabled cursor='not-allowed' style={{ paddingLeft: '20px',width:'80vw' }} />
                     </div>
                 </div>
                 <br /><br /><br />
