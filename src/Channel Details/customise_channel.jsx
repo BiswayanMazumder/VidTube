@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
+import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import Header from '../Components/header';
 
 const firebaseConfig = {
@@ -19,6 +20,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 export default function Customise_channel() {
     const { userId } = useParams();
@@ -27,6 +29,7 @@ export default function Customise_channel() {
     const [bio, setBio] = useState('');
     const [coverPic, setCoverPic] = useState('');
     const [loading, setLoading] = useState(true);
+    const [message, setMessage] = useState('');
 
     useEffect(() => {
         document.title = 'Channel customization - Vidtube Studio';
@@ -61,7 +64,7 @@ export default function Customise_channel() {
         } catch (error) {
             console.error(error);
         } finally {
-            setLoading(false); // Set loading to false after data fetch
+            setLoading(false);
         }
     };
 
@@ -73,13 +76,29 @@ export default function Customise_channel() {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onloadend = () => {
-                if (type === 'cover') {
-                    setCoverPic(reader.result);
-                    // Handle the upload logic for cover pic here
-                } else if (type === 'profile') {
-                    setDp(reader.result);
-                    // Handle the upload logic for profile pic here
+            reader.onloadend = async () => {
+                try {
+                    // Create a storage reference
+                    const storageRef = ref(storage, `${userId}/${type}-${Date.now()}.png`);
+                    const uploadResult = await uploadString(storageRef, reader.result, 'data_url');
+
+                    // Get the download URL
+                    const downloadURL = await getDownloadURL(uploadResult.ref);
+
+                    if (type === 'cover') {
+                        setCoverPic(downloadURL);
+                        const coverDocRef = doc(db, 'User Cover Pictures', userId);
+                        await updateDoc(coverDocRef, { 'Cover Pic': downloadURL });
+                        setMessage('Cover picture updated successfully!');
+                    } else if (type === 'profile') {
+                        setDp(downloadURL);
+                        const profileDocRef = doc(db, 'User Profile Pictures', userId);
+                        await updateDoc(profileDocRef, { 'Profile Pic': downloadURL });
+                        setMessage('Profile picture updated successfully!');
+                    }
+                } catch (error) {
+                    console.error(error);
+                    setMessage('Failed to upload image. Please try again.');
                 }
             };
             reader.readAsDataURL(file);
@@ -94,6 +113,8 @@ export default function Customise_channel() {
         <div className='webbody'>
             <Header />
             <div className="rjgjrgrkjg">
+                {message && <div className="message">{message}</div>}
+                {/* Rest of your component code */}
                 <div className="heading">
                     <div className="jrhgrjg">Banner Image</div>
                     <br />
@@ -156,7 +177,7 @@ export default function Customise_channel() {
                     </div>
                     <br />
                     <div className="sjjcc">
-                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} style={{ paddingLeft: '20px',width:'80vw' }} />
+                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} style={{ paddingLeft: '20px', width: '80vw' }} />
                     </div>
                 </div>
                 <br /><br /><br />
@@ -164,7 +185,7 @@ export default function Customise_channel() {
                     <div className="jrhgrjg">Description</div>
                     <br />
                     <div className="sjjcc">
-                        <input type="text" value={bio} onChange={(e) => setBio(e.target.value)} style={{ paddingLeft: '20px', height: '200px', marginBottom: '100px',width:'80vw' }} />
+                        <input type="text" value={bio} onChange={(e) => setBio(e.target.value)} style={{ paddingLeft: '20px', height: '200px', marginBottom: '100px', width: '80vw' }} />
                     </div>
                 </div>
                 <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
@@ -172,11 +193,11 @@ export default function Customise_channel() {
                     <div className="jrhgrjg">Email</div>
                     <br />
                     <div className="sjjcc">
-                        Let people know your email for business enquires
+                        Let people know your email for business inquiries
                     </div>
                     <br />
                     <div className="sjjcc">
-                        <input type="text" value={auth.currentUser.email} disabled cursor='not-allowed' style={{ paddingLeft: '20px',width:'80vw' }} />
+                        <input type="text" value={auth.currentUser.email} disabled style={{ paddingLeft: '20px', width: '80vw' }} />
                     </div>
                 </div>
                 <br /><br /><br />
