@@ -212,6 +212,21 @@ export default function Videoviewingpage() {
   useEffect(() => {
     fetchData();
   }, [videoId, videoowner]);
+  const [pfp, setpfp] = useState('');
+  const fetchdp = async () => {
+    //   await fetchData();
+    if (auth.currentUser) {
+      const profileDocRef = doc(db, 'User Profile Pictures', auth.currentUser.uid);
+      const profileDocSnapshot = await getDoc(profileDocRef);
+      if (profileDocSnapshot.exists()) {
+        const profileData = profileDocSnapshot.data();
+        setpfp(profileData['Profile Pic']);
+      }
+    }
+  }
+  useEffect(() => {
+    fetchdp();
+  },[])
   const handleSubscribe = async () => {
     await fetchData();
     const subsRef = doc(db, 'Subscribers', videoowner);
@@ -621,7 +636,7 @@ export default function Videoviewingpage() {
               <div className="jenfjekf" style={{ display: "flex", flexDirection: "row", gap: "15px", marginTop: "20px" }}>
                 {
                   user ? <div className='jdckdk'>
-                    <img src={photourl} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                    <img src={pfp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
                   </div> : <div className='jdckdk'>
                     <img src="https://yt3.ggpht.com/a/default-user=s88-c-k-c0x00ffffff-no-rj" alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
                   </div>

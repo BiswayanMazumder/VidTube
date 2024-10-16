@@ -103,6 +103,21 @@ export default function Header() {
             return newNightMode;
         });
     };
+    const [pfp, setpfp] = useState('');
+    const fetchdp = async () => {
+      //   await fetchData();
+      if (auth.currentUser) {
+        const profileDocRef = doc(db, 'User Profile Pictures', auth.currentUser.uid);
+        const profileDocSnapshot = await getDoc(profileDocRef);
+        if (profileDocSnapshot.exists()) {
+          const profileData = profileDocSnapshot.data();
+          setpfp(profileData['Profile Pic']);
+        }
+      }
+    }
+    useEffect(() => {
+      fetchdp();
+    },[])
     return (
 
         <div className="heading">
@@ -141,7 +156,7 @@ export default function Header() {
                     }}>
                         {
                             user ? <div className='ekhbfehf'>
-                                <img src={photourl} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                                <img src={pfp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
                             </div> : <div className="kjefkjfl">
                                 Sign in
                             </div>
