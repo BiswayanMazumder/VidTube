@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 import Header from '../Components/header';
 import Aboutpage from './aboutpage';
 import VideosHomepage from './videoshomepage';
 import VideoSection from './videospage';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Communitypage from './communitypage';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -35,93 +35,126 @@ export default function ProfilePage() {
     const [vidData, setVidData] = useState([]);
     const [videoCount, setVideoCount] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [currentuser, setcurrentuser] = useState(false);
-    
+    const [currentuser, setCurrentUser] = useState(false);
+    const [subscribed, setSubscribed] = useState(false);
+
+    const fetchUserData = async () => {
+        try {
+            const docRef = doc(db, 'User Details', userId);
+            const docSnapshot = await getDoc(docRef);
+            if (docSnapshot.exists()) {
+                const userData = docSnapshot.data();
+                setName(userData.Username);
+                setBio(userData.Bio);
+            }
+
+            const coverDocRef = doc(db, 'User Cover Pictures', userId);
+            const coverDocSnapshot = await getDoc(coverDocRef);
+            if (coverDocSnapshot.exists()) {
+                const coverData = coverDocSnapshot.data();
+                setCoverPic(coverData['Cover Pic']);
+            }
+
+            const subDocRef = doc(db, 'Subscribers', userId);
+            const subDocSnapshot = await getDoc(subDocRef);
+            if (subDocSnapshot.exists()) {
+                const subData = subDocSnapshot.data();
+                setSubs(subData['Subscriber UIDs']);
+            }
+
+            const profileDocRef = doc(db, 'User Profile Pictures', userId);
+            const profileDocSnapshot = await getDoc(profileDocRef);
+            if (profileDocSnapshot.exists()) {
+                const profileData = profileDocSnapshot.data();
+                setDp(profileData['Profile Pic']);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const fetchData = async () => {
+        try {
+            const docRef = doc(db, 'Global VIDs', 'VIDs');
+            const docSnapshot = await getDoc(docRef);
+            let count = 0;
+
+            if (docSnapshot.exists()) {
+                const data = docSnapshot.data();
+                setVidData(data.VID);
+
+                for (let i = 0; i < data.VID.length; i++) {
+                    const videoRef = doc(db, 'Global Post', data.VID[i]);
+                    const videoDoc = await getDoc(videoRef);
+
+                    if (videoDoc.exists()) {
+                        const videoData = videoDoc.data();
+                        const uploader = videoData['Uploaded UID'];
+
+                        if (uploader === userId) {
+                            count += 1;
+                        }
+                    }
+                }
+                setVideoCount(count);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const checkSubscriptionStatus = async () => {
+        if (auth.currentUser) {
+            const subsRef = doc(db, 'Subscribers', userId);
+            const subsDoc = await getDoc(subsRef);
+
+            if (subsDoc.exists()) {
+                const subsData = subsDoc.data();
+                const subscriberUIDs = subsData['Subscriber UIDs'] || [];
+                setSubscribed(subscriberUIDs.includes(auth.currentUser.uid));
+                setSubs(subscriberUIDs);
+            }
+        }
+    };
+
+    const handleSubscribe = async () => {
+        const subsRef = doc(db, 'Subscribers', userId);
+        const subsDoc = await getDoc(subsRef);
+
+        let subscriberUIDs = [];
+
+        if (subsDoc.exists()) {
+            subscriberUIDs = subsDoc.data()['Subscriber UIDs'] || [];
+        }
+
+        if (subscriberUIDs.includes(auth.currentUser.uid)) {
+            subscriberUIDs = subscriberUIDs.filter(uid => uid !== auth.currentUser.uid);
+        } else {
+            subscriberUIDs.push(auth.currentUser.uid);
+        }
+
+        await updateDoc(subsRef, { 'Subscriber UIDs': subscriberUIDs });
+        await checkSubscriptionStatus();
+    };
+
+    const loadData = async () => {
+        setLoading(true);
+        await Promise.all([fetchUserData(), fetchData(), checkSubscriptionStatus()]);
+        setLoading(false);
+    };
+
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const uid = user.uid;
-                setcurrentuser(uid === userId);
+                setCurrentUser(uid === userId);
             } else {
-                setcurrentuser(false);
+                setCurrentUser(false);
             }
         });
     }, [userId]);
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const docRef = doc(db, 'User Details', userId);
-                const docSnapshot = await getDoc(docRef);
-                if (docSnapshot.exists()) {
-                    const userData = docSnapshot.data();
-                    setName(userData.Username);
-                    setBio(userData.Bio);
-                }
-
-                const coverDocRef = doc(db, 'User Cover Pictures', userId);
-                const coverDocSnapshot = await getDoc(coverDocRef);
-                if (coverDocSnapshot.exists()) {
-                    const coverData = coverDocSnapshot.data();
-                    setCoverPic(coverData['Cover Pic']);
-                }
-
-                const subDocRef = doc(db, 'Subscribers', userId);
-                const subDocSnapshot = await getDoc(subDocRef);
-                if (subDocSnapshot.exists()) {
-                    const subData = subDocSnapshot.data();
-                    setSubs(subData['Subscriber UIDs']);
-                }
-
-                const profileDocRef = doc(db, 'User Profile Pictures', userId);
-                const profileDocSnapshot = await getDoc(profileDocRef);
-                if (profileDocSnapshot.exists()) {
-                    const profileData = profileDocSnapshot.data();
-                    setDp(profileData['Profile Pic']);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        const fetchData = async () => {
-            try {
-                const docRef = doc(db, 'Global VIDs', 'VIDs');
-                const docSnapshot = await getDoc(docRef);
-                let count = 0;
-
-                if (docSnapshot.exists()) {
-                    const data = docSnapshot.data();
-                    setVidData(data.VID);
-
-                    for (let i = 0; i < data.VID.length; i++) {
-                        const videoRef = doc(db, 'Global Post', data.VID[i]);
-                        const videoDoc = await getDoc(videoRef);
-
-                        if (videoDoc.exists()) {
-                            const videoData = videoDoc.data();
-                            const uploader = videoData['Uploaded UID'];
-
-                            if (uploader === userId) {
-                                count += 1;
-                            }
-                        } else {
-                            console.log(`Video not found for VID: ${data.VID[i]}`);
-                        }
-                    }
-                    setVideoCount(count);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        const loadData = async () => {
-            setLoading(true);
-            await Promise.all([fetchUserData(), fetchData()]);
-            setLoading(false);
-        };
-
         loadData();
     }, [userId]);
 
@@ -130,19 +163,17 @@ export default function ProfilePage() {
     }, [name]);
 
     const [activeTab, setActiveTab] = useState('home');
-    const [commupload, setcommupload] = useState([]);
     const [communityPosts, setCommunityPosts] = useState([]);
+
     useEffect(() => {
-        const fetchUserData = async () => {
+        const fetchCommunityPosts = async () => {
             try {
                 const docRef = doc(db, "Community Posts", userId);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
                     const subData = docSnap.data();
-                    setCommunityPosts(subData['Posts']); // Assuming 'Posts' is an array of objects
-                    setcommupload(subData['Date of Upload']);
-                    console.log('Fetched data:', subData); // Log the fetched data
+                    setCommunityPosts(subData['Posts']);
                 } else {
                     console.log('No such document!');
                 }
@@ -151,8 +182,9 @@ export default function ProfilePage() {
             }
         };
 
-        fetchUserData();
+        fetchCommunityPosts();
     }, [userId]);
+
     return (
         <div>
             <Header />
@@ -193,38 +225,39 @@ export default function ProfilePage() {
                             {
                                 currentuser ? (
                                     <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
-                                            <div className='hebfjenk' style={{ backgroundColor: 'rgb(94, 94, 239)', color: 'white', border: '1px solid blue' }}>
-                                                <center>Customise</center>
-                                            </div>
-                                        </Link>
+                                        <div className='hebfjenk' style={{ backgroundColor: 'rgb(94, 94, 239)', color: 'white', border: '1px solid blue' }}>
+                                            <center>Customize</center>
+                                        </div>
+                                    </Link>
                                 ) : (
-                                    auth.currentUser && subs.includes(auth.currentUser.uid) ? (
-                                        <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
-                                            <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black' }}>
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        {subscribed ? (
+                                            <Link style={{ textDecoration: 'none', color: 'black' }} data-testid="subscribed-link">
+                                            <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black' }} onClick={handleSubscribe}>
                                                 <center>Subscribed</center>
                                             </div>
-                                        </Link>
-                                    ) : (
-                                        <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribe-link">
-                                            <div className='hebfjenk'>
+                                            </Link>
+                                        ) : (
+                                            <Link style={{ textDecoration: 'none', color: 'black' }} data-testid="subscribe-link">
+                                            <div className='hebfjenk' onClick={handleSubscribe}>
                                                 <center>Subscribe</center>
                                             </div>
+                                            </Link>
+                                        )}
+                                        <Link style={{ textDecoration: 'none', color: 'black' }} data-testid="join-link">
+                                            <div className='hebfjenk' style={{ backgroundColor: 'transparent', color: 'black', border: '0.5px solid black' }}>
+                                                <center>Join</center>
+                                            </div>
                                         </Link>
-                                    )
+                                    </div>
                                 )
                             }
-
-                            <Link style={{ textDecoration: 'none', color: 'black' }} data-testid="join-link">
-                                <div className='hebfjenk' style={{ backgroundColor: 'transparent', color: 'black', border: '0.5px solid black' }}>
-                                    <center>Join</center>
-                                </div>
-                            </Link>
                         </div>
                     </div>
                 </div>
                 <div className="irfjkfjlvf">
                     <Link
-                        style={{ textDecoration: 'none', color: activeTab === 'home' ? 'black' : 'grey', padding: '10px'}}
+                        style={{ textDecoration: 'none', color: activeTab === 'home' ? 'black' : 'grey', padding: '10px' }}
                         onClick={() => setActiveTab('home')}
                         data-testid="home-link"
                     >
@@ -243,17 +276,16 @@ export default function ProfilePage() {
                             {activeTab === 'video' && <div className="nfjvf"></div>}
                         </div>
                     </Link>
-                   <Link
+                    <Link
                         style={{ textDecoration: 'none', color: activeTab === 'community' ? 'black' : 'grey', padding: '10px' }}
                         onClick={() => setActiveTab('community')}
-                        data-testid="video-link"
+                        data-testid="community-link"
                     >
                         <div className="jjnffkmkm">
                             Community
                             {activeTab === 'community' && <div className="nfjvf"></div>}
                         </div>
                     </Link>
-                   
                     <Link
                         style={{ textDecoration: 'none', color: activeTab === 'about' ? 'black' : 'grey', padding: '10px' }}
                         onClick={() => setActiveTab('about')}
@@ -270,7 +302,7 @@ export default function ProfilePage() {
                         activeTab === 'about' ? <Aboutpage /> :
                         activeTab === 'home' ? <VideosHomepage /> :
                         activeTab === 'video' ? <VideoSection /> :
-                        activeTab === 'community' ? <Communitypage /> :<></>
+                        activeTab === 'community' ? <Communitypage communityPosts={communityPosts} /> : <></>
                     }
                 </div>
             </div>

@@ -143,6 +143,7 @@ export default function Videoviewingpage() {
 
     fetchData();
   }, []);
+  const [subscribed, issubscribed] = useState(false);
   const [videolink, setvideolink] = useState('');
   const [videoviwes, setvideoviews] = useState(0);
   const [videotitle, setvideotitle] = useState('');
@@ -151,60 +152,93 @@ export default function Videoviewingpage() {
   const [videoownerpfp, setvideoownerpfp] = useState('');
   const [subscount, setsubs] = useState([]);
   const [videoupload, setvideoupload] = useState([]);
+
+  const fetchData = async () => {
+    const videoRef = doc(db, 'Global Post', videoId);
+    const videoDoc = await getDoc(videoRef);
+    var usersubsed = false;
+    if (videoDoc.exists()) {
+      const videoData = videoDoc.data();
+      setvideolink(videoData['Video Link']);
+      setvideoviews(videoData['Views']);
+      setvideotitle(videoData['Caption']);
+      setvideoupload(videoData['Uploaded At']);
+      setvideoowner(videoData['Uploaded UID']); // Ensure this UID is valid
+
+      // Increment views
+      const newviews = videoData['Views'] + 1; // Get the current views from videoData
+      console.log('Views', newviews);
+      const viewsdoc = doc(db, 'Global Post', videoId);
+      const viewsdetails = {
+        Views: newviews,
+      };
+
+      // Log the view update details before writing
+      console.log('View Update Details:', viewsdetails);
+
+      await updateDoc(viewsdoc, viewsdetails);
+      setvideoviews(newviews); // Update state to reflect the new view count
+    }
+
+    if (videoowner) {
+      const userRef = doc(db, 'User Details', videoowner);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setvideoownername(userData['Username']);
+      }
+
+      const profilePicRef = doc(db, 'User Profile Pictures', videoowner);
+      const profilePicDoc = await getDoc(profilePicRef);
+      if (profilePicDoc.exists()) {
+        const profilePicData = profilePicDoc.data();
+        setvideoownerpfp(profilePicData['Profile Pic']);
+      }
+
+      const subsRef = doc(db, 'Subscribers', videoowner);
+      const subsDoc = await getDoc(subsRef);
+      if (subsDoc.exists()) {
+        const subsData = subsDoc.data();
+        setsubs(subsData['Subscriber UIDs']);
+
+        if (subsData['Subscriber UIDs'].includes(auth.currentUser.uid)) {
+          issubscribed(true);
+          usersubsed = true;
+        }
+        console.log('subs', usersubsed);
+      }
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      const videoRef = doc(db, 'Global Post', videoId);
-      const videoDoc = await getDoc(videoRef);
-
-      if (videoDoc.exists()) {
-        const videoData = videoDoc.data();
-        setvideolink(videoData['Video Link']);
-        setvideoviews(videoData['Views']);
-        setvideotitle(videoData['Caption']);
-        setvideoupload(videoData['Uploaded At']);
-        setvideoowner(videoData['Uploaded UID']); // Ensure this UID is valid
-
-        // Increment views
-        const newviews = videoData['Views'] + 1; // Get the current views from videoData
-        console.log('Views', newviews);
-        const viewsdoc = doc(db, 'Global Post', videoId);
-        const viewsdetails = {
-          Views: newviews,
-        };
-
-        // Log the view update details before writing
-        console.log('View Update Details:', viewsdetails);
-
-        await updateDoc(viewsdoc, viewsdetails);
-        setvideoviews(newviews); // Update state to reflect the new view count
-      }
-
-      if (videoowner) {
-        const userRef = doc(db, 'User Details', videoowner);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setvideoownername(userData['Username']);
-        }
-
-        const profilePicRef = doc(db, 'User Profile Pictures', videoowner);
-        const profilePicDoc = await getDoc(profilePicRef);
-        if (profilePicDoc.exists()) {
-          const profilePicData = profilePicDoc.data();
-          setvideoownerpfp(profilePicData['Profile Pic']);
-        }
-
-        const subsRef = doc(db, 'Subscribers', videoowner);
-        const subsDoc = await getDoc(subsRef);
-        if (subsDoc.exists()) {
-          const subsData = subsDoc.data();
-          setsubs(subsData['Subscriber UIDs']);
-        }
-      }
-    };
-
     fetchData();
   }, [videoId, videoowner]);
+  const handleSubscribe = async () => {
+    await fetchData();
+    const subsRef = doc(db, 'Subscribers', videoowner);
+    const subsDoc = await getDoc(subsRef);
+
+    if (subsDoc.exists()) {
+      const subsData = subsDoc.data();
+      let subscriberUIDs = subsData['Subscriber UIDs'] || [];
+
+      if (subscriberUIDs.includes(auth.currentUser.uid)) {
+        // User is currently subscribed, remove their UID
+        subscriberUIDs = subscriberUIDs.filter(uid => uid !== auth.currentUser.uid);
+        console.log('User unsubscribed:', auth.currentUser.uid);
+      } else {
+        // User is not subscribed, add their UID
+        subscriberUIDs.push(auth.currentUser.uid);
+        console.log('User subscribed:', auth.currentUser.uid);
+      }
+
+      // Update the document with the new subscriber list
+      await updateDoc(subsRef, { 'Subscriber UIDs': subscriberUIDs });
+
+      // Update state to reflect the subscription status
+      setsubs(subscriberUIDs);
+      issubscribed(!subscriberUIDs.includes(auth.currentUser.uid)); // Toggle subscription status
+    }
+  };
 
   function formatViews(views) {
     if (views < 1000) return views;
@@ -522,19 +556,19 @@ export default function Videoviewingpage() {
               {
                 auth.currentUser && subscount.includes(auth.currentUser.uid) ? (
                   <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
-                    <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "-8px" }}>
+                    <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "-8px" }} onClick={handleSubscribe}>
                       <center>Subscribed</center>
                     </div>
                   </Link>
                 ) : (
                   <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link">
-                    <div className='hebfjenk'>
+                    <div className='hebfjenk' onClick={handleSubscribe} >
                       <center>Subscribe</center>
                     </div>
                   </Link>
                 )
               }
-              <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
+              {/* <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
                 <div className='hebfjenkd' style={{ backgroundColor: 'black', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "0px", width: "fit-content", gap: "50px", paddingLeft: "10px", paddingRight: "10px" }}>
                   <div className="rbrn" style={{ color: "white", display: "flex", flexDirection: "row", gap: "10px", alignItems: "center" }}>
                     <div className="jnf" onClick={() => {
@@ -578,7 +612,7 @@ export default function Videoviewingpage() {
                     {dislikecount} Dislikes
                   </div>
                 </div>
-              </Link>
+              </Link> */}
             </div>
           </div>
           <div className="krkmvkrhgjr">
@@ -650,9 +684,9 @@ export default function Videoviewingpage() {
                         {captions[index]}
                       </Link>
                       <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${uploader[index]}`}>
-                      <div className="jefjnf" style={{ color: "grey", fontSize: "12px" }}>
-                        {name[index]}
-                      </div>
+                        <div className="jefjnf" style={{ color: "grey", fontSize: "12px" }}>
+                          {name[index]}
+                        </div>
                       </Link>
                       <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
                         <p>{
@@ -661,7 +695,7 @@ export default function Videoviewingpage() {
                               formatViews(views[index]) + ' Views' :
                             "No views"
                         }</p>
-                        
+
                         <p>{formatTimeAgo(uploaddate[index])}</p>
                       </div>
                     </div>
