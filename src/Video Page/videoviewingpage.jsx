@@ -406,11 +406,14 @@ export default function Videoviewingpage() {
         const commentpfp = [];
         const commentvideoid = [];
         const commentownerid = [];
+        const commentupload = [];
         for (const commentID of CommentIDs) {//comment
           const commentRef = doc(db, 'Comment Details', commentID.toString());
           const commentDoc = await getDoc(commentRef);
           if (commentDoc.exists()) {
             const commentData = commentDoc.data();
+            commentupload.push(commentData.timestamp);
+            // console.log('Date',commentupload);
             fetchedComments.push(commentData.comment);
             commentvideoid.push(commentData.VideoID);
             commentownerid.push(commentData.commenter);
@@ -450,7 +453,9 @@ export default function Videoviewingpage() {
         setcommentpfp(commentpfp); // Set profile pictures separately
         setcommentername(commenterdetails);
         setcomentowners(commentownerid);
+        setcommentdate(commentupload);
         setcommentedvideo(commentvideoid);
+        console.log('Date', commentupload);
       } else {
         console.log('No Comment ID document found!');
       }
@@ -475,7 +480,7 @@ export default function Videoviewingpage() {
           const data = docSnapshot.data();
           setcommentdata(data.comment);
           setcommentowner(data.commenter);
-          setcommentdate(data.timestamp);
+          // setcommentdate(data.timestamp);
           setcommentlike(data.likes);
           setcommentdislike(data.dislikes);
 
@@ -661,8 +666,12 @@ export default function Videoviewingpage() {
                       <div className="vkfk" style={{ display: "flex", flexDirection: "row", gap: "15px", fontWeight: "600", fontSize: "15px" }}>
 
                         <Link style={{ textDecoration: 'none', color: 'black', marginTop: "5px" }} to={`/profile/${commentowners[index]}`}>
-                          {commentername[index]}
-                          {comment.timestamp}
+                          <div className="jjhfkjfk" style={{ display: "flex", flexDirection: "row", gap: "5px" }}>
+                            {commentername[index]}
+                            <div className="jedhjef" style={{ marginLeft: "5px", color: "grey", fontSize: "12px", marginTop: "2px" }}>
+                              {formatTimeAgo(commenrdate[index])}
+                            </div>
+                          </div>
                         </Link>
                         <div onClick={async () => {
                           const docRef = doc(db, 'Comment ID', "Comment ID Generated");
