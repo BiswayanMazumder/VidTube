@@ -569,7 +569,7 @@ export default function Videoviewingpage() {
               </Link>
 
               {
-               auth.currentUser.uid === videoowner?<Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link" to={`/channel/${userId}/editing/profile`}>
+               auth.currentUser.uid === videoowner?<Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link" to={`/channel/${videoowner}/editing/profile`}>
                     <div className='hebfjenk' >
                       <center>Customize</center>
                     </div>
