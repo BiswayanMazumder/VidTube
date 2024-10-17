@@ -564,8 +564,13 @@ export default function Videoviewingpage() {
 
               {
                 auth.currentUser ? auth.currentUser.uid === videoowner ? <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link" to={`/channel/${auth.currentUser.uid}/editing/profile`}>
+                  <div className="jfjdnkf" style={{display: "flex", flexDirection: "row", gap: "10px"}}>
                   <div className='hebfjenk' >
                     <center>Customize</center>
+                  </div>
+                  <div className='hebfjenk' >
+                    <center>Edit Video</center>
+                  </div>
                   </div>
                 </Link> : subscount.includes(auth.currentUser.uid) ? (
                   <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
