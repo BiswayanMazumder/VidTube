@@ -9,6 +9,7 @@ import { Analytics } from "@vercel/analytics/react"
 import Profilepage from './User Profiles/profilepage';
 import Videoviewingpage from './Video Page/videoviewingpage';
 import Customise_channel from './Channel Details/customise_channel';
+import Uploadvideo from './Video Page/uploadvideo';
 function App() {
   return (
     <BrowserRouter>
@@ -24,6 +25,9 @@ function App() {
       </Routes>
       <Routes>
       <Route path="/channel/:userId/editing/profile" element={<Customise_channel/>} />
+      </Routes>
+      <Routes>
+      <Route path="/channel/uploadvideo" element={<Uploadvideo/>} />
       </Routes>
       <Analytics />
     </BrowserRouter>
