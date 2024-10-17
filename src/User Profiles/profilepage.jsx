@@ -37,7 +37,7 @@ export default function ProfilePage() {
     const [loading, setLoading] = useState(true);
     const [currentuser, setCurrentUser] = useState(false);
     const [subscribed, setSubscribed] = useState(false);
-
+    
     const fetchUserData = async () => {
         try {
             const docRef = doc(db, 'User Details', userId);
@@ -185,18 +185,31 @@ export default function ProfilePage() {
         fetchCommunityPosts();
     }, [userId]);
     const [joined, setjoined] = useState(false);
+
     useEffect(() => {
         const checkmembership = async () => {
             const docRef = doc(db, 'Memberships', userId);
             const docSnap = await getDoc(docRef);
+            
             if (docSnap.exists()) {
-                setjoined(true);
+                const membershipData = docSnap.data();
+                const joinedmembers = membershipData['MemberID'] || []; // Ensure it's an array
+    
+                console.log('Members', joinedmembers);
+                // Check if the current user is a member
+                if (joinedmembers.includes(auth.currentUser.uid)) {
+                    setjoined(true);
+                } else {
+                    setjoined(false); // Set to false if not included
+                }
             } else {
-                setjoined(false);
+                setjoined(false); // Set to false if the document doesn't exist
             }
-        }
+        };
+    
         checkmembership();
     }, [userId]);
+    
     const joinmembership = async () => {
         const docRef = doc(db, 'Memberships', userId);
 
@@ -222,6 +235,7 @@ export default function ProfilePage() {
 
                 try {
                     await joinmembership();
+                    window.location.reload();
                 } catch (error) {
                     // console.error('Error adding to cart:', error);
                     // alert('Payment Successful, but failed to add to cart.');

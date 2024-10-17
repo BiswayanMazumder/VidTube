@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -15,10 +16,13 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
+// const app = initializeApp(firebaseConfig);
+// const db = getFirestore(app);
+const auth = getAuth(app);
 export default function VideosHomepage() {
     const { userId } = useParams();
     const [dp, setDp] = useState('');
+    const [memberonly,setmemberonly] = useState([]);
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
     const [coverPic, setCoverPic] = useState('');
@@ -32,6 +36,31 @@ export default function VideosHomepage() {
     const [videoLink, setVideoLink] = useState([]);
     const [activeVideoIndex, setActiveVideoIndex] = useState(0);
     const [hoveredIndex, setHoveredIndex] = useState(null); // Track hovered thumbnail index
+    const [joined, setjoined] = useState(false);
+
+useEffect(() => {
+    const checkmembership = async () => {
+        const docRef = doc(db, 'Memberships', userId);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+            const membershipData = docSnap.data();
+            const joinedmembers = membershipData['MemberID'] || []; // Ensure it's an array
+
+            console.log('Members', joinedmembers);
+            // Check if the current user is a member
+            if (joinedmembers.includes(auth.currentUser.uid)) {
+                setjoined(true);
+            } else {
+                setjoined(false); // Set to false if not included
+            }
+        } else {
+            setjoined(false); // Set to false if the document doesn't exist
+        }
+    };
+
+    checkmembership();
+}, [userId]);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -89,6 +118,7 @@ export default function VideosHomepage() {
                     const UploadDates = [];
                     const Videolink = [];
                     const VideoID = [];
+                    const MembersOnly=[];
                     for (const vid of data.VID) {
                         const videoRef = doc(db, 'Global Post', vid);
                         const videoDoc = await getDoc(videoRef);
@@ -102,14 +132,16 @@ export default function VideosHomepage() {
                                 Views.push(videoData['Views']);
                                 UploadDates.push(videoData['Uploaded At']);
                                 Videolink.push(videoData['Video Link']);
+                                MembersOnly.push(videoData['membersonly']||false);
                                 // setVID(data.VID);
                             }
                         }
                     }
-
+                    console.log('Members Only',MembersOnly);
                     setThumbnails(Array.from(uniqueThumbnails));
                     setCaptions(Array.from(uniqueCaptions));
                     setViews(Views);
+                    setmemberonly(MembersOnly);
                     setVideoLink(Videolink);
                     setUploadDate(UploadDates);
                     // console.log('VID DATA',VideoID)
@@ -181,7 +213,92 @@ export default function VideosHomepage() {
                         onMouseLeave={() => setHoveredIndex(null)}
                         onClick={() => setActiveVideoIndex(index)}
                     >
-                        <Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}>
+                    {/* user logged in and owner then show all videos user logged out show only public videos user logged in and member then show all videos */}
+                        {
+                            auth.currentUser && userId === auth.currentUser.uid?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}>
+                            <div className="jjfmenmd">
+                                {hoveredIndex === index ? (//user logged in and owner show all videos
+                                    <video
+                                        src={videoLink[index]}
+                                        height={"150px"}
+                                        width={"265px"}
+                                        autoPlay
+                                        muted
+                                        loop
+
+                                        style={{ borderRadius: "10px" }}
+                                    />
+                                ) : (
+                                    <img
+                                        src={url}
+                                        alt={`Thumbnail ${index}`}
+                                        className="thumbnail-image"
+                                        height={"150px"}
+                                        width={"265px"}
+                                        style={{ borderRadius: "10px" }}
+                                    />
+                                )}
+                            </div>
+                            <div className="jefkfm">
+                                <div className="pfp">
+                                    <Link>
+                                        <img src={dp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                                    </Link>
+                                </div>
+                                <div className="jjnjbhvf">
+                                    <div className="jehfej" style={{ color: "black", fontSize: "15px", display: "flex", flexDirection: "column", gap: "1px", fontWeight: "500" }}>
+                                        <h5>{captions[index]}</h5>
+                                        <div className="jnfjvnkfv" style={{ color: "black", fontSize: "15px", display: "flex", flexDirection: "row", gap: "5px" }}>
+                                            <p style={{ fontSize: "12px", color: "grey" }}>{views[index] === 0 ? 'No Views' : formatViews(views[index]) + ' Views'}</p> •
+                                            <p style={{ fontSize: "12px", color: "grey" }}>{formatTimeAgo(uploadDate[index])}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </Link>:
+                        auth.currentUser && userId != auth.currentUser.uid && joined?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}>
+                            <div className="jjfmenmd">
+                                {hoveredIndex === index ? (//user logged in and owner show all videos
+                                    <video
+                                        src={videoLink[index]}
+                                        height={"150px"}
+                                        width={"265px"}
+                                        autoPlay
+                                        muted
+                                        loop
+
+                                        style={{ borderRadius: "10px" }}
+                                    />
+                                ) : (
+                                    <img
+                                        src={url}
+                                        alt={`Thumbnail ${index}`}
+                                        className="thumbnail-image"
+                                        height={"150px"}
+                                        width={"265px"}
+                                        style={{ borderRadius: "10px" }}
+                                    />
+                                )}
+                            </div>
+                            <div className="jefkfm">
+                                <div className="pfp">
+                                    <Link>
+                                        <img src={dp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                                    </Link>
+                                </div>
+                                <div className="jjnjbhvf">
+                                    <div className="jehfej" style={{ color: "black", fontSize: "15px", display: "flex", flexDirection: "column", gap: "1px", fontWeight: "500" }}>
+                                        <h5>{captions[index]}</h5>
+                                        <div className="jnfjvnkfv" style={{ color: "black", fontSize: "15px", display: "flex", flexDirection: "row", gap: "5px" }}>
+                                            <p style={{ fontSize: "12px", color: "grey" }}>{views[index] === 0 ? 'No Views' : formatViews(views[index]) + ' Views'}</p> •
+                                            <p style={{ fontSize: "12px", color: "grey" }}>{formatTimeAgo(uploadDate[index])}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </Link>:
+                        !memberonly[index]?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}> 
+                       
                             <div className="jjfmenmd">
                                 {hoveredIndex === index ? (
                                     <video
@@ -221,7 +338,8 @@ export default function VideosHomepage() {
                                     </div>
                                 </div>
                             </div>
-                        </Link>
+                        </Link>:<></>
+                        }
                     </div>
                 ))}
             </div>

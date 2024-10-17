@@ -550,7 +550,9 @@ export default function Videoviewingpage() {
               Uploaded {formatTimeAgo(videoupload)}
             </div>
             <div className='ekhbfehfss' style={{ display: "flex", flexDirection: "row", gap: "10px", marginTop: "20px" }}>
+              <Link to={`/profile/${videoowner}`}>
               <img src={videoownerpfp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+              </Link>
               <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${videoowner}`}>
                 <div className="jfvjnf" style={{ fontWeight: "300", fontSize: "15px", marginTop: "0px" }}>
                   {videoownername}
