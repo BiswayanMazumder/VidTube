@@ -1,13 +1,49 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../Components/header';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, getDoc, updateDoc, setDoc, arrayUnion } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+const firebaseConfig = {
+    apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
+    authDomain: "pixelprowess69.firebaseapp.com",
+    projectId: "pixelprowess69",
+    storageBucket: "pixelprowess69.appspot.com",
+    messagingSenderId: "785469951781",
+    appId: "1:785469951781:web:e5b45a44c5ec5f44d0d4cc",
+    measurementId: "G-TZ5WZEQPZE"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 // import './Uploadvideo.css'; // Ensure this is imported
 
 export default function Uploadvideo() {
     const { userId } = useParams();
     const [imageSrc, setImageSrc] = useState('');
     const [videosrc, setvideosrc] = useState('');
+    useEffect(() => {
+        if(auth.currentUser){
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // User is signed in, see docs for a list of available properties
+                    // https://firebase.google.com/docs/reference/js/auth/user
+                    const uid = user.uid;
 
+                    // ...
+                } else {
+                    // User is signed out
+                    
+                    // ...
+                }
+            });
+        }
+        else{
+            window.location.replace('/');
+        }
+    })
     const showFileName = (event) => {
         const file = event.target.files[0];
         const fileName = document.getElementById('file-name');
