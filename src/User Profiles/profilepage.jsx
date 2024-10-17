@@ -294,11 +294,13 @@ export default function ProfilePage() {
                                                 </div>
                                             </Link>
                                         )}
-                                        <Link style={{ textDecoration: 'none', color: 'black' }} data-testid="join-link">
+                                        {
+                                            auth.currentUser?<Link style={{ textDecoration: 'none', color: 'black' }} data-testid="join-link">
                                             <div className='hebfjenk' style={{ backgroundColor: 'transparent', color: 'black', border: '0.5px solid black' }} onClick={joined?null:joinpayments}>
                                                 <center>{joined?'Already Joined':'Join'}</center>
                                             </div>
-                                        </Link>
+                                        </Link>:<></>
+                                        }
                                     </div>
                                 )
                             }
