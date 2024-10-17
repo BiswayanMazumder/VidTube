@@ -27,6 +27,7 @@ export default function Landingpage() {
     useEffect(()=>{
         document.title='VidTube';
     })
+    const [memberonly,setmemberonly] = useState([]);
     const [sidebar, setSidebar] = useState(true);
     const [user, setuser] = useState(false);
     const [photourl, setphotourl] = useState('');
@@ -75,6 +76,7 @@ export default function Landingpage() {
                     const Uploader = [];
                     const Name = [];
                     const PFP = [];
+                    const MembersOnly=[];
                     // console.log('VID',data.VID);
                     setVID(data.VID);
                     // Fetch video data
@@ -89,7 +91,9 @@ export default function Landingpage() {
                             Captions.push(videoData['Caption']);
                             Views.push(videoData['Views']);
                             UploadDates.push(videoData['Uploaded At']);
+                            setmemberonly(MembersOnly);
                             Uploader.push(videoData['Uploaded UID']);
+                            MembersOnly.push(videoData['membersonly']||false);
                         } else {
                             console.log(`Video not found for VID: ${data.VID[i]}`);
                         }
@@ -185,7 +189,6 @@ export default function Landingpage() {
         else if (views < 1000000000) return (views / 1000000).toFixed(1) + 'M';
         else return (views / 1000000000).toFixed(1) + 'B';
     }
-
     const handleSignOut = async () => {
         try {
             await signOut(auth);
@@ -237,7 +240,7 @@ export default function Landingpage() {
                 <Uploadbutton/>
                     {/* <div className="thumbnail-container"> */}
                     {thumbnail.map((url, index) => (
-                        <div key={index} className={nightmode?"thumbnail-item-dark":"thumbnail-item"}>
+                        !memberonly[index]?<div key={index} className={nightmode?"thumbnail-item-dark":"thumbnail-item"}>
                             <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(()=>{
                                             localStorage.setItem("VID", VID[index]);
                                         })}>
@@ -269,7 +272,7 @@ export default function Landingpage() {
                                     </div>
                                 </div>
                             </Link>
-                        </div>
+                        </div>:<></>
                     ))}
 
 
