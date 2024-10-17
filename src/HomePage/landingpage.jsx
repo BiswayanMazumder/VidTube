@@ -6,6 +6,7 @@ import Sidebar from '../Components/sidebar';
 import ShortSidebar from '../Components/shortsidebar';
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import Header from '../Components/header';
+import Uploadbutton from '../Components/uploadbutton';
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
     authDomain: "pixelprowess69.firebaseapp.com",
@@ -232,6 +233,7 @@ export default function Landingpage() {
                     sidebar ? <Sidebar /> : <ShortSidebar />
                 } */}
                 <div className="jdbfjekfjkhef" style={{color: nightmode ? 'white' : 'black'}}>
+                <Uploadbutton/>
                     {/* <div className="thumbnail-container"> */}
                     {thumbnail.map((url, index) => (
                         <div key={index} className={nightmode?"thumbnail-item-dark":"thumbnail-item"}>
