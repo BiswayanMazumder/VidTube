@@ -568,9 +568,11 @@ export default function Videoviewingpage() {
                   <div className='hebfjenk' >
                     <center>Customize</center>
                   </div>
+                  <Link to={`/channel/${auth.currentUser.uid}/editing/profle`} style={{ textDecoration: 'none', color: 'white' }}>
                   <div className='hebfjenk' >
                     <center>Edit Video</center>
                   </div>
+                  </Link>
                   </div>
                 </Link> : subscount.includes(auth.currentUser.uid) ? (
                   <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
