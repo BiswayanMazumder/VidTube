@@ -522,8 +522,9 @@ input {
 }
 .rjkjvkvk{
   display: flex;
-  flex-direction: row;
-  gap: 20px;
+  flex-direction: column;
+  gap: 100px;
+  /* justify-content: space-between; */
   flex-wrap: wrap;
   margin-left: 50px;
   width: 100vw;
@@ -535,11 +536,15 @@ input {
 }
 .djkdmv{
   display: flex;
-  width:382px ;
-  height: 214px;
+  width:90% ;
+  height: 500px;
   /* background-color: black; */
   border: 1px solid grey;
   border-radius: 20px;
 }
-
-
+.rjjnvnv{
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
