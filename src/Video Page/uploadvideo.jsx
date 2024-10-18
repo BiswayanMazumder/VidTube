@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../Components/header';
 import { initializeApp } from 'firebase/app';
-import { arrayUnion, doc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
+import { arrayUnion, doc, getFirestore, serverTimestamp, setDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import CircularProgress from '@mui/material/CircularProgress'; // Import CircularProgress
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -19,13 +21,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
 
 export default function Uploadvideo() {
     const { userId } = useParams();
+    const navigate = useNavigate(); // Use navigate for redirection
     const [imageSrc, setImageSrc] = useState('');
     const [videosrc, setvideosrc] = useState('');
     const [title, setTitle] = useState('');
     const [isFormValid, setIsFormValid] = useState(false);
+    const [thumbnailFile, setThumbnailFile] = useState(null);
+    const [videoFile, setVideoFile] = useState(null);
+    const [accessType, setAccessType] = useState('public'); // Default to 'public'
+    const [isLoading, setIsLoading] = useState(false); // Loading state
 
     useEffect(() => {
         const checkAuth = () => {
@@ -44,86 +52,89 @@ export default function Uploadvideo() {
     }, []);
 
     useEffect(() => {
-        // Check if all required fields are filled
         setIsFormValid(imageSrc && videosrc && title);
     }, [imageSrc, videosrc, title]);
 
     const showFileName = (event) => {
         const file = event.target.files[0];
-        const fileName = document.getElementById('file-name');
-
         if (file) {
             const url = URL.createObjectURL(file);
             setImageSrc(url);
-            fileName.textContent = file.name;
+            setThumbnailFile(file);
         } else {
             setImageSrc('');
-            fileName.textContent = '';
+            setThumbnailFile(null);
         }
     };
 
     const showFileNameVideo = (event) => {
         const file = event.target.files[0];
-        const fileName = document.getElementById('file-inputvideo-name');
-
         if (file) {
             const url = URL.createObjectURL(file);
             setvideosrc(url);
-            fileName.textContent = file.name;
+            setVideoFile(file);
         } else {
             setvideosrc('');
-            fileName.textContent = '';
+            setVideoFile(null);
         }
     };
+
     const [randomNumber, setRandomNumber] = useState(0);
-  const generateRandomNumber = () => {
-    return Math.floor(1000000000 + Math.random() * 9000000000);
-  };
+    const generateRandomNumber = () => Math.floor(1000000000 + Math.random() * 9000000000);
 
-  useEffect(() => {
-    // Set a random number when the component mounts
-    setRandomNumber(generateRandomNumber());
-    // console.log('Rand',randomNumber);
-  }, []);
-  const uploadcommentid = async () => {
-    try {
-      // Create a reference to the document in Firestore
-      const docRef = doc(db, 'Global VIDs', "VIDs");
+    useEffect(() => {
+        setRandomNumber(generateRandomNumber());
+    }, []);
 
-      // Prepare the data to upload, including the random number
-      const dataToUpdate = {
-        VID: arrayUnion(randomNumber.toString()), // Add the random number to the array
-      };
+    const uploadFiles = async () => {
+        const thumbnailRef = ref(storage, `thumbnails/${thumbnailFile.name}`);
+        const videoRef = ref(storage, `videos/${videoFile.name}`);
 
-      // Update the document with merge: true to keep existing fields
-      await setDoc(docRef, dataToUpdate, { merge: true });
-      console.log('Updated Comment ID document successfully.');
-      console.log('Comment ID uploaded successfully:', randomNumber.toString());
-    } catch (error) {
-      console.error('Error uploading comment ID:', error);
-    }
-  };
-//   const uploadcomment = async () => {
-//     await uploadcommentid();
-//     try {
-//       const commentred = doc(db, 'Comment Details', randomNumber.toString());
-//       const commentdetails = {
-//         title: commentText,
-//         commenter: auth.currentUser.uid,
-//         VideoID: videoId,
-//         timestamp: serverTimestamp(),
-//         likes: 0,
-//         dislikes: 0,
-//       };
+        // Upload thumbnail
+        await uploadBytes(thumbnailRef, thumbnailFile);
+        const thumbnailURL = await getDownloadURL(thumbnailRef);
 
-//       // Log the comment details before writing
-//       console.log('Comment Details:', commentdetails);
+        // Upload video
+        await uploadBytes(videoRef, videoFile);
+        const videoURL = await getDownloadURL(videoRef);
 
-//       await setDoc(commentred, commentdetails);
-//     } catch (error) {
-//       console.log('Error:', error);
-//     }
-//   }
+        return { thumbnailURL, videoURL };
+    };
+
+    const uploadvideoid = async () => {
+        const docRef = doc(db, 'Global VIDs', "VIDs");
+        const dataToUpdate = {
+            VID: arrayUnion(randomNumber.toString()),
+        };
+        await setDoc(docRef, dataToUpdate, { merge: true });
+    };
+
+    const uploadvideo = async () => {
+        setIsLoading(true); // Start loading
+        await uploadvideoid();
+        try {
+            const { thumbnailURL, videoURL } = await uploadFiles();
+            const commentred = doc(db, 'Global Post', randomNumber.toString());
+            const commentdetails = {
+                Caption: title,
+                'Uploaded UID': auth.currentUser.uid,
+                'Thumbnail Link': thumbnailURL,
+                'Video Link': videoURL,
+                'Uploaded At': serverTimestamp(),
+                Views: 0,
+                membersonly: accessType === 'member', // Set to true if 'Members Only' is selected
+            };
+
+            await setDoc(commentred, commentdetails);
+            console.log('Video uploaded successfully:', commentdetails);
+            navigate('/'); // Redirect to home screen after upload
+        } catch (error) {
+            console.log('Error:', error);
+        } finally {
+            setIsLoading(false); // Stop loading
+        }
+    };
+
     return (
         <div className='webbody'>
             <Header />
@@ -220,11 +231,25 @@ export default function Uploadvideo() {
                         <div className="jjmjskjk">
                             <div>
                                 <label style={{ marginRight: '50px' }}>
-                                    <input type="radio" name="access" value="public" defaultChecked style={{ width: '12px', height: '12px' }} />
+                                    <input 
+                                        type="radio" 
+                                        name="access" 
+                                        value="public" 
+                                        checked={accessType === 'public'}
+                                        onChange={() => setAccessType('public')} 
+                                        style={{ width: '12px', height: '12px' }} 
+                                    />
                                     Public
                                 </label>
                                 <label>
-                                    <input type="radio" name="access" value="member" style={{ width: '12px', height: '12px' }} />
+                                    <input 
+                                        type="radio" 
+                                        name="access" 
+                                        value="member" 
+                                        checked={accessType === 'member'}
+                                        onChange={() => setAccessType('member')} 
+                                        style={{ width: '12px', height: '12px' }} 
+                                    />
                                     Members Only
                                 </label>
                             </div>
@@ -235,7 +260,7 @@ export default function Uploadvideo() {
                             className="djjvdndnv"
                             style={{
                                 width: '90%',
-                                backgroundColor: isFormValid ? '#4285F4' : '#cccccc',
+                                backgroundColor: isFormValid && !isLoading ? '#4285F4' : '#cccccc',
                                 height: '50px',
                                 borderRadius: '20px',
                                 display: 'flex',
@@ -243,18 +268,19 @@ export default function Uploadvideo() {
                                 alignItems: 'center',
                                 color: 'white',
                                 fontFamily: "'Poppins', sans-serif",
-                                cursor: isFormValid ? 'pointer' : 'not-allowed'
+                                cursor: isFormValid && !isLoading ? 'pointer' : 'not-allowed'
                             }}
                             onClick={() => {
-                                if (isFormValid) {
-                                    generateRandomNumber();
-                                    // uploadcommentid();
-                                    console.log('Rand',randomNumber);
-                                    console.log('Title',title);
+                                if (isFormValid && !isLoading) {
+                                    uploadvideo();
                                 }
                             }}
                         >
-                            PUBLISH
+                            {isLoading ? (
+                                <CircularProgress size={24} color="inherit" /> // Show loading indicator
+                            ) : (
+                                'PUBLISH'
+                            )}
                         </div>
                     </div>
                 </div>
