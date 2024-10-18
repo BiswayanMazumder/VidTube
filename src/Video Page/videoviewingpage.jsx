@@ -154,13 +154,15 @@ export default function Videoviewingpage() {
   const [videoownerpfp, setvideoownerpfp] = useState('');
   const [subscount, setsubs] = useState([]);
   const [videoupload, setvideoupload] = useState([]);
-
+  const [currentmemberonly,setcurrentsetmemberonly] = useState([]);
   const fetchData = async () => {
     const videoRef = doc(db, 'Global Post', videoId);
     const videoDoc = await getDoc(videoRef);
     var usersubsed = false;
+    var ismemberonly=false;
     if (videoDoc.exists()) {
       const videoData = videoDoc.data();
+      setcurrentsetmemberonly(videoData['membersonly']||false);
       setvideolink(videoData['Video Link']);
       setvideoviews(videoData['Views']);
       setvideotitle(videoData['Caption']);
@@ -214,6 +216,20 @@ export default function Videoviewingpage() {
   useEffect(() => {
     fetchData();
   }, [videoId, videoowner]);
+  const changevisibility = async () => {
+    const videoRef = doc(db, 'Global Post', videoId);
+    const videoDoc = await getDoc(videoRef);
+    if (videoDoc.exists()) {
+      const videoData = videoDoc.data();
+      if (videoData['membersonly']) {
+        setcurrentsetmemberonly(false);
+        await updateDoc(videoRef, { 'membersonly': false });
+      } else {
+        setcurrentsetmemberonly(true);
+        await updateDoc(videoRef, { 'membersonly': true });
+      }
+    }
+  }
   const handleSubscribe = async () => {
     await fetchData();
     const subsRef = doc(db, 'Subscribers', videoowner);
@@ -297,6 +313,7 @@ export default function Videoviewingpage() {
           const Videolink = [];
           const VideoID = [];
           const MembersOnly = [];
+          const membervideo=false;
           if (data.VID.includes(videoId)) {
             data.VID = data.VID.filter(id => id !== videoId);
           }
@@ -311,6 +328,7 @@ export default function Videoviewingpage() {
               uniqueCaptions.add(videoData['Caption']);
               Views.push(videoData['Views']);
               setmemberonly(MembersOnly);
+              
               MembersOnly.push(videoData['membersonly'] || false);
               UploadDates.push(videoData['Uploaded At']);
               Videolink.push(videoData['Video Link']);
@@ -622,9 +640,12 @@ export default function Videoviewingpage() {
                       </div>
 
                     </Link>
-                    
-                      
-                    
+                    <Link  style={{ textDecoration: 'none', color: 'white' }}>
+                      <div className='hebfjenk' style={{width:"fit-content",paddingLeft:"10px",paddingRight:"10px"}} onClick={changevisibility}>
+                        <center>{currentmemberonly?'Make Public':'Make Members Only'}</center>
+                      </div>
+
+                    </Link>
                   </div>
                 </Link> : subscount.includes(auth.currentUser.uid) ? (
                   <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
