@@ -296,7 +296,7 @@ export default function Landingpage() {
                 <div className="jdbfjekfjkhef" style={{ color: nightmode ? 'white' : 'black' }}>
                     {
                         premium?<></>:<Link>
-                        <div className="jjnjfdkmvd" onClick={joinpremium}>
+                        <div className="jjnjfdkmvd" onClick={auth.currentUser?joinpremium():null}>
                         <div className="ejkclsklksd">
                             <img src="https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_MusicModuleSquare_tablet_640x550.webp" alt="" height="500px" width="50%" />
                             <div className="image-container">
