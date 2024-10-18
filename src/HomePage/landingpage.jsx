@@ -4,7 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
 import Sidebar from '../Components/sidebar';
 import ShortSidebar from '../Components/shortsidebar';
-import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { doc, getDoc, getFirestore, setDoc, Timestamp } from "firebase/firestore";
 import Header from '../Components/header';
 import Uploadbutton from '../Components/uploadbutton';
 const firebaseConfig = {
@@ -245,6 +245,47 @@ export default function Landingpage() {
         console.log('prem', premium);
         fetchVideoData();
     })
+    const buypremium = async () => {
+        try {
+            const docref=doc(db,'Premium Users',auth.currentUser.uid);
+            const dataToUpdate = {
+                'Premium User': true, // Add the random number to the array
+                'Premium Started':Timestamp.now(),
+                'Premium Expiry': new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            };
+            await setDoc(docref, dataToUpdate);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const joinpremium = async () => {
+        const options = {
+            key: 'rzp_test_5ujtbmUNWVYysI', // Your Razorpay Key ID
+            amount: '50000', // Amount in paise
+            currency: 'INR',
+            name: 'VidTube',
+            description: `Membership of ${name}`,
+            image: 'https://vidtubee.vercel.app/favicon.ico', // Your logo URL
+            handler: async (response) => {
+                // Handle payment success
+                // console.log(response.razorpay_payment_id);
+
+                try {
+                    buypremium();
+                    window.location.reload();
+                } catch (error) {
+                    // console.error('Error adding to cart:', error);
+                    // alert('Payment Successful, but failed to add to cart.');
+                }
+            },
+            theme: {
+                color: '#F37254'
+            }
+        };
+
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
+    }
     return (
         <div className="webbody" style={{ backgroundColor: nightmode ? 'black' : 'white', color: nightmode ? 'white' : 'black' }} >
             <Header />
@@ -254,7 +295,8 @@ export default function Landingpage() {
                 } */}
                 <div className="jdbfjekfjkhef" style={{ color: nightmode ? 'white' : 'black' }}>
                     {
-                        premium?<></>:<div className="jjnjfdkmvd">
+                        premium?<></>:<Link>
+                        <div className="jjnjfdkmvd" onClick={joinpremium}>
                         <div className="ejkclsklksd">
                             <img src="https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_MusicModuleSquare_tablet_640x550.webp" alt="" height="500px" width="50%" />
                             <div className="image-container">
@@ -272,6 +314,7 @@ export default function Landingpage() {
                             </div>
                         </div>
                     </div>
+                        </Link>
                     }
 
                     {

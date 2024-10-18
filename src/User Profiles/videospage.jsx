@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
-
+import { CircularProgress } from '@mui/material';
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
     authDomain: "pixelprowess69.firebaseapp.com",
@@ -182,7 +182,8 @@ export default function VideoSection() {
     return (
         <div className='webbody'>
             <div className="jdbfjekfjkhef">
-                {thumbnails.map((url, index) => (
+        
+                {loading? <div style={{ display: "flex", justifyContent: "center" }}><CircularProgress size={24} color="#4285F4" /></div>:thumbnails.map((url, index) => (
                     <div 
                         key={index} 
                         className="thumbnail-item" 

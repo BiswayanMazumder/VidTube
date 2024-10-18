@@ -8,6 +8,7 @@ import VideosHomepage from './videoshomepage';
 import VideoSection from './videospage';
 import Communitypage from './communitypage';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import Playlistpage from './playlistpage';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -362,12 +363,25 @@ export default function ProfilePage() {
                             {activeTab === 'about' && <div className="nfjvf"></div>}
                         </div>
                     </Link>
+                   {
+                  auth.currentUser&&  auth.currentUser.uid===userId? <Link
+                        style={{ textDecoration: 'none', color: activeTab === 'playlist' ? 'black' : 'grey', padding: '10px' }}
+                        onClick={() => setActiveTab('playlist')}
+                        data-testid="about-link"
+                    >
+                        <div className="jjnffkmkm">
+                            Playlist
+                            {activeTab === 'playlist' && <div className="nfjvf"></div>}
+                        </div>
+                    </Link>:<></>
+                   }
                 </div>
                 <div className="jhfjkfj">
                     {
                         activeTab === 'about' ? <Aboutpage /> :
                             activeTab === 'home' ? <VideosHomepage /> :
                                 activeTab === 'video' ? <VideoSection /> :
+                                activeTab === 'playlist' ? <Playlistpage /> :
                                     activeTab === 'community' ? <Communitypage communityPosts={communityPosts} /> : <></>
                     }
                 </div>

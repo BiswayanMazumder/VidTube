@@ -280,7 +280,7 @@ export default function Videoviewingpage() {
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState(null); // Track hovered thumbnail index
   const [VIDs, setVIDs] = useState([]);//
-  const [memberonly,setmemberonly] = useState([]);
+  const [memberonly, setmemberonly] = useState([]);
   useEffect(() => {
     const fetchVideos = async () => {
       try {
@@ -296,7 +296,7 @@ export default function Videoviewingpage() {
           const UploadDates = [];
           const Videolink = [];
           const VideoID = [];
-          const MembersOnly=[];
+          const MembersOnly = [];
           if (data.VID.includes(videoId)) {
             data.VID = data.VID.filter(id => id !== videoId);
           }
@@ -311,7 +311,7 @@ export default function Videoviewingpage() {
               uniqueCaptions.add(videoData['Caption']);
               Views.push(videoData['Views']);
               setmemberonly(MembersOnly);
-              MembersOnly.push(videoData['membersonly']||false);
+              MembersOnly.push(videoData['membersonly'] || false);
               UploadDates.push(videoData['Uploaded At']);
               Videolink.push(videoData['Video Link']);
               setVIDs(data.VID);
@@ -364,7 +364,7 @@ export default function Videoviewingpage() {
       console.error('Error uploading comment ID:', error);
     }
   };
-  
+
   const uploadcomment = async () => {
     await uploadcommentid();
     try {
@@ -408,7 +408,7 @@ export default function Videoviewingpage() {
         const data = docSnapshot.data();
         const CommentIDs = data.commentId || []; // Ensure this is an array
         setcommentdataid(CommentIDs);
-        
+
         const fetchedComments = [];
         const commenterdetails = [];
         const commentpfp = [];
@@ -536,7 +536,53 @@ export default function Videoviewingpage() {
       console.log("Error updating document: ", error);
     }
   };
+  const [savevideo, setsaved] = useState(false);
+  useEffect(() => {
+    const fetchsavedvideos = async () => {
+      try {
+        const docref= doc(db, 'Global Playlists', auth.currentUser.uid);
+        const docSnapshot = await getDoc(docref);
+        if(docSnapshot.exists()){
+          const data = docSnapshot.data();
+          const savedvideos = data['VID'];
+          if(savedvideos.includes(videoId)){
+            setsaved(true);
+          }
+        }
+      } catch (error) {
+        
+      }
+    }
+    fetchsavedvideos();
+  },[])
+  const savevideos = async () => {
+    try {
+      const docref= doc(db, 'Global Playlists', auth.currentUser.uid);
+      const dataToUpdate = {
+        'VID': arrayUnion(videoId), // Add the random number to the array
+      };
 
+      // Update the document with merge: true to keep existing fields
+      await setDoc(docref, dataToUpdate, { merge: true });
+      setsaved(true);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const removevideos = async () => {
+    try {
+      const docref= doc(db, 'Global Playlists', auth.currentUser.uid);
+      const dataToUpdate = {
+        'VID': arrayRemove(videoId), // Add the random number to the array
+      };
+
+      // Update the document with merge: true to keep existing fields
+      await setDoc(docref, dataToUpdate, { merge: true });
+      setsaved(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <div className='webbody'>
       <Header />
@@ -553,7 +599,7 @@ export default function Videoviewingpage() {
             </div>
             <div className='ekhbfehfss' style={{ display: "flex", flexDirection: "row", gap: "10px", marginTop: "20px" }}>
               <Link to={`/profile/${videoowner}`}>
-              <img src={videoownerpfp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                <img src={videoownerpfp} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
               </Link>
               <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${videoowner}`}>
                 <div className="jfvjnf" style={{ fontWeight: "300", fontSize: "15px", marginTop: "0px" }}>
@@ -566,15 +612,19 @@ export default function Videoviewingpage() {
 
               {
                 auth.currentUser ? auth.currentUser.uid === videoowner ? <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link" to={`/channel/${auth.currentUser.uid}/editing/profile`}>
-                  <div className="jfjdnkf" style={{display: "flex", flexDirection: "row", gap: "10px"}}>
-                  <div className='hebfjenk' >
-                    <center>Customize</center>
-                  </div>
-                  <Link to={`/channel/${auth.currentUser.uid}/editing/profle`} style={{ textDecoration: 'none', color: 'white' }}>
-                  <div className='hebfjenk' >
-                    <center>Edit Video</center>
-                  </div>
-                  </Link>
+                  <div className="jfjdnkf" style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
+                    <div className='hebfjenk' >
+                      <center>Customize</center>
+                    </div>
+                    <Link to={`/channel/${auth.currentUser.uid}/editing/profle`} style={{ textDecoration: 'none', color: 'white' }}>
+                      <div className='hebfjenk' >
+                        <center>Edit Video</center>
+                      </div>
+
+                    </Link>
+                    
+                      
+                    
                   </div>
                 </Link> : subscount.includes(auth.currentUser.uid) ? (
                   <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
@@ -589,6 +639,18 @@ export default function Videoviewingpage() {
                     </div>
                   </Link>
                 ) : <></>
+              }
+              {
+                auth.currentUser && auth.currentUser.uid != videoowner?<Link  style={{ textDecoration: 'none', color: 'white' }}>
+                      <div className='hebfjenk' onClick={()=>{
+                        savevideo?removevideos():savevideos();
+                      }} style={{marginTop: "-5px"}}>
+                        {
+                          !savevideo ? <svg aria-label="Save" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>Save</title><polygon fill="none" points="20 21 12 13.44 4 21 4 3 20 3 20 21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polygon></svg> : <svg aria-label="Remove" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>Remove</title><path d="M20 22a.999.999 0 0 1-.687-.273L12 14.815l-7.313 6.912A1 1 0 0 1 3 21V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1Z"></path></svg>
+                        }
+                      </div>
+
+                    </Link>:<></>
               }
               {/* <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
                 <div className='hebfjenkd' style={{ backgroundColor: 'black', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "0px", width: "fit-content", gap: "50px", paddingLeft: "10px", paddingRight: "10px" }}>
@@ -669,62 +731,62 @@ export default function Videoviewingpage() {
 
               <div className="ehgfehfjefn" style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "50px" }}>
                 {
-                  loadingcomment? <div style={{ display: "flex", justifyContent: "center" }}><CircularProgress size={24} color="#4285F4" /></div>:
-                  comments.map((comment, index) => (
-                  commentedvideo[index] == videoId ? <div className="jefjkf" style={{ display: "flex", flexDirection: "row", gap: "10px", marginTop: "10px", flexDirection: 'row', gap: "10px", fontWeight: "500", fontSize: "15px" }} key={index}>
-                    <div className="bnbnfnv" style={{ height: "40px", width: "40px", borderRadius: "50%", backgroundColor: "grey" }}>
-                      <img src={commentpfp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
-                    </div>
-                    <div className="knkfnvk" style={{ display: "flex", flexDirection: "column", marginTop: "2px", gap: "5px", fontWeight: "600", fontSize: "15px" }}>
-                      <div className="vkfk" style={{ display: "flex", flexDirection: "row", gap: "15px", fontWeight: "600", fontSize: "15px" }}>
+                  loadingcomment ? <div style={{ display: "flex", justifyContent: "center" }}><CircularProgress size={24} color="#4285F4" /></div> :
+                    comments.map((comment, index) => (
+                      commentedvideo[index] == videoId ? <div className="jefjkf" style={{ display: "flex", flexDirection: "row", gap: "10px", marginTop: "10px", flexDirection: 'row', gap: "10px", fontWeight: "500", fontSize: "15px" }} key={index}>
+                        <div className="bnbnfnv" style={{ height: "40px", width: "40px", borderRadius: "50%", backgroundColor: "grey" }}>
+                          <img src={commentpfp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                        </div>
+                        <div className="knkfnvk" style={{ display: "flex", flexDirection: "column", marginTop: "2px", gap: "5px", fontWeight: "600", fontSize: "15px" }}>
+                          <div className="vkfk" style={{ display: "flex", flexDirection: "row", gap: "15px", fontWeight: "600", fontSize: "15px" }}>
 
-                        <Link style={{ textDecoration: 'none', color: 'black', marginTop: "5px" }} to={`/profile/${commentowners[index]}`}>
-                          <div className="jjhfkjfk" style={{ display: "flex", flexDirection: "row", gap: "5px" }}>
-                            {commentername[index]}
-                            <div className="jedhjef" style={{ marginLeft: "5px", color: "grey", fontSize: "12px", marginTop: "2px" }}>
-                              {formatTimeAgo(commenrdate[index])}
+                            <Link style={{ textDecoration: 'none', color: 'black', marginTop: "5px" }} to={`/profile/${commentowners[index]}`}>
+                              <div className="jjhfkjfk" style={{ display: "flex", flexDirection: "row", gap: "5px" }}>
+                                {commentername[index]}
+                                <div className="jedhjef" style={{ marginLeft: "5px", color: "grey", fontSize: "12px", marginTop: "2px" }}>
+                                  {formatTimeAgo(commenrdate[index])}
+                                </div>
+                              </div>
+                            </Link>
+                            <div onClick={async () => {
+                              const docRef = doc(db, 'Comment ID', "Comment ID Generated");
+                              // Prepare the data to upload, including the random number
+                              const dataToUpdate = {
+                                commentId: arrayRemove(commentataid[index]), // Add the random number to the array
+                              };
+
+                              // Update the document with merge: true to keep existing fields
+                              await setDoc(docRef, dataToUpdate, { merge: true });
+                              window.location.reload();
+                            }} style={{ textDecoration: 'none', color: 'black' }}>
+                              {
+                                user ? commentowners[index] === auth.currentUser.uid ? <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="20"
+                                  height="20"
+                                  viewBox="0 0 24 24"
+                                  fill="red"
+                                  style={{ cursor: 'pointer' }}
+                                >
+                                  <path d="M3 6h18v2H3zm1 3h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V9zm3 3h2v6H7zm4 0h2v6h-2zm4 0h2v6h-2z" />
+                                </svg> : <></> : <></>
+                              }
                             </div>
                           </div>
-                        </Link>
-                        <div onClick={async () => {
-                          const docRef = doc(db, 'Comment ID', "Comment ID Generated");
-                          // Prepare the data to upload, including the random number
-                          const dataToUpdate = {
-                            commentId: arrayRemove(commentataid[index]), // Add the random number to the array
-                          };
-
-                          // Update the document with merge: true to keep existing fields
-                          await setDoc(docRef, dataToUpdate, { merge: true });
-                          window.location.reload();
-                        }} style={{ textDecoration: 'none', color: 'black' }}>
-                          {
-                            user ? commentowners[index] === auth.currentUser.uid ? <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="red"
-                              style={{ cursor: 'pointer' }}
-                            >
-                              <path d="M3 6h18v2H3zm1 3h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V9zm3 3h2v6H7zm4 0h2v6h-2zm4 0h2v6h-2z" />
-                            </svg> : <></> : <></>
-                          }
+                          {/* </Link> */}
+                          <div className="vkfk" style={{ fontWeight: "300", fontSize: "12px" }}>
+                            {comments[index]}
+                          </div>
                         </div>
-                      </div>
-                      {/* </Link> */}
-                      <div className="vkfk" style={{ fontWeight: "300", fontSize: "12px" }}>
-                        {comments[index]}
-                      </div>
-                    </div>
-                  </div> : <></>
-                ))}
+                      </div> : <></>
+                    ))}
               </div>
 
             </div>
             <div className="relatedvideos">
               {
                 thumbnails.map((thumbnail, index) => (
-                  !memberonly[index]? <div className="jnfvkf">
+                  !memberonly[index] ? <div className="jnfvkf">
                     <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${vidData[index]}`}>
                       <img src={thumbnails[index]} alt={captions[index]} height={"120px"}
                         width={"200px"} style={{ borderRadius: "10px" }} />
@@ -750,7 +812,7 @@ export default function Videoviewingpage() {
                       </div>
                     </div>
 
-                  </div>:<></>
+                  </div> : <></>
                 ))
               }
             </div>
