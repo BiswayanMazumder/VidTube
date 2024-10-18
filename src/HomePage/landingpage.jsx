@@ -237,7 +237,9 @@ export default function Landingpage() {
                     sidebar ? <Sidebar /> : <ShortSidebar />
                 } */}
                 <div className="jdbfjekfjkhef" style={{color: nightmode ? 'white' : 'black'}}>
-                <Uploadbutton/>
+                {
+                    auth.currentUser?<Uploadbutton/>:<></>
+                }
                     {/* <div className="thumbnail-container"> */}
                     {thumbnail.map((url, index) => (
                         !memberonly[index]?<div key={index} className={nightmode?"thumbnail-item-dark":"thumbnail-item"}>
