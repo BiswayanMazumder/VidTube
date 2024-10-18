@@ -253,7 +253,8 @@ export default function Landingpage() {
                     sidebar ? <Sidebar /> : <ShortSidebar />
                 } */}
                 <div className="jdbfjekfjkhef" style={{ color: nightmode ? 'white' : 'black' }}>
-                    <div className="jjnjfdkmvd">
+                    {
+                        premium?<></>:<div className="jjnjfdkmvd">
                         <div className="ejkclsklksd">
                             <img src="https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_MusicModuleSquare_tablet_640x550.webp" alt="" height="500px" width="50%" />
                             <div className="image-container">
@@ -271,6 +272,7 @@ export default function Landingpage() {
                             </div>
                         </div>
                     </div>
+                    }
 
                     {
                         auth.currentUser ? <Uploadbutton /> : <></>
