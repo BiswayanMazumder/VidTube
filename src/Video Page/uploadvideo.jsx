@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../Components/header';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
+import { arrayUnion, doc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -85,24 +85,24 @@ export default function Uploadvideo() {
     setRandomNumber(generateRandomNumber());
     // console.log('Rand',randomNumber);
   }, []);
-//   const uploadcommentid = async () => {
-//     try {
-//       // Create a reference to the document in Firestore
-//       const docRef = doc(db, 'Comment ID', "Comment ID Generated");
+  const uploadcommentid = async () => {
+    try {
+      // Create a reference to the document in Firestore
+      const docRef = doc(db, 'Global VIDs', "VIDs");
 
-//       // Prepare the data to upload, including the random number
-//       const dataToUpdate = {
-//         commentId: arrayUnion(randomNumber), // Add the random number to the array
-//       };
+      // Prepare the data to upload, including the random number
+      const dataToUpdate = {
+        VID: arrayUnion(randomNumber.toString()), // Add the random number to the array
+      };
 
-//       // Update the document with merge: true to keep existing fields
-//       await setDoc(docRef, dataToUpdate, { merge: true });
-//       console.log('Updated Comment ID document successfully.');
-//       console.log('Comment ID uploaded successfully:', randomNumber.toString());
-//     } catch (error) {
-//       console.error('Error uploading comment ID:', error);
-//     }
-//   };
+      // Update the document with merge: true to keep existing fields
+      await setDoc(docRef, dataToUpdate, { merge: true });
+      console.log('Updated Comment ID document successfully.');
+      console.log('Comment ID uploaded successfully:', randomNumber.toString());
+    } catch (error) {
+      console.error('Error uploading comment ID:', error);
+    }
+  };
 //   const uploadcomment = async () => {
 //     await uploadcommentid();
 //     try {
@@ -248,6 +248,7 @@ export default function Uploadvideo() {
                             onClick={() => {
                                 if (isFormValid) {
                                     generateRandomNumber();
+                                    // uploadcommentid();
                                     console.log('Rand',randomNumber);
                                     console.log('Title',title);
                                 }
