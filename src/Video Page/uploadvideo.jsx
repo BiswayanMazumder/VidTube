@@ -25,7 +25,7 @@ export default function Uploadvideo() {
     const [imageSrc, setImageSrc] = useState('');
     const [videosrc, setvideosrc] = useState('');
     useEffect(() => {
-        if(auth.currentUser){
+        if (auth.currentUser) {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     // User is signed in, see docs for a list of available properties
@@ -35,12 +35,12 @@ export default function Uploadvideo() {
                     // ...
                 } else {
                     // User is signed out
-                    
+
                     // ...
                 }
             });
         }
-        else{
+        else {
             window.location.replace('/');
         }
     })
@@ -157,9 +157,30 @@ export default function Uploadvideo() {
                     <div className="rjjnvnv">
                         Title
                         <div className="jjmjskjk">
-                            <input type="text" style={{ width: '90%' }} />
+                            <input type="text" style={{ width: '90%',paddingLeft:'10px' }}/>
                         </div>
                     </div>
+                    <div className="rjjnvnv">
+                        Video Type
+                        <div className="jjmjskjk">
+                            <div>
+                                <label style={{ marginRight: '50px' }}>
+                                    <input type="radio" name="access" value="public" defaultChecked style={{ width: '12px', height: '12px' }} />
+                                    Public
+                                </label>
+                                <label>
+                                    <input type="radio" name="access" value="member" style={{ width: '12px', height: '12px' }} />
+                                    Members Only
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div className="jjmjskjk">
+                            <div className="djjvdndnv" style={{ width: '90%',backgroundColor:'#4285F4',height:'50px',borderRadius:'20px',display:'flex',justifyContent:'center',alignItems:'center',color:'white',fontFamily:"'Poppins', sans-serif"}}>
+                            PUBLISH
+                            </div>
+                        </div>
                 </div>
             </div>
         </div>
