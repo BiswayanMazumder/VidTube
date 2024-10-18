@@ -246,7 +246,7 @@ export default function Landingpage() {
                             <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(()=>{
                                             localStorage.setItem("VID", VID[index]);
                                         })}>
-                                <img src={url} alt={`Thumbnail ${index}`} className="thumbnail-image" height={"150px"} width={"265px"} style={{ borderRadius: "10px" }} />
+                                <img src={url} alt={`Thumbnail ${index}`} className="thumbnail-image" height={"150px"} width={"100%"} style={{ borderRadius: "10px" }} />
                                 <div className="jefkfm">
                                     <div className="pfp">
                                         <Link to={`/profile/${uploader[index]}`} onClick={(()=>{
