@@ -6,6 +6,7 @@ import Sidebar from '../Components/sidebar';
 import ShortSidebar from '../Components/shortsidebar';
 import { arrayRemove, arrayUnion, doc, Firestore, getDoc, getFirestore, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import Header from '../Components/header';
+import { CircularProgress } from '@mui/material';
 const firebaseConfig = {
   apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
   authDomain: "pixelprowess69.firebaseapp.com",
@@ -396,61 +397,55 @@ export default function Videoviewingpage() {
   const [commentername, setcommentername] = useState([]);
   const [commentowners, setcomentowners] = useState([]);
   const [commentedvideo, setcommentedvideo] = useState([]);
+  const [loadingcomment, setLoadingcomment] = useState(true);
   const fetchcomments = async () => {
+    setLoadingcomment(true); // Set loading to true at the start
     try {
-      const docRef = doc(db, 'Comment ID', "Comment ID Generated");
+      const docRef = doc(db, 'Comment ID', 'Comment ID Generated');
       const docSnapshot = await getDoc(docRef);
 
       if (docSnapshot.exists()) {
         const data = docSnapshot.data();
         const CommentIDs = data.commentId || []; // Ensure this is an array
         setcommentdataid(CommentIDs);
-        // console.log('Comment IDs:', CommentIDs);
+        
         const fetchedComments = [];
         const commenterdetails = [];
         const commentpfp = [];
         const commentvideoid = [];
         const commentownerid = [];
         const commentupload = [];
-        for (const commentID of CommentIDs) {//comment
+
+        for (const commentID of CommentIDs) {
           const commentRef = doc(db, 'Comment Details', commentID.toString());
           const commentDoc = await getDoc(commentRef);
+
           if (commentDoc.exists()) {
             const commentData = commentDoc.data();
             commentupload.push(commentData.timestamp);
-            // console.log('Date',commentupload);
             fetchedComments.push(commentData.comment);
             commentvideoid.push(commentData.VideoID);
             commentownerid.push(commentData.commenter);
-            // Fetch commenter details
-            const commenterRefs = doc(db, 'User Details', commentData.commenter);//name
-            const commenterDocs = await getDoc(commenterRefs);
-            let commenterData;
 
+            // Fetch commenter details
+            const commenterRefs = doc(db, 'User Details', commentData.commenter);
+            const commenterDocs = await getDoc(commenterRefs);
             if (commenterDocs.exists()) {
-              commenterData = commenterDocs.data();
+              const commenterData = commenterDocs.data();
               commenterdetails.push(commenterData.Username);
             } else {
               console.log(`Commenter not found for UID: ${commentData.commenter}`);
             }
 
             // Fetch profile picture
-            const commenterRefss = doc(db, 'User Profile Pictures', commentData.commenter);//pfp
+            const commenterRefss = doc(db, 'User Profile Pictures', commentData.commenter);
             const commenterDocss = await getDoc(commenterRefss);
-            let commenterDatas;
-
             if (commenterDocss.exists()) {
-              commenterDatas = commenterDocss.data();
+              const commenterDatas = commenterDocss.data();
               commentpfp.push(commenterDatas['Profile Pic']);
-            } else {
-              // console.log(`Profile picture not found for UID: ${commentData.commenter}`);
             }
-
-            // Log the comment details
-
-
           } else {
-            // console.log(`No comment found for ID: ${commentID}`);
+            console.log(`No comment found for ID: ${commentID}`);
           }
         }
 
@@ -460,14 +455,16 @@ export default function Videoviewingpage() {
         setcomentowners(commentownerid);
         setcommentdate(commentupload);
         setcommentedvideo(commentvideoid);
-        // console.log('Date', commentupload);
       } else {
         console.log('No Comment ID document found!');
       }
     } catch (error) {
       console.error('Error fetching comments:', error);
+    } finally {
+      setLoadingcomment(false); // Set loading to false after data fetching is complete
     }
   };
+
 
 
 
@@ -671,7 +668,9 @@ export default function Videoviewingpage() {
               </div>
 
               <div className="ehgfehfjefn" style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "50px" }}>
-                {comments.map((comment, index) => (
+                {
+                  loadingcomment? <div style={{ display: "flex", justifyContent: "center" }}><CircularProgress size={24} color="#4285F4" /></div>:
+                  comments.map((comment, index) => (
                   commentedvideo[index] == videoId ? <div className="jefjkf" style={{ display: "flex", flexDirection: "row", gap: "10px", marginTop: "10px", flexDirection: 'row', gap: "10px", fontWeight: "500", fontSize: "15px" }} key={index}>
                     <div className="bnbnfnv" style={{ height: "40px", width: "40px", borderRadius: "50%", backgroundColor: "grey" }}>
                       <img src={commentpfp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
