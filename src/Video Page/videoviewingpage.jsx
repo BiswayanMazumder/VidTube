@@ -279,6 +279,7 @@ export default function Videoviewingpage() {
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState(null); // Track hovered thumbnail index
   const [VIDs, setVIDs] = useState([]);//
+  const [memberonly,setmemberonly] = useState([]);
   useEffect(() => {
     const fetchVideos = async () => {
       try {
@@ -294,6 +295,7 @@ export default function Videoviewingpage() {
           const UploadDates = [];
           const Videolink = [];
           const VideoID = [];
+          const MembersOnly=[];
           if (data.VID.includes(videoId)) {
             data.VID = data.VID.filter(id => id !== videoId);
           }
@@ -307,6 +309,8 @@ export default function Videoviewingpage() {
               uniqueThumbnails.add(videoData['Thumbnail Link']);
               uniqueCaptions.add(videoData['Caption']);
               Views.push(videoData['Views']);
+              setmemberonly(MembersOnly);
+              MembersOnly.push(videoData['membersonly']||false);
               UploadDates.push(videoData['Uploaded At']);
               Videolink.push(videoData['Video Link']);
               setVIDs(data.VID);
@@ -359,6 +363,7 @@ export default function Videoviewingpage() {
       console.error('Error uploading comment ID:', error);
     }
   };
+  
   const uploadcomment = async () => {
     await uploadcommentid();
     try {
@@ -720,7 +725,7 @@ export default function Videoviewingpage() {
             <div className="relatedvideos">
               {
                 thumbnails.map((thumbnail, index) => (
-                  <div className="jnfvkf">
+                  !memberonly[index]? <div className="jnfvkf">
                     <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${vidData[index]}`}>
                       <img src={thumbnails[index]} alt={captions[index]} height={"120px"}
                         width={"200px"} style={{ borderRadius: "10px" }} />
@@ -746,7 +751,7 @@ export default function Videoviewingpage() {
                       </div>
                     </div>
 
-                  </div>
+                  </div>:<></>
                 ))
               }
             </div>
