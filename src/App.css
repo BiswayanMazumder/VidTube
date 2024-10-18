@@ -548,3 +548,57 @@ input {
   flex-direction: column;
   gap: 20px;
 }
+.jjnjfdkmvd {
+  width: 100vw;
+  display: flex;
+  height: fit-content;
+}
+
+.ejkclsklksd {
+  margin-right: 50px;
+  width: 100%;
+  background-color: red;
+  height: 500px;
+  display: flex;
+  flex-direction: row;
+  border-radius: 20px;
+}
+
+.image-container {
+  position: relative;
+  width: 50%; /* Match the width of the image */
+}
+
+.overlay-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white; /* Adjust color as needed */
+  font-size: 24px; /* Adjust font size as needed */
+  text-align: center;
+  /* Optional: Add background for better visibility */
+  /* background-color: rgba(0, 0, 0, 0.5);  */
+  padding: 10px;
+  border-radius: 5px;
+}
+.dnfmdm{
+  height: 50px;
+  width:fit-content;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #65B8FF;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 10px;
+  color: black;
+  font-weight: bold;
+}
+@media screen and (max-width:760px) {
+  .jjnjfdkmvd{
+    display: none;
+  }
+}

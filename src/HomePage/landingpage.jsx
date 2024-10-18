@@ -24,10 +24,10 @@ const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
 export default function Landingpage() {
     const { userId } = useParams();
-    useEffect(()=>{
-        document.title='VidTube';
+    useEffect(() => {
+        document.title = 'VidTube';
     })
-    const [memberonly,setmemberonly] = useState([]);
+    const [memberonly, setmemberonly] = useState([]);
     const [sidebar, setSidebar] = useState(true);
     const [user, setuser] = useState(false);
     const [photourl, setphotourl] = useState('');
@@ -57,7 +57,7 @@ export default function Landingpage() {
     const [uploader, setuploader] = useState([]);
     const [dp, setdp] = useState([]);
     const [name, setname] = useState([]);
-    const [VID,setVID]=useState([]);
+    const [VID, setVID] = useState([]);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -76,12 +76,12 @@ export default function Landingpage() {
                     const Uploader = [];
                     const Name = [];
                     const PFP = [];
-                    const MembersOnly=[];
+                    const MembersOnly = [];
                     // console.log('VID',data.VID);
                     setVID(data.VID);
                     // Fetch video data
                     for (let i = 0; i < data.VID.length; i++) {
-                        
+
                         const videoRef = doc(db, 'Global Post', data.VID[i]);
                         const videoDoc = await getDoc(videoRef);
 
@@ -93,7 +93,7 @@ export default function Landingpage() {
                             UploadDates.push(videoData['Uploaded At']);
                             setmemberonly(MembersOnly);
                             Uploader.push(videoData['Uploaded UID']);
-                            MembersOnly.push(videoData['membersonly']||false);
+                            MembersOnly.push(videoData['membersonly'] || false);
                         } else {
                             console.log(`Video not found for VID: ${data.VID[i]}`);
                         }
@@ -227,8 +227,24 @@ export default function Landingpage() {
         const interval = setInterval(fetchdarkmode, 1000); // Call the function every second
 
         return () => clearInterval(interval); // Cleanup the interval on unmount
-    }, []); 
-    
+    }, []);
+    const [premium, setpremium] = useState(false);
+    useEffect(() => {
+        const fetchVideoData = async () => {
+            try {
+                const docRef = doc(db, 'Premium Users', auth.currentUser.uid);
+                const docSnapshot = await getDoc(docRef);
+                if (docSnapshot.exists()) {
+                    const videoData = docSnapshot.data();
+                    setpremium(videoData['Premium User']);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        console.log('prem', premium);
+        fetchVideoData();
+    })
     return (
         <div className="webbody" style={{ backgroundColor: nightmode ? 'black' : 'white', color: nightmode ? 'white' : 'black' }} >
             <Header />
@@ -236,45 +252,65 @@ export default function Landingpage() {
                 {/* {
                     sidebar ? <Sidebar /> : <ShortSidebar />
                 } */}
-                <div className="jdbfjekfjkhef" style={{color: nightmode ? 'white' : 'black'}}>
-                {
-                    auth.currentUser?<Uploadbutton/>:<></>
-                }
+                <div className="jdbfjekfjkhef" style={{ color: nightmode ? 'white' : 'black' }}>
+                    <div className="jjnjfdkmvd">
+                        <div className="ejkclsklksd">
+                            <img src="https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_MusicModuleSquare_tablet_640x550.webp" alt="" height="500px" width="50%" />
+                            <div className="image-container">
+                                <img src="https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_MusicModuleSquare_text_background_tablet_1284x1875.jpg" alt="" height="500px" width="100%" />
+                                <div className="overlay-text" style={{display:"flex",justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
+                                <h2>Try Premium now</h2>
+                                <div className="jdnjvnd" style={{fontSize:"15px",fontWeight:"400"}}>
+                                Prepaid and monthly plans available. Starts at ₹149.00​/month. Free trials with monthly plans. 
+                                </div>
+                                <br /><br />
+                                <div className="dnfmdm" style={{fontSize:"15px",fontWeight:"400"}}>
+                                GET VIDETUBE PREMIUM
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {
+                        auth.currentUser ? <Uploadbutton /> : <></>
+                    }
                     {/* <div className="thumbnail-container"> */}
                     {thumbnail.map((url, index) => (
-                        !memberonly[index]?<div key={index} className={nightmode?"thumbnail-item-dark":"thumbnail-item"}>
-                            <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(()=>{
-                                            localStorage.setItem("VID", VID[index]);
-                                        })}>
-                                <img src={url} alt={`Thumbnail ${index}`} className="thumbnail-image" height={"150px"} width={"265px"} style={{ borderRadius: "10px" }} />
-                                <div className="jefkfm">
-                                    <div className="pfp">
-                                        <Link to={`/profile/${uploader[index]}`} onClick={(()=>{
-                                            localStorage.setItem("userid", uploader[index]);
-                                        })}>
-                                            <img src={dp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
-                                        </Link>
-                                    </div>
-                                    <div className="jjnjbhvf" style={{color: nightmode ? 'white' : 'black'}}>
-                                        <h5>{caption[index]}</h5>
-                                        <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
-                                            {name[index]}
+                        !memberonly[index] ?
+                            <div key={index} className={"thumbnail-item"}>
+                                <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(() => {
+                                    localStorage.setItem("VID", VID[index]);
+                                })}>
+                                    <img src={url} alt={`Thumbnail ${index}`} className="thumbnail-image" height={"150px"} width={"265px"} style={{ borderRadius: "10px" }} />
+                                    <div className="jefkfm">
+                                        <div className="pfp">
+                                            <Link to={`/profile/${uploader[index]}`} onClick={(() => {
+                                                localStorage.setItem("userid", uploader[index]);
+                                            })}>
+                                                <img src={dp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                                            </Link>
+                                        </div>
+                                        <div className="jjnjbhvf" style={{ color: nightmode ? 'white' : 'black' }}>
+                                            <h5>{caption[index]}</h5>
+                                            <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
+                                                {name[index]}
 
-                                        </div>
-                                        <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
-                                            <p>{
-                                                views[index] > 0 ?
-                                                    views[index] === 1 ? formatViews(views[index]) + ' View' :
-                                                        formatViews(views[index]) + ' Views' :
-                                                    "No views"
-                                            }</p>
-                                            •
-                                            <p>{formatTimeAgo(uploaddate[index])}</p>
+                                            </div>
+                                            <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
+                                                <p>{
+                                                    views[index] > 0 ?
+                                                        views[index] === 1 ? formatViews(views[index]) + ' View' :
+                                                            formatViews(views[index]) + ' Views' :
+                                                        "No views"
+                                                }</p>
+                                                •
+                                                <p>{formatTimeAgo(uploaddate[index])}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </Link>
-                        </div>:<></>
+                                </Link>
+                            </div> : <></>
                     ))}
 
 
