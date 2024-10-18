@@ -129,7 +129,7 @@ export default function Header() {
                 </Link>
                 <Link to={"/"}>
                     <div className="kejfkf" >
-                        <img src={premium ? "https://as2.ftcdn.net/v2/jpg/04/69/69/17/1000_F_469691792_MfkrxlGuUkHsztMOuCo7CvADeyvhGihm.jpg" : "https://vidtube-sable.vercel.app/assets/logo-koDzNJgp.png"} alt="" height={"30px"} width={"130px"} />
+                        <img src={premium ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgV3YjQxAs50jIXsB4qDUR0imp4XHcALTPAQ&s" : "https://vidtube-sable.vercel.app/assets/logo-koDzNJgp.png"} alt="" height={"30px"} width={"130px"} />
                     </div>
                 </Link>
                 <div className="searchbar">
