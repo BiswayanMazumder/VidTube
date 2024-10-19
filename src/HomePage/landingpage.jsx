@@ -357,8 +357,7 @@ export default function Landingpage() {
                                 </Link>
                             </div> : <></>
                     ))}
-
-
+                    
                 </div>
             </div>
         </div>

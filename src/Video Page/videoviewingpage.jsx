@@ -7,6 +7,7 @@ import ShortSidebar from '../Components/shortsidebar';
 import { arrayRemove, arrayUnion, doc, Firestore, getDoc, getFirestore, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import Header from '../Components/header';
 import { CircularProgress } from '@mui/material';
+import { getDownloadURL, getStorage, ref, uploadBytes, uploadString } from 'firebase/storage';
 const firebaseConfig = {
   apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
   authDomain: "pixelprowess69.firebaseapp.com",
@@ -22,6 +23,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
+const storage = getStorage(app);
 export default function Videoviewingpage() {
   const { videoId, userId } = useParams();
   // const { userId } = useParams();
@@ -147,6 +149,7 @@ export default function Videoviewingpage() {
   }, []);
   const [subscribed, issubscribed] = useState(false);
   const [videolink, setvideolink] = useState('');
+  const [videothumbnail, setvideothumbnail] = useState('');
   const [videoviwes, setvideoviews] = useState(0);
   const [videotitle, setvideotitle] = useState('');
   const [videoowner, setvideoowner] = useState('');
@@ -154,16 +157,18 @@ export default function Videoviewingpage() {
   const [videoownerpfp, setvideoownerpfp] = useState('');
   const [subscount, setsubs] = useState([]);
   const [videoupload, setvideoupload] = useState([]);
-  const [currentmemberonly,setcurrentsetmemberonly] = useState([]);
+  const [currentmemberonly, setcurrentsetmemberonly] = useState([]);
+
   const fetchData = async () => {
     const videoRef = doc(db, 'Global Post', videoId);
     const videoDoc = await getDoc(videoRef);
     var usersubsed = false;
-    var ismemberonly=false;
+    var ismemberonly = false;
     if (videoDoc.exists()) {
       const videoData = videoDoc.data();
-      setcurrentsetmemberonly(videoData['membersonly']||false);
+      setcurrentsetmemberonly(videoData['membersonly'] || false);
       setvideolink(videoData['Video Link']);
+      setvideothumbnail(videoData['Thumbnail Link']);
       setvideoviews(videoData['Views']);
       setvideotitle(videoData['Caption']);
       setvideoupload(videoData['Uploaded At']);
@@ -313,7 +318,7 @@ export default function Videoviewingpage() {
           const Videolink = [];
           const VideoID = [];
           const MembersOnly = [];
-          const membervideo=false;
+          const membervideo = false;
           if (data.VID.includes(videoId)) {
             data.VID = data.VID.filter(id => id !== videoId);
           }
@@ -328,7 +333,7 @@ export default function Videoviewingpage() {
               uniqueCaptions.add(videoData['Caption']);
               Views.push(videoData['Views']);
               setmemberonly(MembersOnly);
-              
+
               MembersOnly.push(videoData['membersonly'] || false);
               UploadDates.push(videoData['Uploaded At']);
               Videolink.push(videoData['Video Link']);
@@ -558,24 +563,24 @@ export default function Videoviewingpage() {
   useEffect(() => {
     const fetchsavedvideos = async () => {
       try {
-        const docref= doc(db, 'Global Playlists', auth.currentUser.uid);
+        const docref = doc(db, 'Global Playlists', auth.currentUser.uid);
         const docSnapshot = await getDoc(docref);
-        if(docSnapshot.exists()){
+        if (docSnapshot.exists()) {
           const data = docSnapshot.data();
           const savedvideos = data['VID'];
-          if(savedvideos.includes(videoId)){
+          if (savedvideos.includes(videoId)) {
             setsaved(true);
           }
         }
       } catch (error) {
-        
+
       }
     }
     fetchsavedvideos();
-  },[])
+  }, [])
   const savevideos = async () => {
     try {
-      const docref= doc(db, 'Global Playlists', auth.currentUser.uid);
+      const docref = doc(db, 'Global Playlists', auth.currentUser.uid);
       const dataToUpdate = {
         'VID': arrayUnion(videoId), // Add the random number to the array
       };
@@ -589,7 +594,7 @@ export default function Videoviewingpage() {
   }
   const removevideos = async () => {
     try {
-      const docref= doc(db, 'Global Playlists', auth.currentUser.uid);
+      const docref = doc(db, 'Global Playlists', auth.currentUser.uid);
       const dataToUpdate = {
         'VID': arrayRemove(videoId), // Add the random number to the array
       };
@@ -601,6 +606,61 @@ export default function Videoviewingpage() {
       console.log(error);
     }
   }
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const toggleModal = () => {
+    setModalOpen(!isModalOpen);
+  };
+  const [thumbnailFile, setThumbnailFile] = useState(null);
+  const [imageSrc, setImageSrc] = useState(''); // For displaying selected image
+  const [uploading, setuploading] = useState(false);
+
+  const showFileName = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImageSrc(url); // Show selected image
+      setThumbnailFile(file);
+    } else {
+      setImageSrc(''); // Reset if no file
+      setThumbnailFile(null);
+    }
+  };
+
+  const uploadFiles = async () => {
+    console.log('Firestore uploading...');
+    const thumbnailRef = ref(storage, `thumbnails/${thumbnailFile.name}`);
+
+    // Upload thumbnail to Firebase Storage
+    await uploadBytes(thumbnailRef, thumbnailFile);
+
+    // Get the download URL
+    const thumbnailURL = await getDownloadURL(thumbnailRef);
+    return { thumbnailURL };
+  };
+
+  const uploadthumbnail = async () => {
+    setuploading(true);
+    try {
+      const { thumbnailURL } = await uploadFiles();
+
+      // Reference to the document in Firestore
+      const commentRef = doc(db, 'Global Post', videoId);
+      const commentDetails = {
+        'Thumbnail Link': thumbnailURL, // Store the thumbnail URL in Firestore
+      };
+
+      // Set the document in Firestore
+      await updateDoc(commentRef, commentDetails, { merge: true }); // Use merge to update or create
+
+      console.log('Video uploaded successfully:', commentDetails);
+      setuploading(false);
+      window.location.replace('/'); // Redirect after successful upload
+    } catch (error) {
+      console.error('Error uploading to Firestore:', error); // Log specific upload errors
+      setuploading(false); // Stop loading on error
+    }
+  };
   return (
     <div className='webbody'>
       <Header />
@@ -634,15 +694,47 @@ export default function Videoviewingpage() {
                     <div className='hebfjenk' >
                       <center>Customize</center>
                     </div>
-                    <Link to={`/channel/${auth.currentUser.uid}/editing/profle`} style={{ textDecoration: 'none', color: 'white' }}>
-                      <div className='hebfjenk' >
+                    <Link to="#" onClick={toggleModal} style={{ textDecoration: 'none', color: 'white' }}>
+                      <div className='hebfjenk'>
                         <center>Edit Video</center>
                       </div>
-
                     </Link>
-                    <Link  style={{ textDecoration: 'none', color: 'white' }}>
-                      <div className='hebfjenk' style={{width:"fit-content",paddingLeft:"10px",paddingRight:"10px"}} onClick={changevisibility}>
-                        <center>{currentmemberonly?'Make Public':'Make Members Only'}</center>
+
+                    {isModalOpen && (
+                      <div className="modal-overlay" onClick={toggleModal}>
+                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                          <h2>Edit Video</h2>
+                          <div className="ejfkmedkf" style={{ width: "100%", display: "flex", justifyContent: "center", flexDirection: "column", gap: "10px" }}>
+                            <img
+                              src={imageSrc || videothumbnail} // Replace with your default thumbnail URL
+                              alt="Thumbnail Preview"
+                              height={"150px"}
+                              width={"100%"}
+                              style={{ borderRadius: "10px" }}
+                            />
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={showFileName}
+                              style={{ display: 'none' }}
+                              id="file-input" 
+                              onClick={uploading ? null : uploadthumbnail}
+                            />
+                            <label htmlFor="file-input" style={{ textDecoration: 'none', color: 'white' }} onClick={uploading  && imageSrc!=null ? null : uploadthumbnail} >
+                              <div className='hebfjenk' style={{ width: "fit-content", paddingLeft: "10px", paddingRight: "10px", cursor: 'pointer' }} onClick={uploading  && imageSrc!=null ? null : uploadthumbnail} >
+                                <center>{uploading ? <CircularProgress size={24} color="inherit" /> : 'Upload Thumbnail'}</center>
+                              </div>
+                            </label>
+                            <Link to="#" onClick={uploading  && imageSrc!=null ? null : uploadthumbnail} style={{ display: 'none' }}>
+                              <div />
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <Link style={{ textDecoration: 'none', color: 'white' }}>
+                      <div className='hebfjenk' style={{ width: "fit-content", paddingLeft: "10px", paddingRight: "10px" }} onClick={changevisibility}>
+                        <center>{currentmemberonly ? 'Make Public' : 'Make Members Only'}</center>
                       </div>
 
                     </Link>
@@ -662,16 +754,16 @@ export default function Videoviewingpage() {
                 ) : <></>
               }
               {
-                auth.currentUser && auth.currentUser.uid != videoowner?<Link  style={{ textDecoration: 'none', color: 'white' }}>
-                      <div className='hebfjenk' onClick={()=>{
-                        savevideo?removevideos():savevideos();
-                      }} style={{marginTop: "-5px"}}>
-                        {
-                          !savevideo ? <svg aria-label="Save" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>Save</title><polygon fill="none" points="20 21 12 13.44 4 21 4 3 20 3 20 21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polygon></svg> : <svg aria-label="Remove" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>Remove</title><path d="M20 22a.999.999 0 0 1-.687-.273L12 14.815l-7.313 6.912A1 1 0 0 1 3 21V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1Z"></path></svg>
-                        }
-                      </div>
+                auth.currentUser && auth.currentUser.uid != videoowner ? <Link style={{ textDecoration: 'none', color: 'white' }}>
+                  <div className='hebfjenk' onClick={() => {
+                    savevideo ? removevideos() : savevideos();
+                  }} style={{ marginTop: "-5px" }}>
+                    {
+                      !savevideo ? <svg aria-label="Save" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>Save</title><polygon fill="none" points="20 21 12 13.44 4 21 4 3 20 3 20 21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polygon></svg> : <svg aria-label="Remove" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>Remove</title><path d="M20 22a.999.999 0 0 1-.687-.273L12 14.815l-7.313 6.912A1 1 0 0 1 3 21V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1Z"></path></svg>
+                    }
+                  </div>
 
-                    </Link>:<></>
+                </Link> : <></>
               }
               {/* <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
                 <div className='hebfjenkd' style={{ backgroundColor: 'black', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "0px", width: "fit-content", gap: "50px", paddingLeft: "10px", paddingRight: "10px" }}>
