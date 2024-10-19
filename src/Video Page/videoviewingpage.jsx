@@ -661,6 +661,9 @@ export default function Videoviewingpage() {
       setuploading(false); // Stop loading on error
     }
   };
+  const handleInputChange = (event) => {
+    setvideotitle(event.target.value);
+  };
   return (
     <div className='webbody'>
       <Header />
@@ -717,15 +720,15 @@ export default function Videoviewingpage() {
                               accept="image/*"
                               onChange={showFileName}
                               style={{ display: 'none' }}
-                              id="file-input" 
+                              id="file-input"
                               onClick={uploading ? null : uploadthumbnail}
                             />
-                            <label htmlFor="file-input" style={{ textDecoration: 'none', color: 'white' }} onClick={uploading  && imageSrc!=null ? null : uploadthumbnail} >
-                              <div className='hebfjenk' style={{ width: "fit-content", paddingLeft: "10px", paddingRight: "10px", cursor: 'pointer' }} onClick={uploading  && imageSrc!=null ? null : uploadthumbnail} >
+                            <label htmlFor="file-input" style={{ textDecoration: 'none', color: 'white' }} onClick={uploading && imageSrc != null ? null : uploadthumbnail} >
+                              <div className='hebfjenk' style={{ width: "fit-content", paddingLeft: "10px", paddingRight: "10px", cursor: 'pointer' }} onClick={uploading && imageSrc != null ? null : uploadthumbnail} >
                                 <center>{uploading ? <CircularProgress size={24} color="inherit" /> : 'Upload Thumbnail'}</center>
                               </div>
                             </label>
-                            <Link to="#" onClick={uploading  && imageSrc!=null ? null : uploadthumbnail} style={{ display: 'none' }}>
+                            <Link to="#" onClick={uploading && imageSrc != null ? null : uploadthumbnail} style={{ display: 'none' }}>
                               <div />
                             </Link>
                           </div>
@@ -746,7 +749,7 @@ export default function Videoviewingpage() {
                     </div>
                   </Link>
                 ) : (
-                  <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link">
+                  <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-8px" }} data-testid="subscribe-link">
                     <div className='hebfjenk' onClick={handleSubscribe} >
                       <center>Subscribe</center>
                     </div>
