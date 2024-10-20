@@ -8,6 +8,7 @@ import { doc, getDoc, getFirestore, setDoc, Timestamp } from "firebase/firestore
 import Header from '../Components/header';
 import Uploadbutton from '../Components/uploadbutton';
 import Trendingpage from '../Trending Page/trendingpage';
+import { CircularProgress } from '@mui/material';
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
     authDomain: "pixelprowess69.firebaseapp.com",
@@ -408,7 +409,7 @@ export default function Landingpage() {
                 <div className="jdbfjekfjkhef" style={{ color: nightmode ? 'white' : 'black' }}>
                     {
                         premium ? <></> : <Link>
-                            <div className="jjnjfdkmvd" onClick={auth.currentUser ? joinpremium : null}>
+                            <div className="jjnjfdkmvd" onClick={auth.currentUser ? null : null}>
                                 <div className="ejkclsklksd">
                                     <img src="https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_MusicModuleSquare_tablet_640x550.webp" alt="" height="500px" width="50%" />
                                     <div className="image-container">
@@ -449,7 +450,9 @@ export default function Landingpage() {
                         </div>
                     </div>
 
-                    { selectedCategory=='All'?thumbnail.map((url, index) => (
+                    {loading?<div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100vw" }}>
+                        <CircularProgress size={24} color="inherit" />
+                    </div>: selectedCategory=='All'?thumbnail.map((url, index) => (
                         !memberonly[index] ?
                             <div key={index} className={"thumbnail-item"}>
                                 <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(() => {

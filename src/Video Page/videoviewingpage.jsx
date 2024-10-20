@@ -221,6 +221,22 @@ export default function Videoviewingpage() {
   useEffect(() => {
     fetchData();
   }, [videoId, videoowner]);
+  useEffect(() => {
+    const uploadviewing=async()=>{
+      try {
+        const docref=doc(db,'Watching History',auth.currentUser.uid);
+        const updatedata={
+          'VID':arrayUnion(videoId)
+        }
+        await setDoc(docref,updatedata,{merge:true});
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    if(auth.currentUser){
+      uploadviewing();
+    }
+  },[])
   const changevisibility = async () => {
     const videoRef = doc(db, 'Global Post', videoId);
     const videoDoc = await getDoc(videoRef);
