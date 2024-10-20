@@ -7,6 +7,7 @@ import ShortSidebar from '../Components/shortsidebar';
 import { doc, getDoc, getFirestore, setDoc, Timestamp } from "firebase/firestore";
 import Header from '../Components/header';
 import Uploadbutton from '../Components/uploadbutton';
+import Trendingpage from '../Trending Page/trendingpage';
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
     authDomain: "pixelprowess69.firebaseapp.com",
@@ -247,10 +248,10 @@ export default function Landingpage() {
     })
     const buypremium = async () => {
         try {
-            const docref=doc(db,'Premium Users',auth.currentUser.uid);
+            const docref = doc(db, 'Premium Users', auth.currentUser.uid);
             const dataToUpdate = {
                 'Premium User': true, // Add the random number to the array
-                'Premium Started':Timestamp.now(),
+                'Premium Started': Timestamp.now(),
                 'Premium Expiry': new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             };
             await setDoc(docref, dataToUpdate);
@@ -286,6 +287,23 @@ export default function Landingpage() {
         const razorpay = new window.Razorpay(options);
         razorpay.open();
     }
+    const videocategories = [
+        'All',
+        'Trending',
+    ];
+
+    // Initialize selectedCategory with "All"
+    const [selectedCategory, setSelectedCategory] = useState('All');
+
+    const handleClick = (category) => {
+        // If the clicked category is already selected, unselect it
+        if (selectedCategory === category) {
+            setSelectedCategory(null);
+        } else {
+            setSelectedCategory(category);
+        }
+    };
+
     return (
         <div className="webbody" style={{ backgroundColor: nightmode ? 'black' : 'white', color: nightmode ? 'white' : 'black' }} >
             <Header />
@@ -295,25 +313,25 @@ export default function Landingpage() {
                 } */}
                 <div className="jdbfjekfjkhef" style={{ color: nightmode ? 'white' : 'black' }}>
                     {
-                        premium?<></>:<Link>
-                        <div className="jjnjfdkmvd" onClick={auth.currentUser?joinpremium:null}>
-                        <div className="ejkclsklksd">
-                            <img src="https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_MusicModuleSquare_tablet_640x550.webp" alt="" height="500px" width="50%" />
-                            <div className="image-container">
-                                <img src="https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_MusicModuleSquare_text_background_tablet_1284x1875.jpg" alt="" height="500px" width="100%" />
-                                <div className="overlay-text" style={{display:"flex",justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
-                                <h2>Try Premium now</h2>
-                                <div className="jdnjvnd" style={{fontSize:"15px",fontWeight:"400"}}>
-                                Prepaid and monthly plans available. Starts at ₹149.00​/month. Free trials with monthly plans. 
-                                </div>
-                                <br /><br />
-                                <div className="dnfmdm" style={{fontSize:"15px",fontWeight:"400"}}>
-                                GET VIDETUBE PREMIUM
-                                </div>
+                        premium ? <></> : <Link>
+                            <div className="jjnjfdkmvd" onClick={auth.currentUser ? joinpremium : null}>
+                                <div className="ejkclsklksd">
+                                    <img src="https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_MusicModuleSquare_tablet_640x550.webp" alt="" height="500px" width="50%" />
+                                    <div className="image-container">
+                                        <img src="https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_MusicModuleSquare_text_background_tablet_1284x1875.jpg" alt="" height="500px" width="100%" />
+                                        <div className="overlay-text" style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                                            <h2>Try Premium now</h2>
+                                            <div className="jdnjvnd" style={{ fontSize: "15px", fontWeight: "400" }}>
+                                                Prepaid and monthly plans available. Starts at ₹149.00​/month. Free trials with monthly plans.
+                                            </div>
+                                            <br /><br />
+                                            <div className="dnfmdm" style={{ fontSize: "15px", fontWeight: "400" }}>
+                                                GET VIDETUBE PREMIUM
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
                         </Link>
                     }
 
@@ -321,8 +339,24 @@ export default function Landingpage() {
                         auth.currentUser ? <Uploadbutton /> : <></>
                     }
                     {/* <div className="thumbnail-container"> */}
+                    <div style={{ width: "100%", maxWidth: "100%", overflow: "hidden" }}>
+                        <div className="jdcndkcdc" style={{ height: "100px", overflowX: "auto", whiteSpace: "nowrap" }}>
+                            <div style={{ display: "inline-flex", flexDirection: "row", gap: "30px", height: "100%" }}>
+                                {
+                                    videocategories.map((category) => (
+                                        <Link style={{ textDecoration: 'none', color: 'black' }}>
+                                        <div className="jdsncs" style={{ height: "50px", width: "100px", backgroundColor: selectedCategory === category ? "gray" : "black", display: "flex", textAlign: "center", color: "white", justifyContent: "center", alignItems: "center", borderRadius: "10px" }} key={category} onClick={() => handleClick(category)}>
+                                            {category}
+                                        </div>
+                                        </Link>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                    </div>
+
                     {thumbnail.map((url, index) => (
-                        !memberonly[index] ?
+                       selectedCategory==='All'? !memberonly[index] ?
                             <div key={index} className={"thumbnail-item"}>
                                 <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(() => {
                                     localStorage.setItem("VID", VID[index]);
@@ -355,10 +389,10 @@ export default function Landingpage() {
                                         </div>
                                     </div>
                                 </Link>
-                            </div> : <></>
+                            </div> : <></>:<Trendingpage/>
                     ))}
-                    
                 </div>
+                <div className="kdjdkcvd" style={{ height: "100px" }}></div>
             </div>
         </div>
     );
