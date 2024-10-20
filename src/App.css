@@ -654,3 +654,55 @@ input {
   display: flex;
   flex-direction: column;
 }
+.jjhfef{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 40px;
+  font-weight: 600;
+  margin-left: 20px;
+  font-size: 18px;
+}
+.jefenfvdnw{
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+  margin-top: -10px;
+  /* justify-content: space-between; */
+  margin-right: 10px;
+}
+.jbfjdnfkj{
+  margin-top: -10px;
+  height: 30px;
+  width: fit-content;
+  background-color: #65B8FF;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 10px;
+  text-align: center;
+  font-size: 15px;
+  color: black;
+  font-weight: bold;
+}
+.kkrgkkv{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  margin-right: 10px;
+}
+.jefenfvdn{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  /* flex-wrap: wrap; */
+  margin-top: 50px;
+  margin-right: 10px;
+}
