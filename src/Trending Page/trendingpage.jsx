@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { CircularProgress } from '@mui/material';
 
@@ -21,6 +20,7 @@ const db = getFirestore(app);
 
 export default function TrendingPage() {
     const [vidData, setVidData] = useState([]);
+    const [videoIds, setVideoIds] = useState([]); // State for video IDs
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -44,6 +44,7 @@ export default function TrendingPage() {
                         if (videoDoc.exists()) {
                             const videoData = videoDoc.data();
                             const videoInfo = {
+                                id: data.VID[i], // Store video ID
                                 thumbnail: videoData['Thumbnail Link'],
                                 caption: videoData['Caption'],
                                 views: videoData['Views'],
@@ -58,9 +59,12 @@ export default function TrendingPage() {
                         }
                     }
 
-                    // Sort by views and get top 5 videos
+                    // Sort by views and get top 10 videos
                     videoDataArray.sort((a, b) => b.views - a.views);
-                    const topVideos = videoDataArray.slice(0, 10);
+                    const topVideos = videoDataArray.slice(0, 5);
+
+                    // Set video IDs
+                    setVideoIds(topVideos.map(video => video.id)); // Store video IDs
 
                     // Fetch user details in parallel
                     const userDetails = await Promise.all(
@@ -79,7 +83,7 @@ export default function TrendingPage() {
                     );
 
                     // Create a mapping of user details by UID
-                    const userMap = Object.fromEntries(userDetails.map(user => [user.uid, user]));
+                    const userMap = Object.fromEntries(userDetails.map(user => [user.uid, user])) ;
 
                     // Enrich video data with user details
                     const enrichedVideoData = topVideos.map(video => ({
@@ -88,6 +92,10 @@ export default function TrendingPage() {
                         profilePic: userMap[video.uploader]?.profilePic || '',
                     }));
 
+                    // Log enriched data to check for duplicates
+                    console.log("Enriched Video Data:", enrichedVideoData);
+
+                    // Set state with enriched video data
                     setVidData(enrichedVideoData);
                 } else {
                     console.log('No such document!');
@@ -108,11 +116,14 @@ export default function TrendingPage() {
         const now = new Date();
         const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
         const seconds = Math.floor((now - date) / 1000);
-        // Calculate time ago logic...
+        // Time formatting logic...
     }
 
-    function formatViews(viewCount) {
-        return viewCount.toLocaleString();
+    function formatViews(views) {
+        if (views < 1000) return views;
+        else if (views < 1000000) return (views / 1000).toFixed(1) + 'K';
+        else if (views < 1000000000) return (views / 1000000).toFixed(1) + 'M';
+        else return (views / 1000000000).toFixed(1) + 'B';
     }
 
     return (
@@ -120,7 +131,7 @@ export default function TrendingPage() {
             <div className="jdhfkdjf" style={{ display: "flex", flexDirection: "row", gap: "10px", flexWrap: "wrap" }}>
                 {loading ? (
                     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100vw" }}>
-                    <CircularProgress size={24} color="inherit" />
+                        <CircularProgress size={24} color="inherit" />
                     </div>
                 ) : error ? (
                     <p>Error: {error.message}</p>
@@ -130,7 +141,7 @@ export default function TrendingPage() {
                             <div key={index} className={"thumbnail-item"}>
                                 <Link
                                     style={{ textDecoration: 'none', color: 'black' }}
-                                    to={`/videos/${video.uploader}`} // Adjust link as necessary
+                                    to={`/videos/${videoIds[index]}`} // Adjust link as necessary
                                 >
                                     <img
                                         src={video.thumbnail}

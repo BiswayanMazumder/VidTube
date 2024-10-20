@@ -153,8 +153,6 @@ export default function Landingpage() {
 
         fetchData();
     }, []);
-
-
     function formatTimeAgo(timestamp) {
         const now = new Date();
         const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
@@ -303,7 +301,103 @@ export default function Landingpage() {
             setSelectedCategory(category);
         }
     };
+    const [vidDatas, setVidDatas] = useState([]);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                console.log("Fetching VID data...");
+                const docRef = doc(db, 'Global VIDs', 'VIDs');
+                const docSnapshot = await getDoc(docRef);
+    
+                if (docSnapshot.exists()) {
+                    const data = docSnapshot.data();
+                    const videoDataArray = [];
+                    const uploaderIds = new Set(); // To collect unique uploader IDs
+                    const videoIdSet = new Set(); // To track unique video IDs
+    
+                    // Fetch video data
+                    for (let i = 0; i < data.VID.length; i++) {
+                        const videoId = data.VID[i]; // Unique video identifier
+                        if (videoIdSet.has(videoId)) {
+                            console.log(`Duplicate video ID skipped: ${videoId}`);
+                            continue; // Skip processing if the video ID is already seen
+                        }
+    
+                        const videoRef = doc(db, 'Global Post', videoId);
+                        const videoDoc = await getDoc(videoRef);
+    
+                        if (videoDoc.exists()) {
+                            videoIdSet.add(videoId); // Track the unique video ID
+                            const videoData = videoDoc.data();
+                            const videoInfo = {
+                                thumbnail: videoData['Thumbnail Link'],
+                                caption: videoData['Caption'],
+                                views: videoData['Views'],
+                                uploadDate: videoData['Uploaded At'],
+                                uploader: videoData['Uploaded UID'],
+                                membersOnly: videoData['membersonly'] || false,
+                            };
+                            videoDataArray.push(videoInfo);
+                            uploaderIds.add(videoData['Uploaded UID']); // Collect uploader IDs
+                        } else {
+                            console.log(`Video not found for VID: ${videoId}`);
+                        }
+                    }
+    
+                    // Log the raw video data array before sorting and slicing
+                    console.log("Raw video data array:", videoDataArray);
+    
+                    // Sort by views and get top 10 videos
+                    videoDataArray.sort((a, b) => b.views - a.views);
+                    const topVideos = videoDataArray.slice(0, 10);
+    
+                    // Fetch user details in parallel
+                    const userDetails = await Promise.all(
+                        Array.from(uploaderIds).map(async (uid) => {
+                            const userRef = doc(db, 'User Details', uid);
+                            const userDoc = await getDoc(userRef);
+                            const profilePicRef = doc(db, 'User Profile Pictures', uid);
+                            const profilePicDoc = await getDoc(profilePicRef);
+    
+                            return {
+                                uid,
+                                username: userDoc.exists() ? userDoc.data()['Username'] : null,
+                                profilePic: profilePicDoc.exists() ? profilePicDoc.data()['Profile Pic'] : null,
+                            };
+                        })
+                    );
+    
+                    // Create a mapping of user details by UID
+                    const userMap = Object.fromEntries(userDetails.map(user => [user.uid, user]));
+    
+                    // Enrich video data with user details
+                    const enrichedVideoData = topVideos.map(video => ({
+                        ...video,
+                        username: userMap[video.uploader]?.username || 'Unknown',
+                        profilePic: userMap[video.uploader]?.profilePic || '',
+                    }));
+    
+                    // Log enriched data to check for duplicates
+                    console.log("Enriched Video Data:", enrichedVideoData);
+    
+                    // Set state with enriched video data
+                    setVidDatas(enrichedVideoData);
+                } else {
+                    console.log('No such document!');
+                }
+            } catch (err) {
+                setError(err);
+                console.error('Error fetching data:', err);
+            } finally {
+                setLoading(false);
+                console.log('Loading complete');
+            }
+        };
+    
+        fetchData();
+    }, []);
+    
     return (
         <div className="webbody" style={{ backgroundColor: nightmode ? 'black' : 'white', color: nightmode ? 'white' : 'black' }} >
             <Header />
@@ -339,7 +433,7 @@ export default function Landingpage() {
                         auth.currentUser ? <Uploadbutton /> : <></>
                     }
                     {/* <div className="thumbnail-container"> */}
-                    {/* <div style={{ width: "100%", maxWidth: "100%", overflow: "hidden" }}>
+                    <div style={{ width: "100%", maxWidth: "100%", overflow: "hidden" }}>
                         <div className="jdcndkcdc" style={{ height: "100px", overflowX: "auto", whiteSpace: "nowrap" }}>
                             <div style={{ display: "inline-flex", flexDirection: "row", gap: "30px", height: "100%" }}>
                                 {
@@ -353,10 +447,10 @@ export default function Landingpage() {
                                 }
                             </div>
                         </div>
-                    </div> */}
+                    </div>
 
-                    {thumbnail.map((url, index) => (
-                       !memberonly[index] ?
+                    { selectedCategory=='All'?thumbnail.map((url, index) => (
+                        !memberonly[index] ?
                             <div key={index} className={"thumbnail-item"}>
                                 <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(() => {
                                     localStorage.setItem("VID", VID[index]);
@@ -390,7 +484,9 @@ export default function Landingpage() {
                                     </div>
                                 </Link>
                             </div> : <></>
-                    ))}
+                            )
+                    
+                    ):<Trendingpage/>}
                 </div>
                 <div className="kdjdkcvd" style={{ height: "100px" }}></div>
             </div>
