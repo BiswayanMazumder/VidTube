@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, updateDoc, arrayRemove } from "firebase/firestore";
 import Header from '../Components/header';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { CircularProgress } from '@mui/material';
@@ -209,6 +209,17 @@ export default function Myprofile() {
                                         style={{ borderRadius: "10px" }} />
                                     <div className='kwjdkwjdj' style={{fontWeight: '300',fontSize: '15px',marginTop: '20px'}}>
                                         {title[index]}
+                                        <br /><br />
+                                        <Link style={{ textDecoration: 'none', color: 'red' }} onClick={async()=>{
+                                            const docRef = doc(db, 'Watching History', userId);
+                                            const updatedata = {
+                                                'VID':arrayRemove(videoIds[index]) // Add the random number to the array
+                                            }
+                                            await updateDoc(docRef, updatedata,{merge: true});
+                                            window.location.reload();
+                                        }}>
+                                            Remove from watch history
+                                        </Link>
                                     </div>
                                 </div>
                                 </Link>
