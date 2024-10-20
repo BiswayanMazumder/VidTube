@@ -181,6 +181,16 @@ export default function Customise_channel() {
                     </div>
                 </div>
                 <br /><br /><br />
+                
+                <div  style={{ textDecoration: 'none', color: 'black',width:'120px' }}>
+                            <div className="effkf" style={{ cursor: 'pointer',width:'140px' }} onClick={async()=>{
+                                console.log('Name',name);
+                                const docRef = doc(db, 'User Details', auth.currentUser.uid);
+                                await updateDoc(docRef, { 'Username': name });
+                                window.location.replace('/')
+                            }}>Set new name</div>
+                        </div>
+                <br /><br /><br />
                 <div className="heading">
                     <div className="jrhgrjg">Description</div>
                     <br />
@@ -189,6 +199,16 @@ export default function Customise_channel() {
                     </div>
                 </div>
                 <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+                {/* <br /><br /><br /> */}
+                <div  style={{ textDecoration: 'none', color: 'black',width:'120px' }}>
+                            <div className="effkf" style={{ cursor: 'pointer',width:'140px' }} onClick={async()=>{
+                                console.log('Name',name);
+                                const docRef = doc(db, 'User Details', auth.currentUser.uid);
+                                await updateDoc(docRef, { 'Bio': bio });
+                                window.location.replace('/')
+                            }}>Set new bio</div>
+                        </div>
+                <br /><br /><br />
                 <div className="heading">
                     <div className="jrhgrjg">Email</div>
                     <br />
