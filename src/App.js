@@ -10,6 +10,7 @@ import Profilepage from './User Profiles/profilepage';
 import Videoviewingpage from './Video Page/videoviewingpage';
 import Customise_channel from './Channel Details/customise_channel';
 import Uploadvideo from './Video Page/uploadvideo';
+import Myprofile from './User Profiles/myprofile';
 function App() {
   return (
     <BrowserRouter>
@@ -28,6 +29,9 @@ function App() {
       </Routes>
       <Routes>
       <Route path="/channel/uploadvideo" element={<Uploadvideo/>} />
+      </Routes>
+      <Routes>
+      <Route path="/channel/:userId/profiledetails" element={<Myprofile/>} />
       </Routes>
       <Analytics />
     </BrowserRouter>
