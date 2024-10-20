@@ -339,7 +339,7 @@ export default function Landingpage() {
                         auth.currentUser ? <Uploadbutton /> : <></>
                     }
                     {/* <div className="thumbnail-container"> */}
-                    <div style={{ width: "100%", maxWidth: "100%", overflow: "hidden" }}>
+                    {/* <div style={{ width: "100%", maxWidth: "100%", overflow: "hidden" }}>
                         <div className="jdcndkcdc" style={{ height: "100px", overflowX: "auto", whiteSpace: "nowrap" }}>
                             <div style={{ display: "inline-flex", flexDirection: "row", gap: "30px", height: "100%" }}>
                                 {
@@ -353,10 +353,10 @@ export default function Landingpage() {
                                 }
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                     {thumbnail.map((url, index) => (
-                       selectedCategory==='All'? !memberonly[index] ?
+                       !memberonly[index] ?
                             <div key={index} className={"thumbnail-item"}>
                                 <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(() => {
                                     localStorage.setItem("VID", VID[index]);
@@ -389,7 +389,7 @@ export default function Landingpage() {
                                         </div>
                                     </div>
                                 </Link>
-                            </div> : <></>:<Trendingpage/>
+                            </div> : <></>
                     ))}
                 </div>
                 <div className="kdjdkcvd" style={{ height: "100px" }}></div>
