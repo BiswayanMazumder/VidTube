@@ -9,6 +9,7 @@ import Header from '../Components/header';
 import Uploadbutton from '../Components/uploadbutton';
 import Trendingpage from '../Trending Page/trendingpage';
 import { CircularProgress } from '@mui/material';
+import axios from 'axios';
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
     authDomain: "pixelprowess69.firebaseapp.com",
@@ -60,6 +61,27 @@ export default function Landingpage() {
     const [dp, setdp] = useState([]);
     const [name, setname] = useState([]);
     const [VID, setVID] = useState([]);
+    const [blockedcountry,setblockedcountry]=useState([]);
+    const [countryname, setCountryname] = useState('');
+//   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchCountry = async () => {
+      try {
+        const response = await axios.get('https://ipapi.co/json/');
+        console.log('Country',response.data.country_name);
+        setCountryname(response.data.country_name); // Get the country code
+      } catch (err) {
+        // setError('Failed to fetch country information');
+        console.error('Error fetching country:', err);
+      }finally{
+        setLoading(false);
+      }
+    };
+
+    fetchCountry();
+  }, []);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -79,6 +101,8 @@ export default function Landingpage() {
                     const Name = [];
                     const PFP = [];
                     const MembersOnly = [];
+                    const blockcountry = [];
+                    const finalblocked=[];
                     // console.log('VID',data.VID);
                     setVID(data.VID);
                     // Fetch video data
@@ -95,12 +119,15 @@ export default function Landingpage() {
                             UploadDates.push(videoData['Uploaded At']);
                             setmemberonly(MembersOnly);
                             Uploader.push(videoData['Uploaded UID']);
+                            blockcountry.push(videoData['Country_Blocked']);
                             MembersOnly.push(videoData['membersonly'] || false);
                         } else {
                             console.log(`Video not found for VID: ${data.VID[i]}`);
                         }
                     }
 
+                    console.log('Blocked',blockcountry);
+                    setblockedcountry(blockcountry);
                     // Set video-related states
                     setthumbnail(thumbnailLinks);
                     setcaption(Captions);
@@ -453,7 +480,7 @@ export default function Landingpage() {
                     {loading?<div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100vw" }}>
                         <CircularProgress size={24} color="inherit" />
                     </div>: selectedCategory=='All'?thumbnail.map((url, index) => (
-                        !memberonly[index] ?
+                        !memberonly[index] && blockedcountry[index]!=`${countryname}`?
                             <div key={index} className={"thumbnail-item"}>
                                 <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(() => {
                                     localStorage.setItem("VID", VID[index]);

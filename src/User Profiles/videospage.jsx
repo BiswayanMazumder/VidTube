@@ -4,6 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
 import { CircularProgress } from '@mui/material';
+import axios from 'axios';
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
     authDomain: "pixelprowess69.firebaseapp.com",
@@ -34,6 +35,27 @@ export default function VideoSection() {
     const [activeVideoIndex, setActiveVideoIndex] = useState(0);
     const [hoveredIndex, setHoveredIndex] = useState(null); // Track hovered thumbnail index
     const [VID,setVID]=useState([]);
+    const [blockedcountry,setblockedcountry]=useState([]);
+    const [countryname, setCountryname] = useState('');
+//   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchCountry = async () => {
+      try {
+        const response = await axios.get('https://ipapi.co/json/');
+        console.log('Country',response.data.country_name);
+        setCountryname(response.data.country_name); // Get the country code
+      } catch (err) {
+        // setError('Failed to fetch country information');
+        console.error('Error fetching country:', err);
+      }finally{
+        setLoading(false);
+      }
+    };
+
+    fetchCountry();
+  }, []);
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -116,6 +138,7 @@ export default function VideoSection() {
                     const Videolink = [];
                     const VideoID=[];
                     const MembersOnly=[];
+                    const blockcountry = [];
                     for (const vid of data.VID) {
                         const videoRef = doc(db, 'Global Post', vid);
                         const videoDoc = await getDoc(videoRef);
@@ -126,6 +149,7 @@ export default function VideoSection() {
                                 VideoID.push(vid);
                                 MembersOnly.push(videoData['membersonly']||false);
                                 uniqueThumbnails.add(videoData['Thumbnail Link']);
+                                blockcountry.push(videoData['Country_Blocked']);
                                 uniqueCaptions.add(videoData['Caption']);
                                 Views.push(videoData['Views']);
                                 UploadDates.push(videoData['Uploaded At']);
@@ -138,6 +162,7 @@ export default function VideoSection() {
                     setThumbnails(Array.from(uniqueThumbnails));
                     setCaptions(Array.from(uniqueCaptions));
                     setViews(Views);
+                    setblockedcountry(blockcountry);
                     setmemberonly(MembersOnly);
                     setVideoLink(Videolink);
                     setUploadDate(UploadDates);
@@ -233,7 +258,7 @@ export default function VideoSection() {
                                 </div>
                             </div>
                         </Link>:
-                        auth.currentUser && userId != auth.currentUser.uid && joined?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}>
+                        auth.currentUser && userId != auth.currentUser.uid && joined && blockedcountry[index]!=`${countryname}`?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}>
                             <div className="jjfmenmd">
                                 {hoveredIndex === index ? (//user logged in and owner show all videos
                                     <video
@@ -274,7 +299,7 @@ export default function VideoSection() {
                                 </div>
                             </div>
                         </Link>:
-                        !memberonly[index]?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}> 
+                        !memberonly[index] && blockedcountry[index]!=`${countryname}`?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}> 
                        
                             <div className="jjfmenmd">
                                 {hoveredIndex === index ? (

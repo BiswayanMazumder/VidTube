@@ -9,6 +9,7 @@ import VideoSection from './videospage';
 import Communitypage from './communitypage';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Playlistpage from './playlistpage';
+import axios from 'axios';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -73,7 +74,27 @@ export default function ProfilePage() {
             console.error(error);
         }
     };
+    const [blockedcountry,setblockedcountry]=useState([]);
+    const [countryname, setCountryname] = useState('');
+//   const [error, setError] = useState('');
 
+  useEffect(() => {
+    setLoading(true);
+    const fetchCountry = async () => {
+      try {
+        const response = await axios.get('https://ipapi.co/json/');
+        console.log('Country',response.data.country_name);
+        setCountryname(response.data.country_name); // Get the country code
+      } catch (err) {
+        // setError('Failed to fetch country information');
+        console.error('Error fetching country:', err);
+      }finally{
+        setLoading(false);
+      }
+    };
+
+    fetchCountry();
+  }, []);
     const fetchData = async () => {
         try {
             const docRef = doc(db, 'Global VIDs', 'VIDs');

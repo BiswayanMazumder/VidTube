@@ -45,3 +45,38 @@
                   
                   8
                   3020995541                  <span>{comment.dislikes} Dislikes</span>
+                  // src/App.js
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const App = () => {
+  const [country, setCountry] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchCountry = async () => {
+      try {
+        const response = await axios.get('https://ipapi.co/json/');
+        setCountry(response.data.country); // Get the country code
+      } catch (err) {
+        setError('Failed to fetch country information');
+        console.error('Error fetching country:', err);
+      }
+    };
+
+    fetchCountry();
+  }, []);
+
+  return (
+    <div>
+      <h1>User Country</h1>
+      {error ? (
+        <div>{error}</div>
+      ) : (
+        <div>Your country code is: {country}</div>
+      )}
+    </div>
+  );
+};
+
+export default App;

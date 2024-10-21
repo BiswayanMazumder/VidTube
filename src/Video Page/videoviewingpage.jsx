@@ -8,6 +8,7 @@ import { arrayRemove, arrayUnion, doc, Firestore, getDoc, getFirestore, serverTi
 import Header from '../Components/header';
 import { CircularProgress } from '@mui/material';
 import { getDownloadURL, getStorage, ref, uploadBytes, uploadString } from 'firebase/storage';
+import axios from 'axios';
 const firebaseConfig = {
   apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
   authDomain: "pixelprowess69.firebaseapp.com",
@@ -254,7 +255,27 @@ export default function Videoviewingpage() {
       uploadViewing();
     }
   }, [videoId]); // Include videoId in dependencies
-  
+  const [blockedcountry,setblockedcountry]=useState([]);
+  const [countryname, setCountryname] = useState('');
+//   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchCountry = async () => {
+      try {
+        const response = await axios.get('https://ipapi.co/json/');
+        console.log('Country name',response.data.country_name);
+        setCountryname(response.data.country_name); // Get the country code
+      } catch (err) {
+        // setError('Failed to fetch country information');
+        console.error('Error fetching country:', err);
+      }finally{
+        setLoading(false);
+      }
+    };
+
+    fetchCountry();
+  }, []);
   const changevisibility = async () => {
     const videoRef = doc(db, 'Global Post', videoId);
     const videoDoc = await getDoc(videoRef);
@@ -352,6 +373,7 @@ export default function Videoviewingpage() {
           const Videolink = [];
           const VideoID = [];
           const MembersOnly = [];
+          const blockcountry = [];
           const membervideo = false;
           if (data.VID.includes(videoId)) {
             data.VID = data.VID.filter(id => id !== videoId);
@@ -367,7 +389,8 @@ export default function Videoviewingpage() {
               uniqueCaptions.add(videoData['Caption']);
               Views.push(videoData['Views']);
               setmemberonly(MembersOnly);
-
+              blockcountry.push(videoData['Country_Blocked']);
+              // setblockedcountry(videoData['Country_Blocked']);
               MembersOnly.push(videoData['membersonly'] || false);
               UploadDates.push(videoData['Uploaded At']);
               Videolink.push(videoData['Video Link']);
@@ -375,8 +398,10 @@ export default function Videoviewingpage() {
 
             }
           }
+          console.log('BLocked Country', blockcountry);
 
           setThumbnails(Array.from(uniqueThumbnails));
+          setblockedcountry(blockcountry);
           setCaptions(Array.from(uniqueCaptions));
           setViews(Views);
           setVideoLink(Videolink);
@@ -972,7 +997,7 @@ export default function Videoviewingpage() {
             <div className="relatedvideos">
               {
                 thumbnails.map((thumbnail, index) => (
-                  !memberonly[index] ? <div className="jnfvkf">
+                  !memberonly[index] && blockedcountry[index]!=`${countryname}` ? <div className="jnfvkf">
                     <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${vidData[index]}`}>
                       <img src={thumbnails[index]} alt={captions[index]} height={"120px"}
                         width={"200px"} style={{ borderRadius: "10px" }} />

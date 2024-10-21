@@ -4,6 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
 import { CircularProgress } from '@mui/material';
+import axios from 'axios';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -38,6 +39,27 @@ export default function VideosHomepage() {
     const [activeVideoIndex, setActiveVideoIndex] = useState(0);
     const [hoveredIndex, setHoveredIndex] = useState(null); // Track hovered thumbnail index
     const [joined, setjoined] = useState(false);
+    const [blockedcountry,setblockedcountry]=useState([]);
+    const [countryname, setCountryname] = useState('');
+//   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchCountry = async () => {
+      try {
+        const response = await axios.get('https://ipapi.co/json/');
+        console.log('Country',response.data.country_name);
+        setCountryname(response.data.country_name); // Get the country code
+      } catch (err) {
+        // setError('Failed to fetch country information');
+        console.error('Error fetching country:', err);
+      }finally{
+        setLoading(false);
+      }
+    };
+
+    fetchCountry();
+  }, []);
 
 useEffect(() => {
     const checkmembership = async () => {
@@ -120,6 +142,7 @@ useEffect(() => {
                     const Videolink = [];
                     const VideoID = [];
                     const MembersOnly=[];
+                    const blockcountry = [];
                     for (const vid of data.VID) {
                         const videoRef = doc(db, 'Global Post', vid);
                         const videoDoc = await getDoc(videoRef);
@@ -128,6 +151,7 @@ useEffect(() => {
                             const videoData = videoDoc.data();
                             if (videoData['Uploaded UID'] === userId) {
                                 VideoID.push(vid);
+                                blockcountry.push(videoData['Country_Blocked']);
                                 uniqueThumbnails.add(videoData['Thumbnail Link']);
                                 uniqueCaptions.add(videoData['Caption']);
                                 Views.push(videoData['Views']);
@@ -140,6 +164,7 @@ useEffect(() => {
                     }
                     // console.log('Members Only',MembersOnly);
                     setThumbnails(Array.from(uniqueThumbnails));
+                    setblockedcountry(blockcountry);
                     setCaptions(Array.from(uniqueCaptions));
                     setViews(Views);
                     setmemberonly(MembersOnly);
@@ -257,7 +282,7 @@ useEffect(() => {
                                 </div>
                             </div>
                         </Link>:
-                        auth.currentUser && userId != auth.currentUser.uid && joined?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}>
+                        auth.currentUser && userId != auth.currentUser.uid && joined && blockedcountry[index]!=`${countryname}`?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}>
                             <div className="jjfmenmd">
                                 {hoveredIndex === index ? (//user logged in and owner show all videos
                                     <video
@@ -298,7 +323,7 @@ useEffect(() => {
                                 </div>
                             </div>
                         </Link>:
-                        !memberonly[index]?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}> 
+                        !memberonly[index] && blockedcountry[index]!=`${countryname}`? <Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}> 
                        
                             <div className="jjfmenmd">
                                 {hoveredIndex === index ? (
