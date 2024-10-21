@@ -5,6 +5,7 @@ import { getFirestore, doc, getDoc, updateDoc, arrayRemove } from "firebase/fire
 import Header from '../Components/header';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { CircularProgress } from '@mui/material';
+import Playlistpage from './playlistpage';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -119,31 +120,31 @@ export default function Myprofile() {
                 const docRef = doc(db, 'Watching History', userId);
                 const docSnap = await getDoc(docRef);
                 const videoIDs = [];
-    
+
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     // Spread the array into videoIDs
                     videoIDs.push(...data['VID']);
                 }
-    
+
                 setVideoIds(videoIDs);
                 console.log('Video IDs', videoIDs);
-    
+
                 // Create arrays to hold thumbnails and titles
                 const thumbnails = [];
                 const titles = [];
-    
+
                 for (let videoId of videoIDs) {
                     const docRef = doc(db, 'Global Post', videoId);
                     const docSnap = await getDoc(docRef);
-    
+
                     if (docSnap.exists()) {
                         const data = docSnap.data();
                         thumbnails.push(data['Thumbnail Link']);
                         titles.push(data['Caption']);
                     }
                 }
-    
+
                 // Set the state for thumbnails and titles
                 setthumbnail(thumbnails);
                 settitle(titles);
@@ -155,7 +156,7 @@ export default function Myprofile() {
         };
         getVideoIds();
     }, [userId]); // Add userId to the dependency array
-    
+
 
     if (loading) return (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100vw", marginTop: '50px' }}>
@@ -202,29 +203,35 @@ export default function Myprofile() {
                         {
                             thumbnail.map((data, index) =>
                                 <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${videoIds[index]}`}>
-                            <div className="thumbnail-item" key={index}>
-                                    <img src={thumbnail[index]} alt="" className="thumbnail-image"
-                                        height={"150px"}
-                                        width={"265px"}
-                                        style={{ borderRadius: "10px" }} />
-                                    <div className='kwjdkwjdj' style={{fontWeight: '300',fontSize: '15px',marginTop: '20px'}}>
-                                        {title[index]}
-                                        <br /><br />
-                                        <Link style={{ textDecoration: 'none', color: 'red' }} onClick={async()=>{
-                                            const docRef = doc(db, 'Watching History', userId);
-                                            const updatedata = {
-                                                'VID':arrayRemove(videoIds[index]) // Add the random number to the array
-                                            }
-                                            await updateDoc(docRef, updatedata,{merge: true});
-                                            window.location.reload();
-                                        }}>
-                                            Remove from watch history
-                                        </Link>
+                                    <div className="thumbnail-item" key={index} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                        <img src={thumbnail[index]} alt="" className="thumbnail-image"
+                                            height={"150px"}
+                                            width={"265px"}
+                                            style={{ borderRadius: "10px" }} />
+                                        <div className='kwjdkwjdj' style={{ fontWeight: '300', fontSize: '15px', marginTop: '20px' }}>
+                                            {title[index]}
+                                            <br /><br />
+                                            <Link style={{ textDecoration: 'none', color: 'red' }} onClick={async () => {
+                                                const docRef = doc(db, 'Watching History', userId);
+                                                const updatedata = {
+                                                    'VID': arrayRemove(videoIds[index]) // Add the random number to the array
+                                                }
+                                                await updateDoc(docRef, updatedata, { merge: true });
+                                                window.location.reload();
+                                            }}>
+                                                Remove from watch history
+                                            </Link>
+                                        </div>
                                     </div>
-                                </div>
                                 </Link>
                             )
                         }
+                    </div>
+                    <div style={{marginTop:'40px'}} className='jefenfvdnw'>
+                        Saved Videos
+                    </div>
+                    <div className="kdmvkdv" style={{ marginTop: '40px', marginLeft: '-40px', fontWeight: '300', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <Playlistpage />
                     </div>
                 </div>
             </div>
