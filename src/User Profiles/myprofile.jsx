@@ -156,14 +156,57 @@ export default function Myprofile() {
         };
         getVideoIds();
     }, [userId]); // Add userId to the dependency array
+    const [subsname, setsubsname] = useState([]);
+    const [subspic, setsubspic] = useState([]);
+    useEffect(() => {
+        const fetchsubscriptions = async () => {
+            const subsuid = [];
+            const docRef = doc(db, 'Subscribers', userId);
+            const docSnap = await getDoc(docRef);
 
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const subscriberUids = data['Subscriber UIDs'];
+                // console.log('Subs',subsuid);
+                // Check if subscriberUids is an array or a single value
+                if (Array.isArray(subscriberUids)) {
+                    subsuid.push(...subscriberUids);
+                } else if (typeof subscriberUids === 'string') {
+                    subsuid.push(subscriberUids); // if it's a single string
+                } else {
+                    console.error('Subscriber UIDs is neither an array nor a string:', subscriberUids);
+                }
+                console.log('Subs',subsuid);
+                setSubs(subsuid);
+            }
+
+            for (let i = 0; i < subsuid.length; i++) {
+                const docRef = doc(db, 'User Details', subsuid[i]);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setsubsname(prevSubs => [...prevSubs, data.Username]);
+                }
+            }
+
+            for (let i = 0; i < subsuid.length; i++) {
+                const docRef = doc(db, 'User Profile Pictures', subsuid[i]);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setsubspic(prevSubs => [...prevSubs, data['Profile Pic']]);
+                }
+            }
+        };
+
+        fetchsubscriptions();
+    }, [userId]);
 
     if (loading) return (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100vw", marginTop: '50px' }}>
             <CircularProgress size={24} color="inherit" />
         </div>
     );
-
     if (!currentUser) return window.location.replace('/');
 
     return (
@@ -203,7 +246,7 @@ export default function Myprofile() {
                         {
                             thumbnail.map((data, index) =>
                                 <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${videoIds[index]}`}>
-                                    <div className="thumbnail-item" key={index} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <div className="thumbnail-item" key={index} style={{ display: 'flex', justifyContent: 'center', alignItems: 'start' }}>
                                         <img src={thumbnail[index]} alt="" className="thumbnail-image"
                                             height={"150px"}
                                             width={"265px"}
@@ -227,13 +270,29 @@ export default function Myprofile() {
                             )
                         }
                     </div>
-                    <div style={{marginTop:'40px'}} className='jefenfvdnw'>
-                        Saved Videos
+                    <div style={{ marginTop: '40px' }} className='jefenfvdnw'>
+                        Your Subscribers
                     </div>
-                    <div className="kdmvkdv" style={{ marginTop: '40px', marginLeft: '-40px', fontWeight: '300', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <Playlistpage />
+                    <div className="kdmvkdv" style={{ marginTop: '20px', fontWeight: '300', display: 'flex', justifyContent: 'start', alignItems: 'start', flexWrap: 'wrap', gap: '50px' }}>
+                        {subs.map((data, index) =>
+                            <Link key={index} style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${subs[index]}`}>
+                                <div className="kknfkmv" style={{ height: '200px', width: '200px', borderRadius: '50%', backgroundColor: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', color: 'black', margin: '20px', padding: '10px' }}>
+                                    <div>
+                                    <img src={subspic[index]} alt="" height={'200px'} width={'200px'} style={{ borderRadius: '50%', marginBottom: '10px' }} />
+                                    </div>
+                                    <div style={{ fontWeight: '500',marginBottom: '50px' }}>
+                                    {subsname[index]}
+                                    </div>
+                                    <br /><br /><br />
+                                </div>
+                            </Link>
+                        )}
                     </div>
+
+
+
                 </div>
+
             </div>
         </div>
     );
