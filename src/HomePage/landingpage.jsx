@@ -347,7 +347,7 @@ export default function Landingpage() {
                     }
     
                     // Log the raw video data array before sorting and slicing
-                    console.log("Raw video data array:", videoDataArray);
+                    // console.log("Raw video data array:", videoDataArray);
     
                     // Sort by views and get top 10 videos
                     videoDataArray.sort((a, b) => b.views - a.views);
@@ -380,7 +380,7 @@ export default function Landingpage() {
                     }));
     
                     // Log enriched data to check for duplicates
-                    console.log("Enriched Video Data:", enrichedVideoData);
+                    // console.log("Enriched Video Data:", enrichedVideoData);
     
                     // Set state with enriched video data
                     setVidDatas(enrichedVideoData);
