@@ -261,7 +261,7 @@ export default function Landingpage() {
     const joinpremium = async () => {
         const options = {
             key: 'rzp_test_5ujtbmUNWVYysI', // Your Razorpay Key ID
-            amount: '50000', // Amount in paise
+            amount: '14900', // Amount in paise
             currency: 'INR',
             name: 'VidTube',
             description: `Membership of ${name}`,
