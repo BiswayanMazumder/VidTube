@@ -792,7 +792,7 @@ export default function Videoviewingpage() {
                     </div>
                   </Link>
                 ) : (
-                  <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-8px" }} data-testid="subscribe-link">
+                  <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-15px" }} data-testid="subscribe-link">
                     <div className='hebfjenk' onClick={handleSubscribe} >
                       <center>Subscribe</center>
                     </div>
