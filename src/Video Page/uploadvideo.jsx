@@ -120,6 +120,7 @@ export default function Uploadvideo() {
                 'Uploaded UID': auth.currentUser.uid,
                 'Thumbnail Link': thumbnailURL,
                 'Video Link': videoURL,
+                Country_Blocked: arrayUnion('Pakistan'),
                 'Uploaded At': serverTimestamp(),
                 Views: 0,
                 membersonly: accessType === 'member', // Set to true if 'Members Only' is selected
