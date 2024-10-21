@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/VidTube/static/css/main.3a7d916b.css",
+    "main.js": "/VidTube/static/js/main.5e367f2e.js",
+    "static/js/453.f1072eb6.chunk.js": "/VidTube/static/js/453.f1072eb6.chunk.js",
+    "index.html": "/VidTube/index.html",
+    "main.3a7d916b.css.map": "/VidTube/static/css/main.3a7d916b.css.map",
+    "main.5e367f2e.js.map": "/VidTube/static/js/main.5e367f2e.js.map",
+    "453.f1072eb6.chunk.js.map": "/VidTube/static/js/453.f1072eb6.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.3a7d916b.css",
+    "static/js/main.5e367f2e.js"
+  ]
+}
