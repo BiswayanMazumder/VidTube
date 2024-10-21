@@ -126,7 +126,7 @@ export default function Landingpage() {
                         }
                     }
 
-                    console.log('Blocked',blockcountry);
+                    // console.log('Blocked',blockcountry);
                     setblockedcountry(blockcountry);
                     // Set video-related states
                     setthumbnail(thumbnailLinks);
