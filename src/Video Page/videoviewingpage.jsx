@@ -885,12 +885,12 @@ export default function Videoviewingpage() {
                       </div>
 
                     </Link>
-                    <Link style={{ textDecoration: 'none', color: 'white' }}>
-                      <div className='hebfjenk' style={{ width: "fit-content", paddingLeft: "10px", paddingRight: "10px" }}>
-                        <center>{currentmemberonly ? 'Make Public' : 'Make Members Only'}</center>
-                      </div>
+                    <Link style={{ textDecoration: 'none', color: 'white' }} >
+  <div className='hebfjenk' style={{ width: "fit-content", paddingLeft: "10px", paddingRight: "10px" }} onClick={changevisibility}>
+    <center>{currentmemberonly ? 'Make Public' : 'Make Members Only'}</center>
+  </div>
+</Link>
 
-                    </Link>
                   </div>
                 </Link> : subscount.includes(auth.currentUser.uid) ? (
                   <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
