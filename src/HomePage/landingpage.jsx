@@ -479,7 +479,7 @@ export default function Landingpage() {
 
                     {loading ?
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100vw" }}>
-                            <CircularProgress size={24} color="inherit" />
+                            <CircularProgress size={24} color="black" />
                         </div> : selectedCategory == 'All' ? thumbnail.map((url, index) => (
                             !memberonly[index] && blockedcountry[index] != `${countryname}` ?
                                 <div key={index} className={"thumbnail-item"}>

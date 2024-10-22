@@ -24,7 +24,6 @@ const auth = getAuth(app);
 
 export default function Myprofile() {
     const { userId } = useParams();
-
     const [dp, setDp] = useState('');
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
