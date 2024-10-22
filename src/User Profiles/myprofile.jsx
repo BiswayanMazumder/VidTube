@@ -24,6 +24,11 @@ const auth = getAuth(app);
 
 export default function Myprofile() {
     const { userId } = useParams();
+    useEffect(() => {
+        if(userId!==auth.currentUser.uid){
+            window.location.replace('/');
+        }
+    })
     const [dp, setDp] = useState('');
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
