@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
-import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -22,7 +22,7 @@ export default function Communitypage() {
     const { userId } = useParams();
     const [currentuser, setcurrentuser] = useState(false);
     // const [currentuser, setcurrentuser] = useState(false);
-    
+
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -119,24 +119,25 @@ export default function Communitypage() {
 
         loadData();
     }, [userId]);
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const docRef = doc(db, "Community Posts", userId);
-                const docSnap = await getDoc(docRef);
+    const fetchUserData = async () => {
+        try {
+            const docRef = doc(db, "Community Posts", userId);
+            const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
-                    const subData = docSnap.data();
-                    setCommunityPosts(subData['Posts']); // Assuming 'Posts' is an array of objects
-                    setcommupload(subData['Date of Upload']);
-                    console.log('Fetched data:', subData); // Log the fetched data
-                } else {
-                    console.log('No such document!');
-                }
-            } catch (error) {
-                console.error("Error fetching document: ", error);
+            if (docSnap.exists()) {
+                const subData = docSnap.data();
+                setCommunityPosts(subData['Posts']); // Assuming 'Posts' is an array of objects
+                // setcommupload(subData['Date of Upload']);
+                console.log('Fetched data:', subData); // Log the fetched data
+            } else {
+                console.log('No such document!');
             }
-        };
+        } catch (error) {
+            console.error("Error fetching document: ", error);
+        }
+    };
+    useEffect(() => {
+        
 
         fetchUserData();
     }, [userId]);
@@ -158,40 +159,59 @@ export default function Communitypage() {
         if (interval >= 1) return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
         return seconds + " second" + (seconds > 1 ? "s" : "") + " ago";
     }
+    const [inputValue, setInputValue] = useState('');
+
+    const handleChange = (event) => {
+        setInputValue(event.target.value);
+    };
+    const [commload,setcommload]=useState(false);
     return (
         <div className='webbody'>
             <div className="jnkmkkdkd">
                 {
-                    currentuser?<div className="nmkvmlkd" style={{ height: "280px", display: 'flex', flexDirection: 'column' }}>
-                    <div className="jfnvjfnv" style={{ display: 'flex', alignItems: 'center' }}>
-                        <img src={dp} alt="" height={'40px'} width={'40px'} style={{ borderRadius: '50%' }} />
-                        <div className="enmndv" style={{ fontWeight: 'bold', marginLeft: '10px' }}>
-                            {name}
-                        </div>
-                    </div>
-                    <input
-                        type="text"
-                        
-                        style={{
-                            flexGrow: 1,
-                            marginTop: '10px',
-                            border: 'none',
-                            outline: 'none',
-                            position: 'relative',
-                            width: '95%',
-                            lineHeight: '1.2',
-                            boxShadow: 'none' // Remove any box-shadow if needed
-                        }}
-                        placeholder='What is on your mind?'
-                    />
-                    <div className="jrhkfjk">
-                        <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribe-link">
-                            <div className='hebfjenk' style={{backgroundColor:'rgb(94, 94, 239)'}}>
-                                <center>Post</center>
+                    currentuser ? <div className="nmkvmlkd" style={{ height: "280px", display: 'flex', flexDirection: 'column' }}>
+                        <div className="jfnvjfnv" style={{ display: 'flex', alignItems: 'center' }}>
+                            <img src={dp} alt="" height={'40px'} width={'40px'} style={{ borderRadius: '50%' }} />
+                            <div className="enmndv" style={{ fontWeight: 'bold', marginLeft: '10px' }}>
+                                {name}
                             </div>
-                        </Link>
-                    </div>
-                </div>:<></>
+                        </div>
+                        <input
+                            type="text"
+                            value={inputValue}
+                            onChange={handleChange}
+                            style={{
+                                flexGrow: 1,
+                                marginTop: '10px',
+                                border: 'none',
+                                outline: 'none',
+                                position: 'relative',
+                                width: '95%',
+                                lineHeight: '1.2',
+                                boxShadow: 'none' // Remove any box-shadow if needed
+                            }}
+                            placeholder='What is on your mind?'
+                        />
+                        <div className="jrhkfjk">
+                            <Link style={{ textDecoration: 'none', color: 'white',cursor:inputValue==='' ?'not-allowed': 'pointer' }} data-testid="subscribe-link">
+                                <div className='hebfjenk' style={{ backgroundColor:inputValue==='' ? 'grey' : 'rgb(94, 94, 239)' }} onClick={async()=>{
+                                    const docref=doc(db,'Community Posts',auth.currentUser.uid);
+                                    const datatoupdate={
+                                        'Posts':arrayUnion({
+                                            // 'Date of Upload':serverTimestamp(),
+                                            'Posts':inputValue,
+                                            'User ID':auth.currentUser.uid
+                                        })
+                                    }
+                                    await setDoc(docref,datatoupdate,{merge:true});
+                                    setInputValue('');
+                                    await fetchUserData();
+                                }}>
+                                    <center>Post</center>
+                                </div>
+                            </Link>
+                        </div>
+                    </div> : <></>
                 }
                 {
 

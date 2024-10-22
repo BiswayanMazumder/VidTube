@@ -481,7 +481,7 @@ export default function Landingpage() {
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100vw" }}>
                             <CircularProgress size={24} color="black" />
                         </div> : selectedCategory == 'All' ? thumbnail.map((url, index) => (
-                            !memberonly[index] && blockedcountry[index] != `${countryname}` ?
+                            !memberonly[index] ?
                                 <div key={index} className={"thumbnail-item"}>
                                     <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(() => {
                                         localStorage.setItem("VID", VID[index]);

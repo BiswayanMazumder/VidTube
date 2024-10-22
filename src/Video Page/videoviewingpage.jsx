@@ -458,7 +458,7 @@ export default function Videoviewingpage() {
 
             }
           }
-          console.log('BLocked Country', blockcountry);
+          // console.log('BLocked Country', blockcountry);
 
           setThumbnails(Array.from(uniqueThumbnails));
           setblockedcountry(blockcountry);
@@ -1125,7 +1125,7 @@ export default function Videoviewingpage() {
             <div className="relatedvideos">
               {
                 thumbnails.map((thumbnail, index) => (
-                  !memberonly[index] && blockedcountry[index] != `${countryname}` ? <div className="jnfvkf">
+                  !memberonly[index]? <div className="jnfvkf">
                     <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${vidData[index]}`}>
                       <img src={thumbnails[index]} alt={captions[index]} height={"120px"}
                         width={"200px"} style={{ borderRadius: "10px" }} />

@@ -258,7 +258,7 @@ export default function VideoSection() {
                                 </div>
                             </div>
                         </Link>:
-                        auth.currentUser && userId != auth.currentUser.uid && joined && blockedcountry[index]!=`${countryname}`?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}>
+                        auth.currentUser && userId != auth.currentUser.uid && joined?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}>
                             <div className="jjfmenmd">
                                 {hoveredIndex === index ? (//user logged in and owner show all videos
                                     <video
@@ -299,7 +299,7 @@ export default function VideoSection() {
                                 </div>
                             </div>
                         </Link>:
-                        !memberonly[index] && blockedcountry[index]!=`${countryname}`?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}> 
+                        !memberonly[index]?<Link to={`/videos/${vidData[index]}`} style={{ textDecoration: 'none', color: 'black' }}> 
                        
                             <div className="jjfmenmd">
                                 {hoveredIndex === index ? (
