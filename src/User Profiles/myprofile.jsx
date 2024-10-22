@@ -6,7 +6,7 @@ import Header from '../Components/header';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { CircularProgress } from '@mui/material';
 import Playlistpage from './playlistpage';
-
+import { openDB } from 'idb';
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
     authDomain: "pixelprowess69.firebaseapp.com",
@@ -201,12 +201,57 @@ export default function Myprofile() {
 
         fetchsubscriptions();
     }, [userId]);
+    const [videoData, setVideoData] = useState(null);
+    const [videos, setVideos] = useState([]);
 
+    // Fetch all videos from IndexedDB
+    const fetchAllVideos = async () => {
+      const db = await openDB('video-store', 1);
+      const allVideos = await db.getAll('videos');
+    //   console.log('Videos', allVideos);
+      setVideos(allVideos); // Store fetched videos in state
+    };
+  
+    // Delete a video from IndexedDB
+    const deleteVideoFromCache = async (videoId) => {
+      const db = await openDB('video-store', 1);
+      await db.delete('videos', videoId);
+      console.log('Video data deleted successfully.');
+      fetchAllVideos(); // Refresh the list after deletion
+    };
+  
+    useEffect(() => {
+      fetchAllVideos(); // Fetch videos on component mount
+    }, []);
     if (loading) return (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100vw", marginTop: '50px' }}>
             <CircularProgress size={24} color="inherit" />
         </div>
     );
+    function formatViews(views) {
+        if (views < 1000) return views;
+        else if (views < 1000000) return (views / 1000).toFixed(1) + 'K';
+        else if (views < 1000000000) return (views / 1000000).toFixed(1) + 'M';
+        else return (views / 1000000000).toFixed(1) + 'B';
+    }
+    function formatTimeAgo(timestamp) {
+        const now = new Date();
+        const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+
+        const seconds = Math.floor((now - date) / 1000);
+        let interval = Math.floor(seconds / 31536000);
+
+        if (interval >= 1) return interval + " year" + (interval > 1 ? "s" : "") + " ago";
+        interval = Math.floor(seconds / 2592000);
+        if (interval >= 1) return interval + " month" + (interval > 1 ? "s" : "") + " ago";
+        interval = Math.floor(seconds / 86400);
+        if (interval >= 1) return interval + " day" + (interval > 1 ? "s" : "") + " ago";
+        interval = Math.floor(seconds / 3600);
+        if (interval >= 1) return interval + " hour" + (interval > 1 ? "s" : "") + " ago";
+        interval = Math.floor(seconds / 60);
+        if (interval >= 1) return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
+        return seconds + " second" + (seconds > 1 ? "s" : "") + " ago";
+    }
     if (!currentUser) return window.location.replace('/');
 
     return (
@@ -288,9 +333,35 @@ export default function Myprofile() {
                             </Link>
                         )}
                     </div>
-
-
-
+                    <div style={{ marginTop: '40px' }} className='jefenfvdnw'>
+                        Your Downloads
+                    </div>
+                    <div className="kkrgkkv">
+                        {
+                            videos.map((video) =>
+                                <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${video.id}`}>
+                                    <div className="thumbnail-item" key={video.id} style={{ display: 'flex', justifyContent: 'center', alignItems: 'start' }}>
+                                        <img src={video['data']['Thumbnail Link']} alt="" className="thumbnail-image"
+                                            height={"150px"}
+                                            width={"265px"}
+                                            style={{ borderRadius: "10px" }} />
+                                        <div className='kwjdkwjdj' style={{ fontWeight: '300', fontSize: '15px', marginTop: '20px' }}>
+                                            {video['data']['Caption']}
+                                            <br /><br />
+                                            <div className="dmkdm" style={{ display: 'flex', flexDirection: 'row', gap: '10px',color: 'grey' }}>
+                                            <div>
+                                                {video['data']['Views']>1?formatViews(video['data']['Views'])+' views':formatViews(video['data']['Views'])+' view'}
+                                            </div>
+                                            <div>
+                                               Uploaded {formatTimeAgo(video['data']['Uploaded At'])}
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Link>
+                            )
+                        }
+                    </div>
                 </div>
 
             </div>
