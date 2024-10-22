@@ -166,7 +166,7 @@ export default function VideoSection() {
                     setmemberonly(MembersOnly);
                     setVideoLink(Videolink);
                     setUploadDate(UploadDates);
-                    console.log('VID DATA',VideoID)
+                    // console.log('VID DATA',VideoID)
                     setVidData(VideoID);
                 }
             } catch (error) {

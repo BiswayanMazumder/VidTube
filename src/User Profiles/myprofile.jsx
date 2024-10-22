@@ -175,7 +175,7 @@ export default function Myprofile() {
                 } else {
                     console.error('Subscriber UIDs is neither an array nor a string:', subscriberUids);
                 }
-                console.log('Subs',subsuid);
+                console.log('Subs', subsuid);
                 setSubs(subsuid);
             }
 
@@ -205,23 +205,92 @@ export default function Myprofile() {
 
     // Fetch all videos from IndexedDB
     const fetchAllVideos = async () => {
-      const db = await openDB('video-store', 1);
-      const allVideos = await db.getAll('videos');
-    //   console.log('Videos', allVideos);
-      setVideos(allVideos); // Store fetched videos in state
+        const db = await openDB('video-store', 1);
+        const allVideos = await db.getAll('videos');
+        //   console.log('Videos', allVideos);
+        setVideos(allVideos); // Store fetched videos in state
     };
-  
+
     // Delete a video from IndexedDB
     const deleteVideoFromCache = async (videoId) => {
-      const db = await openDB('video-store', 1);
-      await db.delete('videos', videoId);
-      console.log('Video data deleted successfully.');
-      fetchAllVideos(); // Refresh the list after deletion
+        const db = await openDB('video-store', 1);
+        await db.delete('videos', videoId);
+        console.log('Video data deleted successfully.');
+        fetchAllVideos(); // Refresh the list after deletion
     };
-  
+
     useEffect(() => {
-      fetchAllVideos(); // Fetch videos on component mount
+        fetchAllVideos(); // Fetch videos on component mount
     }, []);
+    const [vidData, setVidData] = useState([]);
+    // const [loading, setLoading] = useState(true);
+    const [thumbnails, setThumbnails] = useState([]);
+    const [captions, setCaptions] = useState([]);
+    const [views, setViews] = useState([]);
+    const [uploadDate, setUploadDate] = useState([]);
+    const [videoLink, setVideoLink] = useState([]);
+    const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+    const [hoveredIndex, setHoveredIndex] = useState(null); // Track hovered thumbnail index
+    const [VID, setVID] = useState([]);
+    const [blockedcountry, setblockedcountry] = useState([]);
+    const [countryname, setCountryname] = useState('');
+    useEffect(() => {
+        const fetchVideos = async () => {
+            setLoading(true);
+            try {
+                const docRef = doc(db, 'Global VIDs', 'VIDs');
+                const docSnapshot = await getDoc(docRef);
+                if (docSnapshot.exists()) {
+                    const data = docSnapshot.data();
+
+                    // console.log('VID DAta', data.VID);
+                    const uniqueThumbnails = new Set();
+                    const uniqueCaptions = new Set();
+                    const Views = [];
+                    const UploadDates = [];
+                    const Videolink = [];
+                    const VideoID = [];
+                    const MembersOnly = [];
+                    const blockcountry = [];
+                    for (const vid of data.VID) {
+                        const videoRef = doc(db, 'Global Post', vid);
+                        const videoDoc = await getDoc(videoRef);
+                        // console.log('VID Data', vid);
+                        if (videoDoc.exists()) {
+                            const videoData = videoDoc.data();
+                            if (videoData['Uploaded UID'] === userId) {
+                                VideoID.push(vid);
+                                MembersOnly.push(videoData['membersonly'] || false);
+                                uniqueThumbnails.add(videoData['Thumbnail Link']);
+                                blockcountry.push(videoData['Country_Blocked']);
+                                uniqueCaptions.add(videoData['Caption']);
+                                Views.push(videoData['Views']);
+                                UploadDates.push(videoData['Uploaded At']);
+                                Videolink.push(videoData['Video Link']);
+                                setVID(data.VID);
+                            }
+                        }
+                    }
+
+                    setThumbnails(Array.from(uniqueThumbnails));
+                    setCaptions(Array.from(uniqueCaptions));
+                    setViews(Views);
+                    setblockedcountry(blockcountry);
+                    // setmemberonly(MembersOnly);
+                    setVideoLink(Videolink);
+                    setUploadDate(UploadDates);
+                    // console.log('VID DATA',VideoID)
+                    setVidData(VideoID);
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchVideos();
+    }, [userId]);
     if (loading) return (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100vw", marginTop: '50px' }}>
             <CircularProgress size={24} color="inherit" />
@@ -322,10 +391,10 @@ export default function Myprofile() {
                             <Link key={index} style={{ textDecoration: 'none', color: 'black' }} to={`/profile/${subs[index]}`}>
                                 <div className="kknfkmv" style={{ height: '200px', width: '200px', borderRadius: '50%', backgroundColor: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', color: 'black', margin: '20px', padding: '10px' }}>
                                     <div>
-                                    <img src={subspic[index]} alt="" height={'200px'} width={'200px'} style={{ borderRadius: '50%', marginBottom: '10px' }} />
+                                        <img src={subspic[index]} alt="" height={'200px'} width={'200px'} style={{ borderRadius: '50%', marginBottom: '10px' }} />
                                     </div>
-                                    <div style={{ fontWeight: '500',marginBottom: '50px' }}>
-                                    {subsname[index]}
+                                    <div style={{ fontWeight: '500', marginBottom: '50px' }}>
+                                        {subsname[index]}
                                     </div>
                                     <br /><br /><br />
                                 </div>
@@ -346,14 +415,52 @@ export default function Myprofile() {
                                             style={{ borderRadius: "10px" }} />
                                         <div className='kwjdkwjdj' style={{ fontWeight: '300', fontSize: '15px', marginTop: '20px' }}>
                                             {video['data']['Caption']}
-                                            <br /><br />
-                                            <div className="dmkdm" style={{ display: 'flex', flexDirection: 'row', gap: '10px',color: 'grey' }}>
-                                            <div>
-                                                {video['data']['Views']>1?formatViews(video['data']['Views'])+' views':formatViews(video['data']['Views'])+' view'}
+                                            <br />
+                                            <div className="dmkdm" style={{ display: 'flex', flexDirection: 'row', gap: '10px', color: 'grey', marginTop: '10px' }}>
+                                                <div>
+                                                    {video['data']['Views'] > 1 ? formatViews(video['data']['Views']) + ' views' : formatViews(video['data']['Views']) + ' view'}
+                                                </div>
+                                                <div>
+                                                    Uploaded {formatTimeAgo(video['data']['Uploaded At'])}
+                                                </div>
                                             </div>
-                                            <div>
-                                               Uploaded {formatTimeAgo(video['data']['Uploaded At'])}
+                                        </div>
+                                    </div>
+                                </Link>
+                            )
+                        }
+                    </div>
+                    <div style={{ marginTop: '40px' }} className='jefenfvdnw'>
+                        Your Videos
+                    </div>
+                    <div className="kkrgkkv">
+                        {
+                            thumbnails.map((data, index) =>
+                                <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${vidData[index]}`}>
+                                    <div className="thumbnail-item" key={index} style={{ display: 'flex', justifyContent: 'center', alignItems: 'start' }}>
+                                        <img src={thumbnails[index]} alt="" className="thumbnail-image"
+                                            height={"150px"}
+                                            width={"265px"}
+                                            style={{ borderRadius: "10px" }} />
+                                        <div style={{ fontWeight: '500', fontSize: '15px', marginTop: '20px' }}>
+                                            {captions[index]}
+                                            <div className="jnvjfnvk" style={{ display: 'flex', flexDirection: 'row', gap: '10px', color: 'grey', marginTop: '10px', fontWeight: '300', fontSize: '15px' }}>
+                                                <Link to={`/profile/${userId}`}>
+                                                <div className="kfkv" style={{ height: '20px', width: '20px', borderRadius: '50%', backgroundColor: 'white' }} >
+                                                    <img src={dp} alt="" height={'20px'} width={'20px'} style={{ borderRadius: '50%' }} />
+                                                </div>
+                                                </Link>
+                                                <Link to={`/profile/${userId}`} style={{ textDecoration: 'none', color: 'grey' }}>
+                                                {name}
+                                                </Link>
                                             </div>
+                                            <div className="dmkdm" style={{ display: 'flex', flexDirection: 'row', gap: '10px', color: 'grey', marginTop: '10px', fontWeight: '300', fontSize: '15px' }}>
+                                                <div>
+                                                    {views[index] > 1 ? formatViews(views[index]) + ' views' : formatViews(views[index]) + ' view'}
+                                                </div>
+                                                <div>
+                                                    Uploaded {formatTimeAgo(uploadDate[index])}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
