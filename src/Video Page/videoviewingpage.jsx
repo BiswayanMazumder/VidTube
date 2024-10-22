@@ -9,6 +9,7 @@ import Header from '../Components/header';
 import { CircularProgress } from '@mui/material';
 import { getDownloadURL, getStorage, ref, uploadBytes, uploadString } from 'firebase/storage';
 import axios from 'axios';
+import { openDB } from 'idb';
 const firebaseConfig = {
   apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
   authDomain: "pixelprowess69.firebaseapp.com",
@@ -159,7 +160,7 @@ export default function Videoviewingpage() {
   const [subscount, setsubs] = useState([]);
   const [videoupload, setvideoupload] = useState([]);
   const [currentmemberonly, setcurrentsetmemberonly] = useState([]);
-
+  const [videoDatas, setVideoData] = useState(null);
   const fetchData = async () => {
     const videoRef = doc(db, 'Global Post', videoId);
     const videoDoc = await getDoc(videoRef);
@@ -167,6 +168,7 @@ export default function Videoviewingpage() {
     var ismemberonly = false;
     if (videoDoc.exists()) {
       const videoData = videoDoc.data();
+      setVideoData(videoData);
       setcurrentsetmemberonly(videoData['membersonly'] || false);
       setvideolink(videoData['Video Link']);
       setvideothumbnail(videoData['Thumbnail Link']);
@@ -222,15 +224,73 @@ export default function Videoviewingpage() {
   useEffect(() => {
     fetchData();
   }, [videoId, videoowner]);
+  const [savedvideos, issaved] = useState(false)
+  const saveVideoToCache = async (videoId, videoData) => {
+    const db = await openDB('video-store', 1, {
+      upgrade(db) {
+        db.createObjectStore('videos', { keyPath: 'id' });
+      },
+    });
+    await db.put('videos', { id: videoId, data: videoData });
+    console.log('Video data saved successfully.');
+  };
+
+  // Function to check if video data exists in IndexedDB
+  const checkIfVideoExists = async (videoId) => {
+    const db = await openDB('video-store', 1);
+    const video = await db.get('videos', videoId);
+    return video !== undefined;
+  };
+
+  // Function to delete video data from IndexedDB
+  const deleteVideoFromCache = async (videoId) => {
+    const db = await openDB('video-store', 1);
+    await db.delete('videos', videoId);
+    console.log('Video data deleted successfully.');
+  };
+
+  // Function to handle button click
+  const handleSaveClick = async () => {
+    if (!videoDatas) {
+      await fetchData(); // Ensure video data is fetched first
+    }
+
+    if (videoDatas) {
+      const exists = await checkIfVideoExists(videoId);
+      issaved(exists); // Update isSaved state
+
+      if (exists) {
+        await deleteVideoFromCache(videoId);
+        issaved(false); // Update state to indicate the video is no longer saved
+        alert('Video has been deleted from offline storage.');
+      } else {
+        await saveVideoToCache(videoId, videoDatas);
+        issaved(true); // Update state to indicate the video is saved
+        alert('Video saved for offline viewing!');
+      }
+    } else {
+      alert('No video data available to save.');
+    }
+  };
+
+  // Check if the video is already saved on component mount
+  useEffect(() => {
+    const checkSavedStatus = async () => {
+      const exists = await checkIfVideoExists(videoId);
+      issaved(exists); // Update isSaved state
+    };
+
+    checkSavedStatus();
+  }, [videoId]);
   useEffect(() => {
     const uploadViewing = async () => {
       try {
         const docRef = doc(db, 'Watching History', auth.currentUser.uid);
         const docSnap = await getDoc(docRef);
-        
+
         if (docSnap.exists()) {
           const data = docSnap.data();
-          
+
           // If "Watch History On" is true, update the VID
           if (data['Watch History On']) {
             const updatedData = {
@@ -250,26 +310,26 @@ export default function Videoviewingpage() {
         console.log(error);
       }
     };
-  
+
     if (auth.currentUser) {
       uploadViewing();
     }
   }, [videoId]); // Include videoId in dependencies
-  const [blockedcountry,setblockedcountry]=useState([]);
+  const [blockedcountry, setblockedcountry] = useState([]);
   const [countryname, setCountryname] = useState('');
-//   const [error, setError] = useState('');
+  //   const [error, setError] = useState('');
 
   useEffect(() => {
     setLoading(true);
     const fetchCountry = async () => {
       try {
         const response = await axios.get('https://ipapi.co/json/');
-        console.log('Country name',response.data.country_name);
+        console.log('Country name', response.data.country_name);
         setCountryname(response.data.country_name); // Get the country code
       } catch (err) {
         // setError('Failed to fetch country information');
         console.error('Error fetching country:', err);
-      }finally{
+      } finally {
         setLoading(false);
       }
     };
@@ -760,7 +820,7 @@ export default function Videoviewingpage() {
               </Link>
 
               {
-                auth.currentUser ? auth.currentUser.uid === videoowner ? <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link" to={`/channel/${auth.currentUser.uid}/editing/profile`}>
+                auth.currentUser ? auth.currentUser.uid === videoowner ? <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-10px" }} data-testid="subscribe-link" to={`/channel/${auth.currentUser.uid}/editing/profile`} className='jenfjenfkmk'>
                   <div className="jfjdnkf" style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
                     <div className='hebfjenk' >
                       <center>Customize</center>
@@ -804,31 +864,85 @@ export default function Videoviewingpage() {
                       </div>
                     )}
                     <Link style={{ textDecoration: 'none', color: 'white' }}>
-                      <div className='hebfjenk' style={{ width: "fit-content", paddingLeft: "10px", paddingRight: "10px" }} onClick={changevisibility}>
+                      <div className='hebfjenk' style={{ width: "fit-content", paddingLeft: "10px", paddingRight: "10px", display: 'flex', flexDirection: 'row', gap: '10px' }}>
+                        <center>
+                          {/* <?xml version="1.0" encoding="utf-8"?> */}
+                          <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 17H17.01M17.4 14H18C18.9319 14 19.3978 14 19.7654 14.1522C20.2554 14.3552 20.6448 14.7446 20.8478 15.2346C21 15.6022 21 16.0681 21 17C21 17.9319 21 18.3978 20.8478 18.7654C20.6448 19.2554 20.2554 19.6448 19.7654 19.8478C19.3978 20 18.9319 20 18 20H6C5.06812 20 4.60218 20 4.23463 19.8478C3.74458 19.6448 3.35523 19.2554 3.15224 18.7654C3 18.3978 3 17.9319 3 17C3 16.0681 3 15.6022 3 15.2346C3.15224 14.7446 3.35523 14.3552 3.15224 14.1522C3 14 3 14 4.23463 14H4.2346M12 15V4M12 15L9 12M12 15L15 12" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+                        </center>
+                      </div>
+
+                    </Link>
+                    <Link style={{ textDecoration: 'none', color: 'white' }}>
+                      <div className='hebfjenk' style={{ width: "fit-content", paddingLeft: "10px", paddingRight: "10px" }}>
                         <center>{currentmemberonly ? 'Make Public' : 'Make Members Only'}</center>
                       </div>
 
                     </Link>
                   </div>
                 </Link> : subscount.includes(auth.currentUser.uid) ? (
-                  <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
-                    <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "-8px" }} onClick={handleSubscribe}>
-                      <center>Subscribed</center>
-                    </div>
-                  </Link>
+                  <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+                    <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link">
+                      <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black', fontSize: "15px", marginLeft: "50px", marginTop: "-5px" }} onClick={handleSubscribe}>
+                        <center>Subscribed</center>
+                      </div>
+                    </Link>
+                    <Link style={{ textDecoration: 'none', color: 'white' }}>
+                      <div className='hebfjenk' style={{ marginTop: "-3px" }} onClick={handleSaveClick}>
+                        <center>
+                          {/* <?xml version="1.0" encoding="utf-8"?> */}
+                          {savedvideos ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="800px" viewBox="0 0 20 20" fill="#ffffff" stroke="#ffffff">
+
+                            <g id="SVGRepo_bgCarrier" stroke-width="0" />
+
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+
+                            <g id="SVGRepo_iconCarrier"> <rect x="0" fill="none" width="20" height="20" /> <g> <path d="M15.3 5.3l-6.8 6.8-2.8-2.8-1.4 1.4 4.2 4.2 8.2-8.2" /> </g> </g>
+
+                          </svg> : <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 17H17.01M17.4 14H18C18.9319 14 19.3978 14 19.7654 14.1522C20.2554 14.3552 20.6448 14.7446 20.8478 15.2346C21 15.6022 21 16.0681 21 17C21 17.9319 21 18.3978 20.8478 18.7654C20.6448 19.2554 20.2554 19.6448 19.7654 19.8478C19.3978 20 18.9319 20 18 20H6C5.06812 20 4.60218 20 4.23463 19.8478C3.74458 19.6448 3.35523 19.2554 3.15224 18.7654C3 18.3978 3 17.9319 3 17C3 16.0681 3 15.6022 3 15.2346C3.15224 14.7446 3.35523 14.3552 3.15224 14.1522C3 14 3 14 4.23463 14H4.2346M12 15V4M12 15L9 12M12 15L15 12" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>}
+                        </center>
+                      </div>
+
+                    </Link>
+                  </div>
                 ) : (
-                  <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-15px" }} data-testid="subscribe-link">
-                    <div className='hebfjenk' onClick={handleSubscribe} >
-                      <center>Subscribe</center>
-                    </div>
-                  </Link>
+                  <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+                    <Link style={{ textDecoration: 'none', color: 'white', fontSize: "15px", marginLeft: "50px", marginTop: "-15px" }} data-testid="subscribe-link">
+                      <div className='hebfjenk' onClick={handleSubscribe} >
+                        <center>Subscribe</center>
+                      </div>
+                    </Link>
+                    <Link style={{ textDecoration: 'none', color: 'white' }}>
+                      <div className='hebfjenk' style={{ marginTop: "-3px" }} onClick={handleSaveClick}>
+                        <center>
+                          {/* <?xml version="1.0" encoding="utf-8"?> */}
+                          {savedvideos ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="800px" viewBox="0 0 20 20" fill="#ffffff" stroke="#ffffff">
+
+                            <g id="SVGRepo_bgCarrier" stroke-width="0" />
+
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+
+                            <g id="SVGRepo_iconCarrier"> <rect x="0" fill="none" width="20" height="20" /> <g> <path d="M15.3 5.3l-6.8 6.8-2.8-2.8-1.4 1.4 4.2 4.2 8.2-8.2" /> </g> </g>
+
+                          </svg> : <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 17H17.01M17.4 14H18C18.9319 14 19.3978 14 19.7654 14.1522C20.2554 14.3552 20.6448 14.7446 20.8478 15.2346C21 15.6022 21 16.0681 21 17C21 17.9319 21 18.3978 20.8478 18.7654C20.6448 19.2554 20.2554 19.6448 19.7654 19.8478C19.3978 20 18.9319 20 18 20H6C5.06812 20 4.60218 20 4.23463 19.8478C3.74458 19.6448 3.35523 19.2554 3.15224 18.7654C3 18.3978 3 17.9319 3 17C3 16.0681 3 15.6022 3 15.2346C3.15224 14.7446 3.35523 14.3552 3.15224 14.1522C3 14 3 14 4.23463 14H4.2346M12 15V4M12 15L9 12M12 15L15 12" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>}
+                        </center>
+                      </div>
+
+                    </Link>
+                  </div>
+
                 ) : <></>
               }
               {
                 auth.currentUser && auth.currentUser.uid != videoowner ? <Link style={{ textDecoration: 'none', color: 'white' }}>
                   <div className='hebfjenk' onClick={() => {
                     savevideo ? removevideos() : savevideos();
-                  }} style={{ marginTop: "-5px" }}>
+                  }} style={{ marginTop: "-3px" }}>
                     {
                       !savevideo ? <svg aria-label="Save" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>Save</title><polygon fill="none" points="20 21 12 13.44 4 21 4 3 20 3 20 21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polygon></svg> : <svg aria-label="Remove" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>Remove</title><path d="M20 22a.999.999 0 0 1-.687-.273L12 14.815l-7.313 6.912A1 1 0 0 1 3 21V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1Z"></path></svg>
                     }
@@ -997,7 +1111,7 @@ export default function Videoviewingpage() {
             <div className="relatedvideos">
               {
                 thumbnails.map((thumbnail, index) => (
-                  !memberonly[index] && blockedcountry[index]!=`${countryname}` ? <div className="jnfvkf">
+                  !memberonly[index] && blockedcountry[index] != `${countryname}` ? <div className="jnfvkf">
                     <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${vidData[index]}`}>
                       <img src={thumbnails[index]} alt={captions[index]} height={"120px"}
                         width={"200px"} style={{ borderRadius: "10px" }} />

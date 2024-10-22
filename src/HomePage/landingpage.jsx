@@ -61,27 +61,27 @@ export default function Landingpage() {
     const [dp, setdp] = useState([]);
     const [name, setname] = useState([]);
     const [VID, setVID] = useState([]);
-    const [blockedcountry,setblockedcountry]=useState([]);
+    const [blockedcountry, setblockedcountry] = useState([]);
     const [countryname, setCountryname] = useState('');
-//   const [error, setError] = useState('');
+    //   const [error, setError] = useState('');
 
-  useEffect(() => {
-    setLoading(true);
-    const fetchCountry = async () => {
-      try {
-        const response = await axios.get('https://ipapi.co/json/');
-        console.log('Country',response.data.country_name);
-        setCountryname(response.data.country_name); // Get the country code
-      } catch (err) {
-        // setError('Failed to fetch country information');
-        console.error('Error fetching country:', err);
-      }finally{
-        setLoading(false);
-      }
-    };
+    useEffect(() => {
+        setLoading(true);
+        const fetchCountry = async () => {
+            try {
+                const response = await axios.get('https://ipapi.co/json/');
+                console.log('Country', response.data.country_name);
+                setCountryname(response.data.country_name); // Get the country code
+            } catch (err) {
+                // setError('Failed to fetch country information');
+                console.error('Error fetching country:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    fetchCountry();
-  }, []);
+        fetchCountry();
+    }, []);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -102,7 +102,7 @@ export default function Landingpage() {
                     const PFP = [];
                     const MembersOnly = [];
                     const blockcountry = [];
-                    const finalblocked=[];
+                    const finalblocked = [];
                     // console.log('VID',data.VID);
                     setVID(data.VID);
                     // Fetch video data
@@ -337,13 +337,13 @@ export default function Landingpage() {
                 console.log("Fetching VID data...");
                 const docRef = doc(db, 'Global VIDs', 'VIDs');
                 const docSnapshot = await getDoc(docRef);
-    
+
                 if (docSnapshot.exists()) {
                     const data = docSnapshot.data();
                     const videoDataArray = [];
                     const uploaderIds = new Set(); // To collect unique uploader IDs
                     const videoIdSet = new Set(); // To track unique video IDs
-    
+
                     // Fetch video data
                     for (let i = 0; i < data.VID.length; i++) {
                         const videoId = data.VID[i]; // Unique video identifier
@@ -351,10 +351,10 @@ export default function Landingpage() {
                             console.log(`Duplicate video ID skipped: ${videoId}`);
                             continue; // Skip processing if the video ID is already seen
                         }
-    
+
                         const videoRef = doc(db, 'Global Post', videoId);
                         const videoDoc = await getDoc(videoRef);
-    
+
                         if (videoDoc.exists()) {
                             videoIdSet.add(videoId); // Track the unique video ID
                             const videoData = videoDoc.data();
@@ -372,14 +372,14 @@ export default function Landingpage() {
                             console.log(`Video not found for VID: ${videoId}`);
                         }
                     }
-    
+
                     // Log the raw video data array before sorting and slicing
                     // console.log("Raw video data array:", videoDataArray);
-    
+
                     // Sort by views and get top 10 videos
                     videoDataArray.sort((a, b) => b.views - a.views);
                     const topVideos = videoDataArray.slice(0, 10);
-    
+
                     // Fetch user details in parallel
                     const userDetails = await Promise.all(
                         Array.from(uploaderIds).map(async (uid) => {
@@ -387,7 +387,7 @@ export default function Landingpage() {
                             const userDoc = await getDoc(userRef);
                             const profilePicRef = doc(db, 'User Profile Pictures', uid);
                             const profilePicDoc = await getDoc(profilePicRef);
-    
+
                             return {
                                 uid,
                                 username: userDoc.exists() ? userDoc.data()['Username'] : null,
@@ -395,20 +395,20 @@ export default function Landingpage() {
                             };
                         })
                     );
-    
+
                     // Create a mapping of user details by UID
                     const userMap = Object.fromEntries(userDetails.map(user => [user.uid, user]));
-    
+
                     // Enrich video data with user details
                     const enrichedVideoData = topVideos.map(video => ({
                         ...video,
                         username: userMap[video.uploader]?.username || 'Unknown',
                         profilePic: userMap[video.uploader]?.profilePic || '',
                     }));
-    
+
                     // Log enriched data to check for duplicates
                     // console.log("Enriched Video Data:", enrichedVideoData);
-    
+
                     // Set state with enriched video data
                     setVidDatas(enrichedVideoData);
                 } else {
@@ -422,10 +422,10 @@ export default function Landingpage() {
                 console.log('Loading complete');
             }
         };
-    
+
         fetchData();
     }, []);
-    
+
     return (
         <div className="webbody" style={{ backgroundColor: nightmode ? 'black' : 'white', color: nightmode ? 'white' : 'black' }} >
             <Header />
@@ -433,7 +433,7 @@ export default function Landingpage() {
                 {/* {
                     sidebar ? <Sidebar /> : <ShortSidebar />
                 } */}
-                <div className="jdbfjekfjkhef" style={{ color: nightmode ? 'white' : 'black' }}>
+                <div className="jdbfjekfjkhef" style={{ width: "100vw",position:"relative" }}>
                     {
                         premium ? <></> : <Link>
                             <div className="jjnjfdkmvd" onClick={auth.currentUser ? null : null}>
@@ -467,9 +467,9 @@ export default function Landingpage() {
                                 {
                                     videocategories.map((category) => (
                                         <Link style={{ textDecoration: 'none', color: 'black' }}>
-                                        <div className="jdsncs" style={{ height: "50px", width: "100px", backgroundColor: selectedCategory === category ? "gray" : "black", display: "flex", textAlign: "center", color: "white", justifyContent: "center", alignItems: "center", borderRadius: "10px" }} key={category} onClick={() => handleClick(category)}>
-                                            {category}
-                                        </div>
+                                            <div className="jdsncs" style={{ height: "50px", width: "100px", backgroundColor: selectedCategory === category ? "gray" : "black", display: "flex", textAlign: "center", color: "white", justifyContent: "center", alignItems: "center", borderRadius: "10px" }} key={category} onClick={() => handleClick(category)}>
+                                                {category}
+                                            </div>
                                         </Link>
                                     ))
                                 }
@@ -477,46 +477,47 @@ export default function Landingpage() {
                         </div>
                     </div>
 
-                    {loading?<div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100vw" }}>
-                        <CircularProgress size={24} color="inherit" />
-                    </div>: selectedCategory=='All'?thumbnail.map((url, index) => (
-                        !memberonly[index] && blockedcountry[index]!=`${countryname}`?
-                            <div key={index} className={"thumbnail-item"}>
-                                <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(() => {
-                                    localStorage.setItem("VID", VID[index]);
-                                })}>
-                                    <img src={url} alt={`Thumbnail ${index}`} className="thumbnail-image" height={"150px"} width={"265px"} style={{ borderRadius: "10px" }} />
-                                    <div className="jefkfm">
-                                        <div className="pfp">
-                                            <Link to={`/profile/${uploader[index]}`} onClick={(() => {
-                                                localStorage.setItem("userid", uploader[index]);
-                                            })}>
-                                                <img src={dp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
-                                            </Link>
-                                        </div>
-                                        <div className="jjnjbhvf" style={{ color: nightmode ? 'white' : 'black' }}>
-                                            <h5>{caption[index]}</h5>
-                                            <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
-                                                {name[index]}
+                    {loading ?
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100vw" }}>
+                            <CircularProgress size={24} color="inherit" />
+                        </div> : selectedCategory == 'All' ? thumbnail.map((url, index) => (
+                            !memberonly[index] && blockedcountry[index] != `${countryname}` ?
+                                <div key={index} className={"thumbnail-item"}>
+                                    <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${VID[index]}`} onClick={(() => {
+                                        localStorage.setItem("VID", VID[index]);
+                                    })}>
+                                        <img src={url} alt={`Thumbnail ${index}`} className="thumbnail-image" height={"150px"} width={"265px"} style={{ borderRadius: "10px" }} />
+                                        <div className="jefkfm">
+                                            <div className="pfp">
+                                                <Link to={`/profile/${uploader[index]}`} onClick={(() => {
+                                                    localStorage.setItem("userid", uploader[index]);
+                                                })}>
+                                                    <img src={dp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
+                                                </Link>
+                                            </div>
+                                            <div className="jjnjbhvf" style={{ color: nightmode ? 'white' : 'black' }}>
+                                                <h5>{caption[index]}</h5>
+                                                <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
+                                                    {name[index]}
 
-                                            </div>
-                                            <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
-                                                <p>{
-                                                    views[index] > 0 ?
-                                                        views[index] === 1 ? formatViews(views[index]) + ' View' :
-                                                            formatViews(views[index]) + ' Views' :
-                                                        "No views"
-                                                }</p>
-                                                •
-                                                <p>{formatTimeAgo(uploaddate[index])}</p>
+                                                </div>
+                                                <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
+                                                    <p>{
+                                                        views[index] > 0 ?
+                                                            views[index] === 1 ? formatViews(views[index]) + ' View' :
+                                                                formatViews(views[index]) + ' Views' :
+                                                            "No views"
+                                                    }</p>
+                                                    •
+                                                    <p>{formatTimeAgo(uploaddate[index])}</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </Link>
-                            </div> : <></>
-                            )
-                    
-                    ):<Trendingpage/>}
+                                    </Link>
+                                </div> : <></>
+                        )
+
+                        ) : <Trendingpage />}
                 </div>
                 <div className="kdjdkcvd" style={{ height: "100px" }}></div>
             </div>

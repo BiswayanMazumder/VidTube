@@ -706,3 +706,8 @@ input {
   margin-top: 50px;
   margin-right: 10px;
 }
+@media screen and (max-width:760px) {
+  .jenfjenfkmk{
+    display: none;
+  }
+}
