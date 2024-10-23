@@ -39,7 +39,7 @@ export default function ProfilePage() {
     const [loading, setLoading] = useState(true);
     const [currentuser, setCurrentUser] = useState(false);
     const [subscribed, setSubscribed] = useState(false);
-    
+
     const fetchUserData = async () => {
         try {
             const docRef = doc(db, 'User Details', userId);
@@ -74,27 +74,27 @@ export default function ProfilePage() {
             console.error(error);
         }
     };
-    const [blockedcountry,setblockedcountry]=useState([]);
+    const [blockedcountry, setblockedcountry] = useState([]);
     const [countryname, setCountryname] = useState('');
-//   const [error, setError] = useState('');
+    //   const [error, setError] = useState('');
 
-  useEffect(() => {
-    setLoading(true);
-    const fetchCountry = async () => {
-      try {
-        const response = await axios.get('https://ipapi.co/json/');
-        console.log('Country',response.data.country_name);
-        setCountryname(response.data.country_name); // Get the country code
-      } catch (err) {
-        // setError('Failed to fetch country information');
-        console.error('Error fetching country:', err);
-      }finally{
-        setLoading(false);
-      }
-    };
+    useEffect(() => {
+        setLoading(true);
+        const fetchCountry = async () => {
+            try {
+                const response = await axios.get('https://ipapi.co/json/');
+                console.log('Country', response.data.country_name);
+                setCountryname(response.data.country_name); // Get the country code
+            } catch (err) {
+                // setError('Failed to fetch country information');
+                console.error('Error fetching country:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    fetchCountry();
-  }, []);
+        fetchCountry();
+    }, []);
     const fetchData = async () => {
         try {
             const docRef = doc(db, 'Global VIDs', 'VIDs');
@@ -212,11 +212,11 @@ export default function ProfilePage() {
         const checkmembership = async () => {
             const docRef = doc(db, 'Memberships', userId);
             const docSnap = await getDoc(docRef);
-            
+
             if (docSnap.exists()) {
                 const membershipData = docSnap.data();
                 const joinedmembers = membershipData['MemberID'] || []; // Ensure it's an array
-    
+
                 console.log('Members', joinedmembers);
                 // Check if the current user is a member
                 if (joinedmembers.includes(auth.currentUser.uid)) {
@@ -228,10 +228,10 @@ export default function ProfilePage() {
                 setjoined(false); // Set to false if the document doesn't exist
             }
         };
-    
+
         checkmembership();
     }, [userId]);
-    
+
     const joinmembership = async () => {
         const docRef = doc(db, 'Memberships', userId);
 
@@ -271,6 +271,13 @@ export default function ProfilePage() {
         const razorpay = new window.Razorpay(options);
         razorpay.open();
     }
+    // const [activeTab, setActiveTab] = useState('video');
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleSelect = (tab) => {
+        setActiveTab(tab);
+        setIsOpen(false);
+    };
     return (
         <div>
             <Header />
@@ -310,20 +317,20 @@ export default function ProfilePage() {
                         <div className="knrgjnfkg">
                             {
                                 currentuser ? (
-                                    <div style={{ display: 'flex', gap: '10px',flexDirection: 'row' }}>
-                                    <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link" to={`/channel/${userId}/editing/profile`}>
-                                        <div className='hebfjenk' style={{ backgroundColor: 'rgb(94, 94, 239)', color: 'white', border: '1px solid blue' }}>
-                                            <center>Customize</center>
-                                        </div>
-                                    </Link>
-                                    <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link" to={`/channel/${userId}/profiledetails`}>
-                                        <div className='hebfjenk' style={{ backgroundColor: 'rgb(94, 94, 239)', color: 'white', border: '1px solid blue' }} >
-                                            <center> My Profile</center>
-                                        </div>
-                                    </Link>
+                                    <div style={{ display: 'flex', gap: '10px', flexDirection: 'row' }}>
+                                        <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link" to={`/channel/${userId}/editing/profile`}>
+                                            <div className='hebfjenk' style={{ backgroundColor: 'rgb(94, 94, 239)', color: 'white', border: '1px solid blue' }}>
+                                                <center>Customize</center>
+                                            </div>
+                                        </Link>
+                                        <Link style={{ textDecoration: 'none', color: 'white' }} data-testid="subscribed-link" to={`/channel/${userId}/profiledetails`}>
+                                            <div className='hebfjenk' style={{ backgroundColor: 'rgb(94, 94, 239)', color: 'white', border: '1px solid blue' }} >
+                                                <center> My Profile</center>
+                                            </div>
+                                        </Link>
                                     </div>
                                 ) : (
-                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                    <div style={{ display: 'flex', gap: '10px' }} className='shgjwjiwj'>
                                         {subscribed ? (
                                             <Link style={{ textDecoration: 'none', color: 'black' }} data-testid="subscribed-link">
                                                 <div className='hebfjenk' style={{ backgroundColor: '#f2dfdf', color: 'black', border: '1px solid black' }} onClick={handleSubscribe}>
@@ -338,11 +345,11 @@ export default function ProfilePage() {
                                             </Link>
                                         )}
                                         {
-                                            auth.currentUser?<Link style={{ textDecoration: 'none', color: 'black' }} data-testid="join-link">
-                                            <div className='hebfjenk' style={{ backgroundColor: 'transparent', color: 'black', border: '0.5px solid black' }} onClick={joined?null:joinpayments}>
-                                                <center>{joined?'Already Joined':'Join'}</center>
-                                            </div>
-                                        </Link>:<></>
+                                            auth.currentUser ? <Link style={{ textDecoration: 'none', color: 'black' }} data-testid="join-link">
+                                                <div className='hebfjenk' style={{ backgroundColor: 'transparent', color: 'black', border: '0.5px solid black' }} onClick={joined ? null : joinpayments}>
+                                                    <center>{joined ? 'Already Joined' : 'Join'}</center>
+                                                </div>
+                                            </Link> : <></>
                                         }
                                     </div>
                                 )
@@ -365,6 +372,7 @@ export default function ProfilePage() {
                         style={{ textDecoration: 'none', color: activeTab === 'video' ? 'black' : 'grey', padding: '10px' }}
                         onClick={() => setActiveTab('video')}
                         data-testid="video-link"
+                        className='jefejfkj'
                     >
                         <div className="jjnffkmkm">
                             Videos
@@ -375,6 +383,7 @@ export default function ProfilePage() {
                         style={{ textDecoration: 'none', color: activeTab === 'community' ? 'black' : 'grey', padding: '10px' }}
                         onClick={() => setActiveTab('community')}
                         data-testid="community-link"
+                        className='jefejfkj'
                     >
                         <div className="jjnffkmkm">
                             Community
@@ -385,32 +394,66 @@ export default function ProfilePage() {
                         style={{ textDecoration: 'none', color: activeTab === 'about' ? 'black' : 'grey', padding: '10px' }}
                         onClick={() => setActiveTab('about')}
                         data-testid="about-link"
+                        className='jefejfkj'
                     >
                         <div className="jjnffkmkm">
                             About
                             {activeTab === 'about' && <div className="nfjvf"></div>}
                         </div>
                     </Link>
-                   {
-                  auth.currentUser&&  auth.currentUser.uid===userId? <Link
-                        style={{ textDecoration: 'none', color: activeTab === 'playlist' ? 'black' : 'grey', padding: '10px' }}
-                        onClick={() => setActiveTab('playlist')}
-                        data-testid="about-link"
-                    >
-                        <div className="jjnffkmkm">
-                            Saved
-                            {activeTab === 'playlist' && <div className="nfjvf"></div>}
-                        </div>
-                    </Link>:<></>
-                   }
+                    <div className="dropdown">
+                        <button
+                            className="dropdown-toggle"
+                            onClick={() => setIsOpen(!isOpen)}
+                        >
+                            {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+                        </button>
+                        {isOpen && (
+                            <div className="dropdown-menu">
+                                <div
+                                    className={`dropdown-item ${activeTab === 'video' ? 'active' : ''}`}
+                                    onClick={() => handleSelect('video')}
+                                    data-testid="video-link"
+                                >
+                                    Videos
+                                </div>
+                                <div
+                                    className={`dropdown-item ${activeTab === 'community' ? 'active' : ''}`}
+                                    onClick={() => handleSelect('community')}
+                                    data-testid="community-link"
+                                >
+                                    Community
+                                </div>
+                                <div
+                                    className={`dropdown-item ${activeTab === 'about' ? 'active' : ''}`}
+                                    onClick={() => handleSelect('about')}
+                                    data-testid="about-link"
+                                >
+                                    About
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    {
+                        auth.currentUser && auth.currentUser.uid === userId ? <Link
+                            style={{ textDecoration: 'none', color: activeTab === 'playlist' ? 'black' : 'grey', padding: '10px' }}
+                            onClick={() => setActiveTab('playlist')}
+                            data-testid="about-link"
+                        >
+                            <div className="jjnffkmkm">
+                                Saved
+                                {activeTab === 'playlist' && <div className="nfjvf"></div>}
+                            </div>
+                        </Link> : <></>
+                    }
                 </div>
                 <div className="jhfjkfj">
                     {
                         activeTab === 'about' ? <Aboutpage /> :
                             activeTab === 'home' ? <VideosHomepage /> :
                                 activeTab === 'video' ? <VideoSection /> :
-                                activeTab === 'playlist' ? <Playlistpage /> :
-                                    activeTab === 'community' ? <Communitypage communityPosts={communityPosts} /> : <></>
+                                    activeTab === 'playlist' ? <Playlistpage /> :
+                                        activeTab === 'community' ? <Communitypage communityPosts={communityPosts} /> : <></>
                     }
                 </div>
             </div>

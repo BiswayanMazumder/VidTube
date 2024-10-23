@@ -706,8 +706,66 @@ input {
   margin-top: 50px;
   margin-right: 10px;
 }
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  background-color: #f9f9f9;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.dropdown-toggle:hover {
+  background-color: #e9e9e9;
+}
+
+.dropdown-menu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  margin-top: 5px;
+}
+
+.dropdown-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown-item.active {
+  font-weight: bold;
+  color: black;
+  background-color: #e1e1e1; /* Optional: highlight the active tab */
+}
+.dropdown{
+  display: none;
+}
 @media screen and (max-width:760px) {
   .jenfjenfkmk{
     display: none;
   }
+  .jefejfkj,.jkgflmlv{
+    display: none;
+  }
+  .dropdown{
+    display: flex;
+  }
+  .coverpic{
+    display: none;
+  }
 }
+
