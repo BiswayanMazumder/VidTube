@@ -137,7 +137,7 @@ export default function Communitypage() {
         }
     };
     useEffect(() => {
-        
+
 
         fetchUserData();
     }, [userId]);
@@ -164,7 +164,7 @@ export default function Communitypage() {
     const handleChange = (event) => {
         setInputValue(event.target.value);
     };
-    const [commload,setcommload]=useState(false);
+    const [commload, setcommload] = useState(false);
     return (
         <div className='webbody'>
             <div className="jnkmkkdkd">
@@ -193,20 +193,24 @@ export default function Communitypage() {
                             placeholder='What is on your mind?'
                         />
                         <div className="jrhkfjk">
-                            <Link style={{ textDecoration: 'none', color: 'white',cursor:inputValue==='' ?'not-allowed': 'pointer' }} data-testid="subscribe-link">
-                                <div className='hebfjenk' style={{ backgroundColor:inputValue==='' ? 'grey' : 'rgb(94, 94, 239)' }} onClick={async()=>{
-                                    const docref=doc(db,'Community Posts',auth.currentUser.uid);
-                                    const datatoupdate={
-                                        'Posts':arrayUnion({
-                                            // 'Date of Upload':serverTimestamp(),
-                                            'Posts':inputValue,
-                                            'User ID':auth.currentUser.uid
+                            <Link style={{ textDecoration: 'none', color: 'white', cursor: inputValue === '' ? 'not-allowed' : 'pointer' }} data-testid="subscribe-link">
+                                <div className='hebfjenk' style={{ backgroundColor: inputValue === '' ? 'grey' : 'rgb(94, 94, 239)' }} onClick={async () => {
+                                    if (inputValue === '') return; // Check if inputValue is empty
+
+                                    const docRef = doc(db, 'Community Posts', auth.currentUser.uid);
+                                    const dataToUpdate = {
+                                        'Posts': arrayUnion({
+                                            // 'Date of Upload': serverTimestamp(),
+                                            'Posts': inputValue,
+                                            'User ID': auth.currentUser.uid
                                         })
-                                    }
-                                    await setDoc(docref,datatoupdate,{merge:true});
+                                    };
+
+                                    await setDoc(docRef, dataToUpdate, { merge: true });
                                     setInputValue('');
                                     await fetchUserData();
-                                }}>
+                                }}
+                                >
                                     <center>Post</center>
                                 </div>
                             </Link>
