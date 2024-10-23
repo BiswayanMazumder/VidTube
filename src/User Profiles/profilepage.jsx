@@ -431,6 +431,15 @@ export default function ProfilePage() {
                                 >
                                     About
                                 </div>
+                                {
+                                    auth.currentUser && auth.currentUser.uid === userId ? <div
+                                    className={`dropdown-item ${activeTab === 'playlist' ? 'active' : ''}`}
+                                    onClick={() => handleSelect('playlist')}
+                                    data-testid="about-link"
+                                >
+                                    Saved
+                                </div>:<></>
+                                }
                             </div>
                         )}
                     </div>
@@ -439,6 +448,7 @@ export default function ProfilePage() {
                             style={{ textDecoration: 'none', color: activeTab === 'playlist' ? 'black' : 'grey', padding: '10px' }}
                             onClick={() => setActiveTab('playlist')}
                             data-testid="about-link"
+                            className='jefejfkj'
                         >
                             <div className="jjnffkmkm">
                                 Saved
