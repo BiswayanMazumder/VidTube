@@ -804,7 +804,9 @@ export default function Videoviewingpage() {
               {formatViews(videoviwes)} views
             </div>
             <div className="jjfndv" style={{ fontSize: "15px", color: "grey", fontWeight: "300", marginTop: "10px" }}>
-              Uploaded {formatTimeAgo(videoupload)}
+              Uploaded {videoupload && videoupload.seconds
+                ? formatTimeAgo(videoupload)
+                : "Unknown date"}
             </div>
             <div className='ekhbfehfss' style={{ display: "flex", flexDirection: "row", gap: "10px", marginTop: "20px" }}>
               <Link to={`/profile/${videoowner}`}>
@@ -1147,7 +1149,9 @@ export default function Videoviewingpage() {
                             "No views"
                         }</p>
 
-                        <p>{formatTimeAgo(uploaddate[index])}</p>
+                        <p>{uploaddate[index] && uploaddate[index].seconds
+                          ? formatTimeAgo(uploaddate[index])
+                          : "Unknown date"}</p>
                       </div>
                     </div>
 
