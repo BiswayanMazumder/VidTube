@@ -316,6 +316,7 @@ export default function Landingpage() {
     const videocategories = [
         'All',
         'Trending',
+        'Subscribed'
     ];
 
     // Initialize selectedCategory with "All"
@@ -517,7 +518,7 @@ export default function Landingpage() {
                                 </div> : <></>
                         )
 
-                        ) : <Trendingpage />}
+                        ) : selectedCategory=='Trending'?<Trendingpage/>:<></>}
                 </div>
                 <div className="kdjdkcvd" style={{ height: "100px" }}></div>
             </div>
