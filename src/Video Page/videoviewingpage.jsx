@@ -886,10 +886,10 @@ export default function Videoviewingpage() {
 
                     </Link>
                     <Link style={{ textDecoration: 'none', color: 'white' }} >
-  <div className='hebfjenk' style={{ width: "fit-content", paddingLeft: "10px", paddingRight: "10px" }} onClick={changevisibility}>
-    <center>{currentmemberonly ? 'Make Public' : 'Make Members Only'}</center>
-  </div>
-</Link>
+                      <div className='hebfjenk' style={{ width: "fit-content", paddingLeft: "10px", paddingRight: "10px" }} onClick={changevisibility}>
+                        <center>{currentmemberonly ? 'Make Public' : 'Make Members Only'}</center>
+                      </div>
+                    </Link>
 
                   </div>
                 </Link> : subscount.includes(auth.currentUser.uid) ? (
@@ -1125,7 +1125,7 @@ export default function Videoviewingpage() {
             <div className="relatedvideos">
               {
                 thumbnails.map((thumbnail, index) => (
-                  !memberonly[index]? <div className="jnfvkf">
+                  !memberonly[index] ? <div className="jnfvkf">
                     <Link style={{ textDecoration: 'none', color: 'black' }} to={`/videos/${vidData[index]}`}>
                       <img src={thumbnails[index]} alt={captions[index]} height={"120px"}
                         width={"200px"} style={{ borderRadius: "10px" }} />

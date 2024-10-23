@@ -398,7 +398,7 @@ export default function ProfilePage() {
                         data-testid="about-link"
                     >
                         <div className="jjnffkmkm">
-                            Playlist
+                            Saved
                             {activeTab === 'playlist' && <div className="nfjvf"></div>}
                         </div>
                     </Link>:<></>
