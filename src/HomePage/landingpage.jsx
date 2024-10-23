@@ -10,6 +10,7 @@ import Uploadbutton from '../Components/uploadbutton';
 import Trendingpage from '../Trending Page/trendingpage';
 import { CircularProgress } from '@mui/material';
 import axios from 'axios';
+import Subscribed_channels_viddeos from '../Video Page/subscribed_channels_viddeos';
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
     authDomain: "pixelprowess69.firebaseapp.com",
@@ -316,8 +317,9 @@ export default function Landingpage() {
     const videocategories = [
         'All',
         'Trending',
-        'Subscribed'
-    ];
+        auth.currentUser ? 'Subscribed' : null,
+    ].filter(Boolean); // This will remove any null values
+    
 
     // Initialize selectedCategory with "All"
     const [selectedCategory, setSelectedCategory] = useState('All');
@@ -518,7 +520,7 @@ export default function Landingpage() {
                                 </div> : <></>
                         )
 
-                        ) : selectedCategory=='Trending'?<Trendingpage/>:<></>}
+                        ) : selectedCategory=='Trending'?<Trendingpage/>:<Subscribed_channels_viddeos/>}
                 </div>
                 <div className="kdjdkcvd" style={{ height: "100px" }}></div>
             </div>
