@@ -436,7 +436,7 @@ export default function Landingpage() {
                 {/* {
                     sidebar ? <Sidebar /> : <ShortSidebar />
                 } */}
-                <div className="jdbfjekfjkhef" style={{ width: "100vw",position:"relative" }}>
+                <div className="jdbfjekfjkhef">
                     {
                         premium ? <></> : <Link>
                             <div className="jjnjfdkmvd" onClick={auth.currentUser ? null : null}>

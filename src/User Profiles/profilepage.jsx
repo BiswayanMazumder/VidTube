@@ -433,8 +433,8 @@ export default function ProfilePage() {
                                 </div>
                                 {
                                     auth.currentUser && auth.currentUser.uid === userId ? <div
-                                    className={`dropdown-item ${activeTab === 'playlist' ? 'active' : ''}`}
-                                    onClick={() => handleSelect('playlist')}
+                                    className={`dropdown-item ${activeTab === 'Saved' ? 'active' : ''}`}
+                                    onClick={() => handleSelect('Saved')}
                                     data-testid="about-link"
                                 >
                                     Saved
@@ -445,14 +445,14 @@ export default function ProfilePage() {
                     </div>
                     {
                         auth.currentUser && auth.currentUser.uid === userId ? <Link
-                            style={{ textDecoration: 'none', color: activeTab === 'playlist' ? 'black' : 'grey', padding: '10px' }}
-                            onClick={() => setActiveTab('playlist')}
+                            style={{ textDecoration: 'none', color: activeTab === 'Saved' ? 'black' : 'grey', padding: '10px' }}
+                            onClick={() => setActiveTab('Saved')}
                             data-testid="about-link"
                             className='jefejfkj'
                         >
                             <div className="jjnffkmkm">
                                 Saved
-                                {activeTab === 'playlist' && <div className="nfjvf"></div>}
+                                {activeTab === 'Saved' && <div className="nfjvf"></div>}
                             </div>
                         </Link> : <></>
                     }
@@ -462,7 +462,7 @@ export default function ProfilePage() {
                         activeTab === 'about' ? <Aboutpage /> :
                             activeTab === 'home' ? <VideosHomepage /> :
                                 activeTab === 'video' ? <VideoSection /> :
-                                    activeTab === 'playlist' ? <Playlistpage /> :
+                                    activeTab === 'Saved' ? <Playlistpage /> :
                                         activeTab === 'community' ? <Communitypage communityPosts={communityPosts} /> : <></>
                     }
                 </div>

@@ -169,7 +169,7 @@ export default function Playlistpage() {
                                            <img src={dp[index]} alt="" height={"40px"} width={"40px"} style={{ borderRadius: "50%" }} />
                                        </Link>
                                    </div>
-                                   <div className="jjnjbhvf" style={{ color:  'black' }}>
+                                   <div className="jjnjbhvf" style={{ color:  'black', fontSize: "15px" }}>
                                        <h5>{caption[index]}</h5>
                                        <div className="jehfej" style={{ color: "grey", fontSize: "12px" }}>
                                            {name[index]}
