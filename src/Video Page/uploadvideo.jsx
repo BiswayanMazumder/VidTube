@@ -6,6 +6,7 @@ import { arrayUnion, doc, getFirestore, serverTimestamp, setDoc } from 'firebase
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import CircularProgress from '@mui/material/CircularProgress'; // Import CircularProgress
+import Navbar_upload from '../Components/Navbar_upload';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -139,6 +140,7 @@ export default function Uploadvideo() {
     return (
         <div className='webbody'>
             <Header />
+            <Navbar_upload/>
             <div className="dffjdnmn">
                 <div className="rjkjvkvk">
                     <div className="njvnnvm">
