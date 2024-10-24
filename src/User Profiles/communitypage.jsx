@@ -19,161 +19,116 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
 export default function Communitypage() {
     const { userId } = useParams();
-    const [currentuser, setcurrentuser] = useState(false);
-    // const [currentuser, setcurrentuser] = useState(false);
-
-    useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const uid = user.uid;
-                setcurrentuser(uid === userId);
-            } else {
-                setcurrentuser(false);
-            }
-        });
-    }, [userId]);
-    const [commupload, setcommupload] = useState([]);
+    const [currentuser, setCurrentUser] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [communityPosts, setCommunityPosts] = useState([]);
     const [dp, setDp] = useState('');
     const [name, setName] = useState('');
-    const [bio, setBio] = useState('');
-    const [coverPic, setCoverPic] = useState('');
-    const [subs, setSubs] = useState([]);
-    const [vidData, setVidData] = useState([]);
-    const [videoCount, setVideoCount] = useState(0);
-    const [loading, setLoading] = useState(true);
+    const [inputValue, setInputValue] = useState('');
+
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const docRef = doc(db, 'User Details', userId);
-                const docSnapshot = await getDoc(docRef);
-                if (docSnapshot.exists()) {
-                    const userData = docSnapshot.data();
-                    setName(userData.Username);
-                    setBio(userData.Bio);
-                }
-
-                const coverDocRef = doc(db, 'User Cover Pictures', userId);
-                const coverDocSnapshot = await getDoc(coverDocRef);
-                if (coverDocSnapshot.exists()) {
-                    const coverData = coverDocSnapshot.data();
-                    setCoverPic(coverData['Cover Pic']);
-                }
-
-                const subDocRef = doc(db, 'Subscribers', userId);
-                const subDocSnapshot = await getDoc(subDocRef);
-                if (subDocSnapshot.exists()) {
-                    const subData = subDocSnapshot.data();
-                    setSubs(subData['Subscriber UIDs']);
-                }
-
-                const profileDocRef = doc(db, 'User Profile Pictures', userId);
-                const profileDocSnapshot = await getDoc(profileDocRef);
-                if (profileDocSnapshot.exists()) {
-                    const profileData = profileDocSnapshot.data();
-                    setDp(profileData['Profile Pic']);
-                }
-            } catch (error) {
-                console.error(error);
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const uid = user.uid;
+                setCurrentUser(uid === userId);
+            } else {
+                setCurrentUser(false);
             }
-        };
+            setLoading(false); // Set loading to false after checking auth state
+        });
 
-        const fetchData = async () => {
-            try {
-                const docRef = doc(db, 'Global VIDs', 'VIDs');
-                const docSnapshot = await getDoc(docRef);
-                let count = 0;
-
-                if (docSnapshot.exists()) {
-                    const data = docSnapshot.data();
-                    setVidData(data.VID);
-
-                    for (let i = 0; i < data.VID.length; i++) {
-                        const videoRef = doc(db, 'Global Post', data.VID[i]);
-                        const videoDoc = await getDoc(videoRef);
-
-                        if (videoDoc.exists()) {
-                            const videoData = videoDoc.data();
-                            const uploader = videoData['Uploaded UID'];
-
-                            if (uploader === userId) {
-                                count += 1;
-                            }
-                        } else {
-                            console.log(`Video not found for VID: ${data.VID[i]}`);
-                        }
-                    }
-                    setVideoCount(count);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        const loadData = async () => {
-            setLoading(true);
-            await Promise.all([fetchUserData(), fetchData()]);
-            setLoading(false);
-        };
-
-        loadData();
+        return () => unsubscribe(); // Clean up the subscription
     }, [userId]);
+
     const fetchUserData = async () => {
+        try {
+            const docRef = doc(db, 'User Details', userId);
+            const docSnapshot = await getDoc(docRef);
+            if (docSnapshot.exists()) {
+                const userData = docSnapshot.data();
+                setName(userData.Username);
+            }
+
+            const profileDocRef = doc(db, 'User Profile Pictures', userId);
+            const profileDocSnapshot = await getDoc(profileDocRef);
+            if (profileDocSnapshot.exists()) {
+                const profileData = profileDocSnapshot.data();
+                setDp(profileData['Profile Pic']);
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    };
+
+    const fetchCommunityPosts = async () => {
         try {
             const docRef = doc(db, "Community Posts", userId);
             const docSnap = await getDoc(docRef);
-
             if (docSnap.exists()) {
                 const subData = docSnap.data();
-                setCommunityPosts(subData['Posts']); // Assuming 'Posts' is an array of objects
-                // setcommupload(subData['Date of Upload']);
-                console.log('Fetched data:', subData); // Log the fetched data
+                setCommunityPosts(subData['Posts'] || []); // Default to empty array if no posts
             } else {
                 console.log('No such document!');
             }
         } catch (error) {
-            console.error("Error fetching document: ", error);
+            console.error("Error fetching community posts:", error);
         }
     };
+
     useEffect(() => {
-
-
-        fetchUserData();
-    }, [userId]);
-    function formatTimeAgo(timestamp) {
-        const now = new Date();
-        const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-
-        const seconds = Math.floor((now - date) / 1000);
-        let interval = Math.floor(seconds / 31536000);
-
-        if (interval >= 1) return interval + " year" + (interval > 1 ? "s" : "") + " ago";
-        interval = Math.floor(seconds / 2592000);
-        if (interval >= 1) return interval + " month" + (interval > 1 ? "s" : "") + " ago";
-        interval = Math.floor(seconds / 86400);
-        if (interval >= 1) return interval + " day" + (interval > 1 ? "s" : "") + " ago";
-        interval = Math.floor(seconds / 3600);
-        if (interval >= 1) return interval + " hour" + (interval > 1 ? "s" : "") + " ago";
-        interval = Math.floor(seconds / 60);
-        if (interval >= 1) return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
-        return seconds + " second" + (seconds > 1 ? "s" : "") + " ago";
-    }
-    const [inputValue, setInputValue] = useState('');
+        if (!loading) {
+            fetchUserData();
+            fetchCommunityPosts();
+        }
+    }, [loading, userId]);
 
     const handleChange = (event) => {
         setInputValue(event.target.value);
     };
-    const [commload, setcommload] = useState(false);
+
+    const handlePostSubmit = async () => {
+        if (!auth.currentUser) return; // Ensure user is logged in
+        if (inputValue === '') return; // Prevent empty posts
+
+        const docRef = doc(db, 'Community Posts', auth.currentUser.uid);
+        const dataToUpdate = {
+            'Posts': arrayUnion({
+                'Posts': inputValue,
+                'User ID': auth.currentUser.uid,
+            })
+        };
+
+        await setDoc(docRef, dataToUpdate, { merge: true });
+        setInputValue('');
+        fetchCommunityPosts(); // Refresh posts after adding
+    };
+
+    const handleDeletePost = async (index) => {
+        if (!auth.currentUser) return; // Ensure user is logged in
+
+        const docRef = doc(db, "Community Posts", userId);
+        const dataToRemove = {
+            'Posts': arrayRemove(communityPosts[index])
+        };
+
+        await updateDoc(docRef, dataToRemove);
+        const updatedPosts = communityPosts.filter((_, i) => i !== index);
+        setCommunityPosts(updatedPosts);
+    };
+
+    if (loading) return <div>Loading...</div>; // Loading state
+
     return (
         <div className='webbody'>
-        <div className="ldlvjic" style={{position:'fixed',bottom:'0px',width:'100%',left:'0px'}}>
-            <Navbar_Profile/>
-        </div>
+            <div className="ldlvjic" style={{ position: 'fixed', bottom: '0px', width: '100%', left: '0px' }}>
+                <Navbar_Profile />
+            </div>
             <div className="jnkmkkdkd">
-                {
-                    currentuser ? <div className="nmkvmlkd" style={{ height: "280px", display: 'flex', flexDirection: 'column' }}>
+                {currentuser && (
+                    <div className="nmkvmlkd" style={{ height: "280px", display: 'flex', flexDirection: 'column' }}>
                         <div className="jfnvjfnv" style={{ display: 'flex', alignItems: 'center' }}>
                             <img src={dp} alt="" height={'40px'} width={'40px'} style={{ borderRadius: '50%' }} />
                             <div className="enmndv" style={{ fontWeight: 'bold', marginLeft: '10px' }}>
@@ -192,75 +147,45 @@ export default function Communitypage() {
                                 position: 'relative',
                                 width: '95%',
                                 lineHeight: '1.2',
-                                boxShadow: 'none' // Remove any box-shadow if needed
+                                boxShadow: 'none'
                             }}
                             placeholder='What is on your mind?'
                         />
                         <div className="jrhkfjk">
-                            <Link style={{ textDecoration: 'none', color: 'white', cursor: inputValue === '' ? 'not-allowed' : 'pointer' }} data-testid="subscribe-link">
-                                <div className='hebfjenk' style={{ backgroundColor: inputValue === '' ? 'grey' : 'rgb(94, 94, 239)' }} onClick={async () => {
-                                    if (inputValue === '') return; // Check if inputValue is empty
-
-                                    const docRef = doc(db, 'Community Posts', auth.currentUser.uid);
-                                    const dataToUpdate = {
-                                        'Posts': arrayUnion({
-                                            // 'Date of Upload': serverTimestamp(),
-                                            'Posts': inputValue,
-                                            'User ID': auth.currentUser.uid
-                                        })
-                                    };
-
-                                    await setDoc(docRef, dataToUpdate, { merge: true });
-                                    setInputValue('');
-                                    await fetchUserData();
-                                }}
+                            <Link style={{ textDecoration: 'none', color: 'white', cursor: inputValue === '' ? 'not-allowed' : 'pointer' }}>
+                                <div
+                                    className='hebfjenk'
+                                    style={{ backgroundColor: inputValue === '' ? 'grey' : 'rgb(94, 94, 239)' }}
+                                    onClick={handlePostSubmit}
                                 >
                                     <center>Post</center>
                                 </div>
                             </Link>
                         </div>
-                    </div> : <></>
-                }
-                {
-
-                    communityPosts.map((post, index) => (
-
-                        <div key={index} className="nmkvmlkd">
-                            <div className="jfnvjfnv">
-                                <img src={dp} alt="" height={'40px'} width={'40px'} style={{ borderRadius: '50%' }} />
-                                <div className="enmndv" style={{ fontWeight: 'bold', }}>
-                                    {name}
-                                </div>
-                                {/* <div className="enmndv">
-                                    {formatTimeAgo(commupload[index])}
-                                </div> */}
-                            </div>
-                            <div className="nefjn" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: '10px' }}>
-                                <p>{post.Posts}</p>
-                                {
-                                    auth.currentUser.uid === userId ?
-                                        <Link>
-                                            <div onClick={async() => {
-                                                const docRef = doc(db, "Community Posts", userId);
-                                                const datatoremove={
-                                                    'Posts': arrayRemove(communityPosts[index]),
-                                                    'User ID': userId
-                                                }
-                                                await updateDoc(docRef, datatoremove);
-                                                communityPosts.splice(index, 1);
-                                                setCommunityPosts([...communityPosts]);
-
-                                            }}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="red"><path d="M3 6h18v2H3zm1 3h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V9zm3 3h2v6H7zm4 0h2v6h-2zm4 0h2v6h-2z"></path></svg>
-                                            </div>
-                                        </Link>
-                                        :
-                                        <></>
-                                }
+                    </div>
+                )}
+                {communityPosts.map((post, index) => (
+                    <div key={index} className="nmkvmlkd">
+                        <div className="jfnvjfnv">
+                            <img src={dp} alt="" height={'40px'} width={'40px'} style={{ borderRadius: '50%' }} />
+                            <div className="enmndv" style={{ fontWeight: 'bold' }}>
+                                {name}
                             </div>
                         </div>
-                    ))
-                }
+                        <div className="nefjn" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: '10px' }}>
+                            <p>{post.Posts}</p>
+                            {auth.currentUser && currentuser && (
+                                <Link>
+                                    <div onClick={() => handleDeletePost(index)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="red">
+                                            <path d="M3 6h18v2H3zm1 3h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V9zm3 3h2v6H7zm4 0h2v6h-2zm4 0h2v6h-2z"></path>
+                                        </svg>
+                                    </div>
+                                </Link>
+                            )}
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );

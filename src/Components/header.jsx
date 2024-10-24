@@ -4,7 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
 import Sidebar from '../Components/sidebar';
 import ShortSidebar from '../Components/shortsidebar';
-import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { doc, getDoc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
     authDomain: "pixelprowess69.firebaseapp.com",
@@ -44,8 +44,31 @@ export default function Header() {
         try {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
-            // console.log('User signed in:', user);
-            // You can save user data or redirect after sign-in
+            // console.log('UID',user.uid);
+            const docref=doc(db,'User Details',user.uid);
+            const docSnapshot=await getDoc(docref);
+            if(docSnapshot.exists()){
+                //do nothing
+            }else{
+                const docref=doc(db,'User Details',user.uid);
+                const datatouploaded={
+                    'Bio':'',
+                    'Email':auth.currentUser.email,
+                    'Username':auth.currentUser.displayName,
+                }
+                await setDoc(docref,datatouploaded);
+                const profileref=doc(db,'User Profile Pictures',user.uid);
+                const profiledata={
+                    'Profile Pic':user.photoURL,
+                    'time stamp':serverTimestamp()
+                }
+                await setDoc(profileref,profiledata);
+                const coverdocref=doc(db,'User Cover Pictures',user.uid);
+                const coverdata={
+                    'Cover Pic':'https://images.pexels.com/photos/158063/bellingrath-gardens-alabama-landscape-scenic-158063.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+                }
+                await setDoc(coverdocref,coverdata);
+            }
         } catch (error) {
             console.error('Error during sign-in:', error);
         }
@@ -77,6 +100,7 @@ export default function Header() {
                     setuser(true);
                     setphotourl(user.photoURL);              //...
                     const uid = user.uid;
+
                     // ...
                 } else {
                     // User is signed out
