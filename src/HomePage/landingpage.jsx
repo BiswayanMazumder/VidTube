@@ -11,6 +11,7 @@ import Trendingpage from '../Trending Page/trendingpage';
 import { CircularProgress } from '@mui/material';
 import axios from 'axios';
 import Subscribed_channels_viddeos from '../Video Page/subscribed_channels_viddeos';
+import Navbar_mobile from '../Components/navbar_mobile';
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
     authDomain: "pixelprowess69.firebaseapp.com",
@@ -432,6 +433,7 @@ export default function Landingpage() {
     return (
         <div className="webbody" style={{ backgroundColor: nightmode ? 'black' : 'white', color: nightmode ? 'white' : 'black' }} >
             <Header />
+            <Navbar_mobile/>
             <div className="videobody">
                 {/* {
                     sidebar ? <Sidebar /> : <ShortSidebar />

@@ -10,6 +10,7 @@ import Communitypage from './communitypage';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Playlistpage from './playlistpage';
 import axios from 'axios';
+import Navbar_Profile from '../Components/navbar_profile';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -281,6 +282,7 @@ export default function ProfilePage() {
     return (
         <div>
             <Header />
+            {/* <Navbar_Profile/> */}
             {loading && (
                 <div style={{
                     position: 'fixed', top: 0, left: 0, width: '100%', height: '5px', backgroundColor: 'red', animation: 'loading 1s infinite'

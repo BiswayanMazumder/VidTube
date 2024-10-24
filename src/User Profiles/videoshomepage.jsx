@@ -5,6 +5,7 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
 import { CircularProgress } from '@mui/material';
 import axios from 'axios';
+import Navbar_Profile from '../Components/navbar_profile';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -210,6 +211,10 @@ useEffect(() => {
 
     return (
         <div className='webbody'>
+        <div className="ldlvjic" style={{position:'fixed',bottom:'0px',width:'100%',left:'0px'}}>
+            <Navbar_Profile/>
+        </div>
+        {/* <Navbar_Profile/> */}
             <div className="jkgflmlv">
                 <video
                     src={videoLink[0]}

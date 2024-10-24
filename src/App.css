@@ -768,4 +768,25 @@ input {
     display: none;
   }
 }
+@media screen and (max-width:760px) {
+  .upload-button{
+    display: none;
+  }
+}
+.lejfkemf{
+  width: 100%;
+  height: 70px;
+  background-color: white;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+@media screen and (min-width:760px) {
+  .lejfkemf{
+    display: none;
+  }
+}
 
