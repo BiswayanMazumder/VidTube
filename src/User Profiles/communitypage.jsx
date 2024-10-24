@@ -168,7 +168,9 @@ export default function Communitypage() {
     const [commload, setcommload] = useState(false);
     return (
         <div className='webbody'>
-        <Navbar_Profile/>
+        <div className="ldlvjic" style={{position:'fixed',bottom:'0px',width:'100%',left:'0px'}}>
+            <Navbar_Profile/>
+        </div>
             <div className="jnkmkkdkd">
                 {
                     currentuser ? <div className="nmkvmlkd" style={{ height: "280px", display: 'flex', flexDirection: 'column' }}>

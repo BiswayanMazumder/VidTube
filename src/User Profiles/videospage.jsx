@@ -207,7 +207,9 @@ export default function VideoSection() {
 
     return (
         <div className='webbody'>
-        <Navbar_Profile/>
+        <div className="ldlvjic" style={{position:'fixed',bottom:'0px',width:'100%',left:'0px'}}>
+            <Navbar_Profile/>
+        </div>
             <div className="jdbfjekfjkhef">
         
                 {loading? <div style={{ display: "flex", justifyContent: "center" }}><CircularProgress size={24} color="#4285F4" /></div>:thumbnails.map((url, index) => (
