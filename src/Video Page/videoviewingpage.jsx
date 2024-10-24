@@ -10,6 +10,7 @@ import { CircularProgress } from '@mui/material';
 import { getDownloadURL, getStorage, ref, uploadBytes, uploadString } from 'firebase/storage';
 import axios from 'axios';
 import { openDB } from 'idb';
+import Navbar_upload from '../Components/Navbar_upload';
 const firebaseConfig = {
   apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
   authDomain: "pixelprowess69.firebaseapp.com",
@@ -795,6 +796,7 @@ export default function Videoviewingpage() {
   return (
     <div className='webbody'>
       <Header />
+      <Navbar_upload/>
       {
         loading ? <div className="loading-bar"></div> : <div className="videobody">
           <video width="100%" height="533" src={videolink} title={videotitle} controls autoPlay style={{ backgroundColor: "black" }} onContextMenu={(e) => e.preventDefault()}></video>

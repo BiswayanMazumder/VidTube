@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
+import Navbar_Profile from '../Components/navbar_profile';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -153,6 +154,7 @@ export default function Playlistpage() {
     }
   return (
     <div className='webbody'>
+    <Navbar_Profile/>
       <div className="jdbfjekfjkhef">
       {thumbnail.map((url, index) => (
                        

@@ -5,6 +5,7 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
 import { CircularProgress } from '@mui/material';
 import axios from 'axios';
+import Navbar_Profile from '../Components/navbar_profile';
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
     authDomain: "pixelprowess69.firebaseapp.com",
@@ -206,6 +207,7 @@ export default function VideoSection() {
 
     return (
         <div className='webbody'>
+        <Navbar_Profile/>
             <div className="jdbfjekfjkhef">
         
                 {loading? <div style={{ display: "flex", justifyContent: "center" }}><CircularProgress size={24} color="#4285F4" /></div>:thumbnails.map((url, index) => (

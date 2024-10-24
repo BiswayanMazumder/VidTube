@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import Header from '../Components/header';
+import Navbar_mobile from '../Components/navbar_mobile';
+import Navbar_Profile from '../Components/navbar_profile';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -105,6 +107,7 @@ export default function Aboutpage() {
     }, [userId]);
     return (
         <div className='webbody'>
+        <Navbar_Profile/>
         <div className="jhcdjkj">
                 Channel Details
             </div>

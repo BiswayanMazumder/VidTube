@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { arrayRemove, arrayUnion, doc, getDoc, getFirestore, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import Navbar_Profile from '../Components/navbar_profile';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUNVwpGBz1HUQs8Y9Ab-I_Nu4pPbeixmY",
@@ -167,6 +168,7 @@ export default function Communitypage() {
     const [commload, setcommload] = useState(false);
     return (
         <div className='webbody'>
+        <Navbar_Profile/>
             <div className="jnkmkkdkd">
                 {
                     currentuser ? <div className="nmkvmlkd" style={{ height: "280px", display: 'flex', flexDirection: 'column' }}>
