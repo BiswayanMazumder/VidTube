@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
-import { arrayUnion, doc, getDoc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, doc, getDoc, getFirestore, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -234,18 +234,24 @@ export default function Communitypage() {
                             <div className="nefjn" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: '10px' }}>
                                 <p>{post.Posts}</p>
                                 {
-                                    auth.currentUser.uid===userId?
-                                <Link>
-                                <div onClick={() => {
-                                    communityPosts.splice(index, 1);
-                                    setCommunityPosts([...communityPosts]);
+                                    auth.currentUser.uid === userId ?
+                                        <Link>
+                                            <div onClick={async() => {
+                                                const docRef = doc(db, "Community Posts", userId);
+                                                const datatoremove={
+                                                    'Posts': arrayRemove(communityPosts[index]),
+                                                    'User ID': userId
+                                                }
+                                                await updateDoc(docRef, datatoremove);
+                                                communityPosts.splice(index, 1);
+                                                setCommunityPosts([...communityPosts]);
 
-                                }}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="red"><path d="M3 6h18v2H3zm1 3h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V9zm3 3h2v6H7zm4 0h2v6h-2zm4 0h2v6h-2z"></path></svg>
-                                </div>
-                                </Link>
-                                :
-                                <></>
+                                            }}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="red"><path d="M3 6h18v2H3zm1 3h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V9zm3 3h2v6H7zm4 0h2v6h-2zm4 0h2v6h-2z"></path></svg>
+                                            </div>
+                                        </Link>
+                                        :
+                                        <></>
                                 }
                             </div>
                         </div>
