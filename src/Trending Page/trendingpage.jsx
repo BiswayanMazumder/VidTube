@@ -61,7 +61,7 @@ export default function TrendingPage() {
 
                     // Sort by views and get top 10 videos
                     videoDataArray.sort((a, b) => b.views - a.views);
-                    const topVideos = videoDataArray.slice(0, 5);
+                    const topVideos = videoDataArray.slice(0, 50);
 
                     // Set video IDs
                     setVideoIds(topVideos.map(video => video.id)); // Store video IDs

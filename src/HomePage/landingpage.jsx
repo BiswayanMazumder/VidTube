@@ -441,7 +441,7 @@ export default function Landingpage() {
                         premium ? <></> : <Link>
                             <div className="jjnjfdkmvd" onClick={auth.currentUser ? null : null}>
                                 <div className="ejkclsklksd">
-                                    <img src="https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_MusicModuleSquare_tablet_640x550.webp" alt="" height="500px" width="50%" />
+                                    <img src= {selectedCategory=='All'?"https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_MusicModuleSquare_tablet_640x550.webp":selectedCategory=='Trending'?'https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_BackgroundPlay_dark_tablet_632x624.webp':'https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_UnlimitedDownloads_dark_tablet_632x615.webp'} alt="" height="500px" width="50%" />
                                     <div className="image-container">
                                         <img src="https://www.gstatic.com/youtube/img/promos/growth/premium_lp2_large_feature_MusicModuleSquare_text_background_tablet_1284x1875.jpg" alt="" height="500px" width="100%" />
                                         <div className="overlay-text" style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
