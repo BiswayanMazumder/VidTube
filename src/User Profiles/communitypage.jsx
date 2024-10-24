@@ -224,14 +224,30 @@ export default function Communitypage() {
                         <div key={index} className="nmkvmlkd">
                             <div className="jfnvjfnv">
                                 <img src={dp} alt="" height={'40px'} width={'40px'} style={{ borderRadius: '50%' }} />
-                                <div className="enmndv" style={{ fontWeight: 'bold' }}>
+                                <div className="enmndv" style={{ fontWeight: 'bold', }}>
                                     {name}
                                 </div>
                                 {/* <div className="enmndv">
                                     {formatTimeAgo(commupload[index])}
                                 </div> */}
                             </div>
-                            <p>{post.Posts}</p>
+                            <div className="nefjn" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: '10px' }}>
+                                <p>{post.Posts}</p>
+                                {
+                                    auth.currentUser.uid===userId?
+                                <Link>
+                                <div onClick={() => {
+                                    communityPosts.splice(index, 1);
+                                    setCommunityPosts([...communityPosts]);
+
+                                }}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="red"><path d="M3 6h18v2H3zm1 3h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V9zm3 3h2v6H7zm4 0h2v6h-2zm4 0h2v6h-2z"></path></svg>
+                                </div>
+                                </Link>
+                                :
+                                <></>
+                                }
+                            </div>
                         </div>
                     ))
                 }
