@@ -318,7 +318,7 @@ export default function Landingpage() {
     const videocategories = [
         'All',
         'Trending',
-        auth.currentUser ? 'Subscribed' : null,
+        auth.currentUser ? '  Subscriptions  ' : null,
     ].filter(Boolean); // This will remove any null values
     
 
