@@ -139,7 +139,9 @@ export default function ProfilePage() {
             }
         }
     };
-
+    useEffect(() => {
+        checkSubscriptionStatus();
+    })
     const handleSubscribe = async () => {
         const subsRef = doc(db, 'Subscribers', userId);
         const subsDoc = await getDoc(subsRef);
