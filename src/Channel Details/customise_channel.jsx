@@ -30,7 +30,8 @@ export default function Customise_channel() {
     const [coverPic, setCoverPic] = useState('');
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
-
+    const [instaacc, setinstaacc] = useState('');
+    const [xacc, setxacc] = useState('');
     useEffect(() => {
         document.title = 'Channel customization - Vidtube Studio';
         if (!auth.currentUser) {
@@ -46,6 +47,8 @@ export default function Customise_channel() {
                 const userData = docSnapshot.data();
                 setName(userData.Username);
                 setBio(userData.Bio);
+                setinstaacc(userData.Instagram || 'No Instagram account available');
+                setxacc(userData.X || 'No X account available');
             }
 
             const coverDocRef = doc(db, 'User Cover Pictures', userId);
@@ -181,15 +184,15 @@ export default function Customise_channel() {
                     </div>
                 </div>
                 <br /><br /><br />
-                
-                <div  style={{ textDecoration: 'none', color: 'black',width:'120px' }}>
-                            <div className="effkf" style={{ cursor: 'pointer',width:'140px' }} onClick={async()=>{
-                                console.log('Name',name);
-                                const docRef = doc(db, 'User Details', auth.currentUser.uid);
-                                await updateDoc(docRef, { 'Username': name });
-                                window.location.replace('/')
-                            }}>Set new name</div>
-                        </div>
+
+                <div style={{ textDecoration: 'none', color: 'black', width: '120px' }}>
+                    <div className="effkf" style={{ cursor: 'pointer', width: '140px' }} onClick={async () => {
+                        console.log('Name', name);
+                        const docRef = doc(db, 'User Details', auth.currentUser.uid);
+                        await updateDoc(docRef, { 'Username': name });
+                        window.location.replace('/')
+                    }}>Set new name</div>
+                </div>
                 <br /><br /><br />
                 <div className="heading">
                     <div className="jrhgrjg">Description</div>
@@ -200,14 +203,14 @@ export default function Customise_channel() {
                 </div>
                 <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
                 {/* <br /><br /><br /> */}
-                <div  style={{ textDecoration: 'none', color: 'black',width:'120px' }}>
-                            <div className="effkf" style={{ cursor: 'pointer',width:'140px' }} onClick={async()=>{
-                                console.log('Name',name);
-                                const docRef = doc(db, 'User Details', auth.currentUser.uid);
-                                await updateDoc(docRef, { 'Bio': bio });
-                                window.location.replace('/')
-                            }}>Set new bio</div>
-                        </div>
+                <div style={{ textDecoration: 'none', color: 'black', width: '120px' }}>
+                    <div className="effkf" style={{ cursor: 'pointer', width: '140px' }} onClick={async () => {
+                        console.log('Name', name);
+                        const docRef = doc(db, 'User Details', auth.currentUser.uid);
+                        await updateDoc(docRef, { 'Bio': bio });
+                        window.location.replace('/')
+                    }}>Set new bio</div>
+                </div>
                 <br /><br /><br />
                 <div className="heading">
                     <div className="jrhgrjg">Email</div>
@@ -220,6 +223,56 @@ export default function Customise_channel() {
                         <input type="text" value={auth.currentUser.email} disabled style={{ paddingLeft: '20px', width: '80vw' }} />
                     </div>
                 </div>
+                <br /><br /><br /><br />
+                <div className="heading">
+                    <div className="jrhgrjg">Instagram</div>
+                    <br />
+                    <div className="sjjcc">
+                        Let people know your insatgram account for business inquiries
+                    </div>
+                    <br />
+                    <div className="sjjcc">
+                        <input
+                            type="text"
+                            value={instaacc}
+                            onChange={(e) => setinstaacc(e.target.value)}
+                            style={{ paddingLeft: '20px', width: '80vw' }}
+                        />
+                    </div>
+                    </div>
+                    <br /><br /><br /><br />
+                    <Link style={{ textDecoration: 'none', color: 'black' }}>
+                        <div style={{ textDecoration: 'none', color: 'black', width: '120px' }}>
+                            <div className="effkf" style={{ cursor: 'pointer', width: '220px' }} onClick={async () => {
+                                const docref = doc(db, 'User Details', auth.currentUser.uid);
+                                await updateDoc(docref, { 'Instagram': instaacc });
+                                window.location.replace('/')
+                            }}>Set new instagram account</div>
+                        </div>
+                    </Link>
+                
+                <br /><br /><br />
+                <div className="heading">
+                    <div className="jrhgrjg">X account</div>
+                    <br />
+                    <div className="sjjcc">
+                        Let people know your X account for business inquiries
+                    </div>
+                    <br />
+                    <div className="sjjcc">
+                        <input type="text" value={xacc} style={{ paddingLeft: '20px', width: '80vw' }} onChange={(e) => setxacc(e.target.value)} />
+                    </div>
+                </div>
+                <br /><br /><br /><br />
+                <Link style={{ textDecoration: 'none', color: 'black' }}>
+                    <div style={{ textDecoration: 'none', color: 'black', width: '120px' }}>
+                        <div className="effkf" style={{ cursor: 'pointer', width: '180px' }} onClick={async () => {
+                            const docref = doc(db, 'User Details', auth.currentUser.uid);
+                            await updateDoc(docref, { 'X': xacc });
+                            window.location.replace('/')
+                        }}>Set new X account</div>
+                    </div>
+                </Link>
                 <br /><br /><br />
             </div>
         </div>

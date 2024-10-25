@@ -434,7 +434,7 @@ export default function Landingpage() {
         <div className="webbody" style={{ backgroundColor: nightmode ? 'black' : 'white', color: nightmode ? 'white' : 'black' }} >
             <Header />
             <Navbar_mobile/>
-            <div className="videobody">
+            <div className="videobody" style={{width:"100%"}}>
                 {/* {
                     sidebar ? <Sidebar /> : <ShortSidebar />
                 } */}

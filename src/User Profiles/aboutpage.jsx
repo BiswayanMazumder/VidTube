@@ -27,6 +27,8 @@ export default function Aboutpage() {
     const [vidData, setVidData] = useState([]);
     const [videoCount, setVideoCount] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [instaacc, setinstaacc] = useState('');
+    const [xacc, setxacc] = useState('');
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -36,6 +38,8 @@ export default function Aboutpage() {
                     const userData = docSnapshot.data();
                     setName(userData.Username);
                     setBio(userData.Bio);
+                    setinstaacc(userData.Instagram || 'No Instagram account available');
+                    setxacc(userData.X || 'No X account available');
                 }
 
                 const coverDocRef = doc(db, 'User Cover Pictures', userId);
@@ -107,16 +111,17 @@ export default function Aboutpage() {
     }, [userId]);
     return (
         <div className='webbody'>
-        <div className="ldlvjic" style={{position:'fixed',bottom:'0px',width:'100%',left:'0px'}}>
-            <Navbar_Profile/>
-        </div>
-        <div className="jhcdjkj">
+            <div className="ldlvjic" style={{ position: 'fixed', bottom: '0px', width: '100%', left: '0px' }}>
+                <Navbar_Profile />
+            </div>
+            <div className="jhcdjkj">
                 Channel Details
             </div>
             <br /><br />
             <div className="jhcdjkj">
                 Bio
             </div>
+            <br />
             <div className="jdhfjk">
                 {bio}
 
@@ -125,24 +130,69 @@ export default function Aboutpage() {
             <div className="jhcdjkj">
                 Subscribers
             </div>
+            <br />
             <div className="jdhfjk">
-                {subs.length>1? subs.length + " Subscribers":subs.length + " Subscriber"}
+                {subs.length > 1 ? subs.length + " Subscribers" : subs.length + " Subscriber"}
             </div>
             <br /><br />
             <div className="jhcdjkj">
                 Videos
             </div>
+            <br />
             <div className="jdhfjk">
-                {videoCount>1? videoCount + " Videos":videoCount + " Video"}
+                {videoCount > 1 ? videoCount + " Videos" : videoCount + " Video"}
             </div>
             <br /><br />
             <div className="jhcdjkj">
                 Channel URL
             </div>
-            <div className="jdhfjk">
+            <br />
+            <a
+                href={document.URL}
+                style={{ textDecoration: 'none', color: 'black' }}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
                 {document.URL}
-
-            </div>
+            </a>
+            {
+                instaacc != 'No Instagram account available' ? <div>
+                    <br /><br />
+                    <div className="jhcdjkj" style={{display:"flex",flexDirection:"row",gap:"10px"}}>
+                    <img src="https://encrypted-tbn3.gstatic.com/favicon-tbn?q=tbn:ANd9GcQSlK46mwDDaUXGvco9TRBnKyzSycwlQHp3G-PyMNHw0XcUw-Uh_2tlI2D3vj7F1vLzXeNfKclfaw5EwOqlfA6a15Kct8yeChp_WcbdMDSBZcLbUbYigg" alt="" height={"20px"} width={"20px"} style={{marginTop:"2px"}} />
+                        Instagram   
+                    </div>
+                    <br />
+                    <a
+                        href={instaacc}
+                        style={{ textDecoration: 'none', color: 'black' }}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        {instaacc}
+                    </a>
+                </div> : <></>
+            }
+            <br /><br />
+            {
+                xacc != 'No X account available' ? <div>
+                    <div className="jhcdjkj" style={{display:"flex",flexDirection:"row",gap:"10px"}}>
+                    <img src="https://encrypted-tbn0.gstatic.com/favicon-tbn?q=tbn:ANd9GcS2QyngJ3CEbdBgAkNjyoe2UhJSeW99hiQFfdlhpSl99gGL7jEN3BuuHDrtdKNeT2LakbGYpgHO3Sl4CWrfgEsXa2lsti2iKgGsW8HvgrMhHA" alt="" height={"20px"} width={"20px"} style={{marginTop:"2px"}}/>
+                        Twitter
+                        
+                    </div>
+                    <br />
+                    <a
+                        href={xacc}
+                        style={{ textDecoration: 'none', color: 'black' }}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        {xacc}
+                    </a>
+                </div> : <></>
+            }
         </div>
+
     )
 }
